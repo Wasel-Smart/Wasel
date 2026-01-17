@@ -1,19 +1,33 @@
-import { useState, useEffect } from 'react';
-import { tripsAPI } from '../services/api';
-import { dataService } from '../services/mockDataService';
+/**
+ * Enhanced Trips Hook - Production Ready
+ * Uses ServiceFactory for unified service access
+ * NO MOCK DATA - Direct Supabase integration
+ */
 
-// Mock types since we don't have the full DB types for KV objects
+import { useState, useEffect } from 'react';
+import { supabase } from '../utils/supabase/client';
+import ServiceFactory from '../services/serviceFactory';
+
 export interface Trip {
   id: string;
   driver_id: string;
-  from: string;
-  to: string;
+  from_location: string;
+  to_location: string;
   departure_date: string;
   departure_time: string;
   available_seats: number;
+  total_seats: number;
   price_per_seat: number;
   status: string;
-  // Add other fields as needed
+  trip_type?: string;
+  vehicle?: any;
+  preferences?: any;
+  driver?: {
+    id: string;
+    full_name: string;
+    phone_number: string;
+    rating: number;
+  };
 }
 
 export function useTrips(filters?: {
@@ -32,35 +46,38 @@ export function useTrips(filters?: {
   const fetchTrips = async () => {
     try {
       setLoading(true);
-      let data: Trip[] = [];
+      setError(null);
 
+      let query = supabase
+        .from('trips')
+        .select(`
+          *,
+          driver:driver_id(id, full_name, phone_number, rating)
+        `);
+
+      // Apply filters
       if (filters?.driverId) {
-        // If filtering by driver, assume it's the current user and use getDriverTrips
-        // Note: api.getDriverTrips uses the auth token to identify the user
-        const response = await tripsAPI.getDriverTrips();
-        data = response.trips || [];
-      } else {
-        // Otherwise search trips - use dataService which has mock fallback
-        const response = await dataService.searchTrips({
-          fromDate: filters?.fromDate,
-        });
-        data = response.trips || [];
+        query = query.eq('driver_id', filters.driverId);
       }
 
-      // Client-side filtering
       if (filters?.status && filters.status.length > 0) {
-        data = data.filter(trip => filters.status?.includes(trip.status));
+        query = query.in('status', filters.status);
       }
 
       if (filters?.fromDate) {
-         data = data.filter(trip => trip.departure_date >= filters.fromDate!);
+        query = query.gte('departure_date', filters.fromDate);
       }
 
-      setTrips(data);
-      setError(null);
+      // Execute query
+      const { data, error: fetchError } = await query.order('departure_date', { ascending: true });
+
+      if (fetchError) throw fetchError;
+
+      setTrips(data || []);
     } catch (err: any) {
       console.error('Error fetching trips:', err);
       setError(err.message);
+      setTrips([]); // Clear trips on error
     } finally {
       setLoading(false);
     }
@@ -68,53 +85,78 @@ export function useTrips(filters?: {
 
   const createTrip = async (tripData: any) => {
     try {
-      const result = await dataService.createTrip(tripData);
+      const response = await ServiceFactory.request({
+        type: 'carpool',
+        from: tripData.from_coords,
+        to: tripData.to_coords,
+        date: tripData.departure_date,
+        time: tripData.departure_time,
+        details: {
+          from_location: tripData.from,
+          to_location: tripData.to,
+          total_seats: tripData.total_seats,
+          available_seats: tripData.available_seats || tripData.total_seats,
+          price_per_seat: tripData.price_per_seat,
+          trip_type: tripData.trip_type || 'wasel',
+          vehicle: tripData.vehicle,
+          preferences: tripData.preferences,
+          status: 'active'
+        }
+      });
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to create trip');
+      }
+
       await fetchTrips();
-      return { data: result.trip, error: null };
+      return { data: response.data, error: null };
     } catch (err: any) {
       console.error('Error creating trip:', err);
       return { data: null, error: err.message };
     }
   };
 
-  // Update trip not fully supported by API wrapper yet? 
-  // Wait, server has PUT /trips/:tripId. api.ts doesn't have updateTrip.
-  // I should add updateTrip to api.ts or just accept it's missing for now.
-  // But the existing hook had it. I'll mock it or leave it as a TODO if strict.
-  // Actually, the user wants "connectivity achieved". I should fix api.ts if needed.
-  // But for now, let's just comment out or implement if critical.
-  
   const updateTrip = async (tripId: string, updates: any) => {
-      try {
-        const result = await dataService.updateTrip(tripId, updates);
-        await fetchTrips();
-        return { data: result.trip, error: null };
-      } catch (err: any) {
-        console.error('Error updating trip:', err);
-        return { data: null, error: err.message };
-      }
+    try {
+      const { data, error: updateError } = await supabase
+        .from('trips')
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', tripId)
+        .select()
+        .single();
+
+      if (updateError) throw updateError;
+
+      await fetchTrips();
+      return { data, error: null };
+    } catch (err: any) {
+      console.error('Error updating trip:', err);
+      return { data: null, error: err.message };
+    }
   };
-  
+
   const deleteTrip = async (tripId: string) => {
-      try {
-        await dataService.deleteTrip(tripId);
-        await fetchTrips();
-        return { error: null };
-      } catch (err: any) {
-        console.error('Error deleting trip:', err);
-        return { error: err.message };
-      }
+    try {
+      const { error: deleteError } = await supabase
+        .from('trips')
+        .delete()
+        .eq('id', tripId);
+
+      if (deleteError) throw deleteError;
+
+      await fetchTrips();
+      return { error: null };
+    } catch (err: any) {
+      console.error('Error deleting trip:', err);
+      return { error: err.message };
+    }
   };
 
   const publishTrip = async (tripId: string) => {
-     try {
-       const result = await tripsAPI.updateTrip(tripId, { status: 'published' });
-       await fetchTrips();
-       return { data: result.trip, error: null };
-     } catch (err: any) {
-       console.error('Error publishing trip:', err);
-       return { error: err.message };
-     }
+    return updateTrip(tripId, { status: 'active' });
   };
 
   return {
@@ -143,18 +185,24 @@ export function useSearchTrips(searchParams: {
   const searchTrips = async () => {
     try {
       setLoading(true);
-      const response = await dataService.searchTrips({
+      setError(null);
+
+      const response = await ServiceFactory.discover('carpool', {
         from: searchParams.from,
         to: searchParams.to,
         date: searchParams.departureDate,
-        seats: searchParams.seats,
+        seats: searchParams.seats || 1
       });
 
-      setTrips(response.trips || []);
-      setError(null);
+      if (!response.success) {
+        throw new Error(response.error || 'Search failed');
+      }
+
+      setTrips(response.data || []);
     } catch (err: any) {
       console.error('Error searching trips:', err);
       setError(err.message);
+      setTrips([]);
     } finally {
       setLoading(false);
     }
@@ -187,12 +235,24 @@ export function useTrip(tripId: string | null) {
 
     try {
       setLoading(true);
-      const response = await dataService.getTripById(tripId);
-      setTrip(response.trip);
       setError(null);
+
+      const { data, error: fetchError } = await supabase
+        .from('trips')
+        .select(`
+          *,
+          driver:driver_id(id, full_name, phone_number, rating)
+        `)
+        .eq('id', tripId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      setTrip(data);
     } catch (err: any) {
       console.error('Error fetching trip:', err);
       setError(err.message);
+      setTrip(null);
     } finally {
       setLoading(false);
     }

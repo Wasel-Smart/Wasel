@@ -15,7 +15,8 @@ import { Checkbox } from './ui/checkbox';
 import { toast } from 'sonner';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { ServiceTabs } from './ServiceTabs';
-import { dataService } from '../services/mockDataService';
+import schoolTransportService from '../services/schoolTransportService';
+import { useAuth } from '../contexts/AuthContext';
 
 interface Guardian {
   name: string;
@@ -31,8 +32,10 @@ interface Student {
 }
 
 export function SchoolTransport() {
+  const { user } = useAuth();
   const [tripType, setTripType] = useState<'one-way' | 'round-trip'>('round-trip');
   const [students, setStudents] = useState<Student[]>([]);
+  const [submitting, setSubmitting] = useState(false);
   const [pickupLocation, setPickupLocation] = useState('');
   const [schoolLocation, setSchoolLocation] = useState('');
   const [pickupTime, setPickupTime] = useState('');
@@ -79,37 +82,33 @@ export function SchoolTransport() {
   };
 
   const handleBooking = async () => {
+    if (!user) {
+      toast.error('Please sign in to book school transport');
+      return;
+    }
+    
     if (!students.length || !pickupLocation || !schoolLocation || !pickupTime || !selectedDays.length) {
       toast.error('Please fill in all required fields');
       return;
     }
 
+    setSubmitting(true);
     try {
-      // Create school transport trip for each selected day
-      const promises = selectedDays.map(async (day) => {
-        const tripDate = new Date();
-        const dayIndex = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].indexOf(day);
-        tripDate.setDate(tripDate.getDate() + ((dayIndex - tripDate.getDay() + 7) % 7));
-        
-        return dataService.createTrip({
-          from: pickupLocation,
-          to: schoolLocation,
-          departure_date: tripDate.toISOString().split('T')[0],
-          departure_time: pickupTime,
-          trip_type: tripType === 'round-trip' ? 'raje3' : 'wasel',
-          price_per_seat: 25, // School transport pricing
-          total_seats: students.length,
-          available_seats: students.length,
-          preferences: {
-            smoking_allowed: false,
-            pets_allowed: false,
-            music_allowed: false,
-          },
-        });
+      const { route } = await schoolTransportService.createRoute({
+        pickupLocation,
+        pickupLat: 25.1161,
+        pickupLng: 55.1964,
+        schoolLocation,
+        schoolLat: 25.2345,
+        schoolLng: 55.3456,
+        pickupTime,
+        returnTime,
+        activeDays: selectedDays,
+        students,
+        tripType
       });
-
-      await Promise.all(promises);
-      toast.success(`School transport booking submitted for ${selectedDays.length} day(s)! You will receive confirmation via SMS.`);
+      
+      toast.success(`School transport route created! Monthly trips scheduled for ${selectedDays.length} days.`);
       
       // Reset form
       setStudents([]);
@@ -121,6 +120,8 @@ export function SchoolTransport() {
       setCurrentStudent({ guardians: [] });
     } catch (error: any) {
       toast.error(error.message || 'Failed to book school transport');
+    } finally {
+      setSubmitting(false);
     }
   };
 

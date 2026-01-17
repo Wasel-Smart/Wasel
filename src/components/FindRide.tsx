@@ -12,9 +12,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collap
 import { TripDetailsDialog } from './TripDetailsDialog';
 import { toast } from 'sonner';
 import { useSearchTrips, Trip as SearchTrip } from '../hooks/useTrips';
-import { bookingsAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
-import { dataService } from '../services/mockDataService';
+import { useBookings } from '../hooks/useBookings';
 
 export function FindRide() {
    const { user } = useAuth();
@@ -75,16 +74,26 @@ export function FindRide() {
     setDialogOpen(true);
   };
 
+  const { createBooking } = useBookings();
+
   const handleBookTrip = async (tripId: number) => {
     if (!user) {
         toast.error('Please sign in to book a trip');
         return;
     }
     try {
-        await dataService.createBooking(tripId.toString(), parseInt(passengers));
+        const { error } = await createBooking({
+          trip_id: tripId.toString(),
+          seats_requested: parseInt(passengers)
+        });
+        
+        if (error) {
+          toast.error(error);
+          return;
+        }
+        
         toast.success('Trip booked successfully! Check "My Trips" for details.');
         setDialogOpen(false);
-        // Refresh search results
         searchTrips();
     } catch (err: any) {
         toast.error(err.message || 'Failed to book trip');

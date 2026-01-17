@@ -9,7 +9,6 @@ import { LiveTripMap } from './LiveTripMap';
 import { useTrips } from '../hooks/useTrips';
 import { useBookings } from '../hooks/useBookings';
 import { useAuth } from '../contexts/AuthContext';
-import { dataService } from '../services/mockDataService';
 
 // Data is now loaded dynamically from hooks
 

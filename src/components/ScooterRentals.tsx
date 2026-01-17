@@ -7,7 +7,8 @@ import { MapComponent } from './MapComponent';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'motion/react';
 import { ServiceTabs } from './ServiceTabs';
-import { dataService } from '../services/mockDataService';
+import scooterService from '../services/scooterService';
+import { useAuth } from '../contexts/AuthContext';
 
 interface Scooter {
   id: string;
@@ -28,10 +29,31 @@ const MOCK_SCOOTERS: Scooter[] = [
 ];
 
 export function ScooterRentals() {
+  const { user } = useAuth();
+  const [scooters, setScooters] = useState<Scooter[]>([]);
   const [selectedScooter, setSelectedScooter] = useState<Scooter | null>(null);
   const [isUnlocking, setIsUnlocking] = useState(false);
-  const [activeRide, setActiveRide] = useState<{ startTime: number; scooter: Scooter } | null>(null);
+  const [activeRide, setActiveRide] = useState<any | null>(null);
   const [rideDuration, setRideDuration] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  // Load nearby scooters on mount
+  useEffect(() => {
+    loadNearbyScooters();
+  }, []);
+
+  const loadNearbyScooters = async () => {
+    try {
+      setLoading(true);
+      const nearby = await scooterService.getNearbyScooters(25.2048, 55.2708, 3);
+      setScooters(nearby);
+    } catch (error) {
+      console.error('Failed to load scooters:', error);
+      toast.error('Failed to load scooters');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Timer for active ride
   useEffect(() => {
@@ -45,47 +67,45 @@ export function ScooterRentals() {
   }, [activeRide]);
 
   const handleUnlock = async () => {
-    if (!selectedScooter) return;
+    if (!selectedScooter || !user) {
+      toast.error('Please sign in to rent a scooter');
+      return;
+    }
+    
     setIsUnlocking(true);
     
     try {
-      // Create scooter rental
-      const rental = await dataService.createRental({
-        vehicle_id: selectedScooter.id,
-        vehicle_name: `Scooter ${selectedScooter.code}`,
-        pickup_location: 'Current Location',
-        return_location: 'Current Location',
-        pickup_date: new Date().toISOString().split('T')[0],
-        return_date: new Date().toISOString().split('T')[0],
-        total_cost: 0, // Will be calculated at end
+      const rental = await scooterService.unlockScooter(selectedScooter.id);
+      
+      setActiveRide({
+        rental,
+        startTime: Date.now(),
+        scooter: selectedScooter
       });
-
-      // Simulate QR scan delay
-      setTimeout(() => {
-        setIsUnlocking(false);
-        setActiveRide({ startTime: Date.now(), scooter: selectedScooter });
-        toast.success('Scooter unlocked! Enjoy your ride.');
-        setSelectedScooter(null);
-      }, 2000);
+      
+      toast.success('Scooter unlocked! Enjoy your ride.');
+      setSelectedScooter(null);
+      loadNearbyScooters(); // Refresh list
     } catch (error: any) {
-      setIsUnlocking(false);
       toast.error(error.message || 'Failed to unlock scooter');
+    } finally {
+      setIsUnlocking(false);
     }
   };
 
   const handleEndRide = async () => {
     if (!activeRide) return;
-    const cost = Math.ceil(rideDuration / 60) * activeRide.scooter.pricePerMin;
     
     try {
-      // Update rental with final cost
-      await dataService.updateTrip(activeRide.scooter.id, {
-        price_per_seat: cost,
-      });
+      const { cost } = await scooterService.endRide(
+        activeRide.rental.id,
+        { lat: 25.2048, lng: 55.2708 } // In production, get from GPS
+      );
       
       toast.success(`Ride ended. Total: AED ${cost.toFixed(2)}. Payment processed.`);
       setActiveRide(null);
       setRideDuration(0);
+      loadNearbyScooters(); // Refresh list
     } catch (error: any) {
       toast.error(error.message || 'Failed to end ride');
     }
@@ -104,9 +124,9 @@ export function ScooterRentals() {
       <div className="flex-1 relative z-0">
         <MapComponent className="w-full h-full" />
         
-        {/* Mock Markers (Overlay on top of map for visual representation) */}
+        {/* Scooter Markers */}
         <div className="absolute inset-0 pointer-events-none">
-          {MOCK_SCOOTERS.map((scooter) => (
+          {scooters.map((scooter) => (
              // Simple positioning simulation for demo purposes
              // In a real app, these would be rendered by the MapComponent based on coords
             <div 

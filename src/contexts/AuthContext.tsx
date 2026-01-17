@@ -31,9 +31,9 @@ const AuthContext = createContext<AuthContextType>({
   signIn: async () => ({ error: null }),
   signInWithGoogle: async () => ({ error: null }),
   signInWithFacebook: async () => ({ error: null }),
-  signOut: async () => {},
+  signOut: async () => { },
   updateProfile: async () => ({ error: null }),
-  refreshProfile: async () => {},
+  refreshProfile: async () => { },
 });
 
 export const useAuth = () => {
@@ -79,31 +79,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      
+
       if (session?.user) {
-        fetchProfile();
-      } else {
-        setLoading(false);
+        await fetchProfile();
       }
+      setLoading(false);
     });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event: AuthChangeEvent, session: Session | null) => {
         console.log('Auth state changed:', event);
-        
+
         setSession(session);
         setUser(session?.user ?? null);
-        
+
         if (session?.user) {
           await fetchProfile();
         } else {
           setProfile(null);
         }
-        
+
         setLoading(false);
       }
     );
@@ -124,15 +123,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Assuming first and last name split for api signature
       const [firstName, ...rest] = fullName.split(' ');
       const lastName = rest.join(' ');
-      
+
       // authAPI.signUp signature: (email, password, firstName, lastName, phone)
       // Wait, server/index.tsx: const { email, password, fullName } = body;
       // services/api.ts: async signUp(email: string, password: string, firstName: string, lastName: string, phone: string)
       // And sends: body: JSON.stringify({ email, password, fullName: `${firstName} ${lastName}` })
       // So I can just pass "" for phone.
-      
+
       const result = await authAPI.signUp(email, password, firstName, lastName || '', '');
-      
+
       if (result.success) {
         // Auto login after signup?
         // Server creates user but doesn't return session.
@@ -140,25 +139,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
         // But wait, the server uses admin.createUser with email_confirm: true.
         // Does that mean we can login immediately? Yes.
         const { error: signInError } = await supabase.auth.signInWithPassword({
-             email,
-             password
+          email,
+          password
         });
         if (signInError) return { error: signInError };
-        
+
         return { error: null };
       }
-      
+
       return { error: new Error('Signup failed') };
 
     } catch (error) {
       if (error instanceof Error && (
-        error.message.includes('already been registered') || 
+        error.message.includes('already been registered') ||
         error.message.includes('User already registered')
       )) {
         // Return duplicate user error gracefully without logging as system error
         return { error };
       }
-      
+
       console.error('Signup error:', error);
       return { error };
     }
@@ -251,8 +250,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const result = await authAPI.updateProfile(updates);
       if (result.success) {
-         await fetchProfile();
-         return { error: null };
+        await fetchProfile();
+        return { error: null };
       }
       return { error: new Error('Failed to update profile') };
     } catch (error) {

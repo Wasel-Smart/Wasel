@@ -11,9 +11,8 @@ import { Checkbox } from './ui/checkbox';
 import { Badge } from './ui/badge';
 import { MapComponent } from './MapComponent';
 import { toast } from 'sonner';
-import { tripsAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
-import { dataService } from '../services/mockDataService';
+import { useTrips } from '../hooks/useTrips';
 
 interface Stop {
   label: string;
@@ -68,6 +67,8 @@ export function OfferRide() {
     setStops(stops.filter((_, i) => i !== index));
   };
 
+  const { createTrip } = useTrips();
+
   const handlePublish = async () => {
     if (!user) {
         toast.error('Please sign in to offer a ride');
@@ -79,7 +80,7 @@ export function OfferRide() {
     }
     
     try {
-        const result = await dataService.createTrip({
+        const { data, error } = await createTrip({
             trip_type: tripType === 'wasel' ? 'wasel' : 'raje3',
             from,
             to,
@@ -105,6 +106,12 @@ export function OfferRide() {
                 music_allowed: true,
             },
         });
+        
+        if (error) {
+          toast.error(error);
+          return;
+        }
+        
         toast.success('Ride published successfully! Your trip is now visible to passengers.');
         // Reset form
         setFrom('');

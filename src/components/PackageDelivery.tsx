@@ -8,10 +8,10 @@ import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Separator } from './ui/separator';
 import { Badge } from './ui/badge';
 import { toast } from 'sonner';
-import { tripsAPI } from '../services/api';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { MapComponent } from './MapComponent';
-import { dataService } from '../services/mockDataService';
+import packageService from '../services/packageService';
+import { useAuth } from '../contexts/AuthContext';
 
 interface DeliveryResult {
   id: string;
@@ -23,11 +23,14 @@ interface DeliveryResult {
 }
 
 export function PackageDelivery() {
+  const { user } = useAuth();
   const [step, setStep] = useState<'search' | 'results' | 'details'>('search');
   const [packageSize, setPackageSize] = useState<'small' | 'medium' | 'large'>('small');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
+  const [results, setResults] = useState<DeliveryResult[]>([]);
   const [selectedDriver, setSelectedDriver] = useState<DeliveryResult | null>(null);
+  const [loading, setLoading] = useState(false);
 
   // Mock geocoding logic
   const geocodeLocation = (location: string): { lat: number; lng: number } => {
@@ -45,23 +48,21 @@ export function PackageDelivery() {
       toast.error("Please enter pickup and dropoff locations");
       return;
     }
+    
+    setLoading(true);
     try {
-      // Search for package delivery trips
-      const response = await dataService.searchTrips({
+      const captains = await packageService.findAvailableCaptains(
         from,
         to,
-      });
+        packageSize
+      );
       
-      // Filter for package delivery or show all available
-      if (response.trips && response.trips.length > 0) {
-        setStep('results');
-      } else {
-        toast.info('No available captains found. Showing sample results.');
-        setStep('results');
-      }
-    } catch (error) {
-      toast.error('Search failed. Showing sample results.');
+      setResults(captains);
       setStep('results');
+    } catch (error: any) {
+      toast.error(error.message || 'Search failed');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,22 +72,32 @@ export function PackageDelivery() {
   };
 
   const confirmBooking = async () => {
-    if (!selectedDriver) {
-      toast.error('Please select a captain');
+    if (!selectedDriver || !user) {
+      toast.error('Please sign in to book delivery');
       return;
     }
     
     try {
-      // Create booking for package delivery
-      const booking = await dataService.createBooking(
-        selectedDriver.id,
-        1, // Package doesn't need seat, but API requires it
-        from,
-        to
+      // Create delivery
+      const delivery = await packageService.createDelivery({
+        fromLocation: from,
+        fromLat: geocodeLocation(from).lat,
+        fromLng: geocodeLocation(from).lng,
+        toLocation: to,
+        toLat: geocodeLocation(to).lat,
+        toLng: geocodeLocation(to).lng,
+        packageSize,
+        description: 'Package delivery'
+      });
+      
+      // Assign captain
+      await packageService.assignCaptain(
+        delivery.id,
+        selectedDriver.captain_id,
+        selectedDriver.estimated_price
       );
       
-      const totalPrice = selectedDriver.price;
-      toast.success(`Delivery booked successfully! Total: AED ${totalPrice}. Captain will contact you soon.`);
+      toast.success(`Delivery booked! Tracking code: ${delivery.tracking_code}`);
       setStep('search');
       setFrom('');
       setTo('');
@@ -96,8 +107,8 @@ export function PackageDelivery() {
     }
   };
 
-  // Mock results
-  const results: DeliveryResult[] = [
+  // Mock results for fallback display
+  const mockResults: DeliveryResult[] = [
     { id: '1', driver: 'Ahmed K.', rating: 4.9, departureTime: '14:00', price: 35, dropoffType: 'door-to-door' },
     { id: '2', driver: 'Sarah M.', rating: 4.8, departureTime: '15:30', price: 25, dropoffType: 'station-to-station' },
     { id: '3', driver: 'Faisal R.', rating: 5.0, departureTime: '16:45', price: 40, dropoffType: 'door-to-door' },
