@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   TreeDeciduous, 
   TrendingUp, 
@@ -57,6 +57,8 @@ export function WorldTree() {
   const [showAnimation, setShowAnimation] = useState<'grow' | 'shrink' | null>(null);
 
   // Simulate trip impact (in real app, this would come from actual trip data)
+  const animTimeoutRef = useRef<number | null>(null);
+
   const addTripImpact = (isEcoFriendly: boolean, distance: number) => {
     const co2PerKm = 0.12; // kg CO2 per km
     const carpoolReduction = 0.6; // 60% reduction when carpooling
@@ -98,10 +100,22 @@ export function WorldTree() {
     }
 
     setTreeStats(newStats);
-    setRecentImpacts([impact, ...recentImpacts.slice(0, 4)]);
+    setRecentImpacts(prev => [impact, ...prev.slice(0, 4)]);
 
-    setTimeout(() => setShowAnimation(null), 1000);
+    if (animTimeoutRef.current) {
+      window.clearTimeout(animTimeoutRef.current);
+    }
+    animTimeoutRef.current = window.setTimeout(() => setShowAnimation(null), 1000);
   };
+
+  useEffect(() => {
+    return () => {
+      if (animTimeoutRef.current) {
+        window.clearTimeout(animTimeoutRef.current);
+        animTimeoutRef.current = null;
+      }
+    };
+  }, []);
 
   const getTreeStage = () => {
     if (treeStats.health >= 80) return { stage: 'thriving', emoji: '🌳', color: 'text-green-600' };

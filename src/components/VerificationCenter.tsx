@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -95,6 +95,17 @@ export function VerificationCenter() {
   const completedCount = verifications.filter(v => v.status === 'approved').length;
   const completionPercentage = (completedCount / verifications.length) * 100;
 
+  const uploadIntervalRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (uploadIntervalRef.current) {
+        window.clearInterval(uploadIntervalRef.current);
+        uploadIntervalRef.current = null;
+      }
+    };
+  }, []);
+
   const handleVerify = (id: string) => {
     const verification = verifications.find(v => v.id === id);
     
@@ -106,28 +117,37 @@ export function VerificationCenter() {
     } else {
       // Simulate file upload then real backend call
       setUploadProgress(0);
-      const interval = setInterval(async () => {
+      uploadIntervalRef.current = window.setInterval(async () => {
         setUploadProgress(prev => {
           if (prev >= 90) {
-            clearInterval(interval);
-            
+            if (uploadIntervalRef.current) {
+              window.clearInterval(uploadIntervalRef.current);
+              uploadIntervalRef.current = null;
+            }
+
             // Call backend to submit verification
             // In a real app, we'd get the URL from supabase storage first
             const mockUrl = `https://storage.supabase.co/${id}-${Date.now()}.jpg`;
-            
+
+            const headers: Record<string, string> = {
+              'Content-Type': 'application/json'
+            };
+
+            if (typeof window !== 'undefined') {
+              const token = localStorage.getItem('supabase.auth.token');
+              if (token) headers['Authorization'] = `Bearer ${token}`;
+            }
+
             fetch('/make-server-0b1f4071/verification/submit', {
               method: 'POST',
-              headers: {
-                 'Content-Type': 'application/json',
-                 'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}` // In real app use session
-              },
+              headers,
               body: JSON.stringify({
                 document_url: mockUrl,
                 document_type: id
               })
             }).then(res => {
                if(res.ok) {
-                  setVerifications(verifications.map(v => 
+                  setVerifications(prev => prev.map(v => 
                     v.id === id ? { ...v, status: 'pending' } : v
                   ));
                   setUploadProgress(100);
@@ -136,8 +156,11 @@ export function VerificationCenter() {
                   toast.error('Verification submission failed');
                   setUploadProgress(0);
                }
+            }).catch(() => {
+              toast.error('Verification submission failed');
+              setUploadProgress(0);
             });
-            
+
             return 90;
           }
           return prev + 10;
