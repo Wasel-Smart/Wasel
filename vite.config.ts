@@ -77,13 +77,12 @@ export default defineConfig({
           return 'assets/[name]-[hash][extname]';
         },
       },
+      treeshake: true,
     },
     // Chunk size warning limit
     chunkSizeWarningLimit: 500,
     // CSS code splitting
     cssCodeSplit: true,
-    // Reduce bundle size with tree shaking
-    treeshake: true,
   },
   server: {
     port: 3000,
