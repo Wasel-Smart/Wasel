@@ -19,9 +19,9 @@ import {
 } from './ui/select';
 import { Label } from './ui/label';
 import { AlertTriangle, DollarSign, Clock, Info } from 'lucide-react';
-import { useLanguage } from './contexts/LanguageContext';
-import { supabase } from './services/api';
-import { paymentService } from './services/integrations';
+import { useLanguage } from '../contexts/LanguageContext';
+import { supabase } from '../services/api';
+import { paymentService } from '../services/integrations';
 import { toast } from 'sonner';
 
 interface CancelTripProps {
@@ -103,7 +103,7 @@ export function CancelTrip({
     };
   };
 
-  useState(() => {
+  useEffect(() => {
     setRefundCalc(calculateRefund());
   }, [tripStatus, fare, scheduledTime]);
 
