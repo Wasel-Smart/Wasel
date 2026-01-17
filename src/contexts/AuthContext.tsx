@@ -71,6 +71,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Initialize auth state
   useEffect(() => {
+    // MOCK MODE FOR SCREENSHOTS - Bypassing Supabase
+    // Setting a fake user immediately to unblock the UI
+
+    setTimeout(() => {
+      setUser({
+        id: 'mock-user-id',
+        email: 'mock@example.com',
+        app_metadata: {},
+        user_metadata: { full_name: 'Mock User' },
+        aud: 'authenticated',
+        created_at: new Date().toISOString()
+      } as any);
+
+      setProfile({
+        id: 'mock-user-id',
+        full_name: 'Laith Nassar',
+        email: 'mock@example.com',
+        role: 'driver',
+        verified: true,
+        created_at: new Date().toISOString()
+      } as any);
+
+      setLoading(false);
+    }, 500); // Small delay to simulate load
+
+    /*
     // If Supabase is not configured, just set loading to false
     if (!isSupabaseConfigured || !supabase) {
       console.warn('Supabase not configured. Running in demo mode without backend.');
@@ -110,6 +136,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return () => {
       subscription.unsubscribe();
     };
+    */
   }, []);
 
   // Sign up
