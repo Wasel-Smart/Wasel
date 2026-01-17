@@ -99,12 +99,12 @@ export function Dashboard({ onNavigate }: DashboardProps) {
               <p className="text-white/90 text-lg">Ready for your next journey with Wassel?</p>
               <div className="flex items-center gap-4 mt-3">
                 <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm">
-                  <Star className="w-3 h-3 mr-1 fill-current" />
+                  <Star className="size-3 mr-1 fill-current" />
                   {profile?.rating_as_driver || 4.8} Rating
                 </Badge>
                 {profile?.email_verified && (
                   <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm">
-                    <Award className="w-3 h-3 mr-1" />
+                    <Award className="size-3 mr-1" />
                     Verified Driver
                   </Badge>
                 )}
@@ -114,17 +114,17 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           
           <div className="grid grid-cols-2 gap-4 lg:flex lg:gap-6">
             <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 text-center">
-              <TrendingUp className="w-6 h-6 text-white mx-auto mb-2" />
+              <TrendingUp className="size-6 text-white mx-auto mb-2" />
               <p className="text-2xl font-bold">{profile?.total_trips || 0}</p>
               <p className="text-sm text-white/80">Total Trips</p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 text-center">
-              <Target className="w-6 h-6 text-white mx-auto mb-2" />
+              <Target className="size-6 text-white mx-auto mb-2" />
               <p className="text-2xl font-bold">320 kg</p>
               <p className="text-sm text-white/80">CO₂ Saved</p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 text-center lg:hidden xl:block">
-              <Zap className="w-6 h-6 text-white mx-auto mb-2" />
+              <Zap className="size-6 text-white mx-auto mb-2" />
               <p className="text-2xl font-bold">95%</p>
               <p className="text-sm text-white/80">On-Time</p>
             </div>
@@ -147,19 +147,19 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                 </CardTitle>
                 <CardDescription className="text-base">Search for available rides across cities</CardDescription>
               </div>
-              <div className="w-16 h-16 bg-gradient-to-br from-primary to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <ScanSearch className="w-8 h-8 text-white" />
+              <div className="size-16 bg-gradient-to-br from-primary to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <ScanSearch className="size-8 text-white" />
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4 relative z-10">
             <div className="grid grid-cols-2 gap-3">
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <Locate className="w-4 h-4 text-primary" />
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Locate className="size-4 text-primary flex-shrink-0" />
                 <span>500+ routes</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <Clock className="w-4 h-4 text-primary" />
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Clock className="size-4 text-primary flex-shrink-0" />
                 <span>24/7 Available</span>
               </div>
             </div>
@@ -182,19 +182,19 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                 </CardTitle>
                 <CardDescription className="text-base">Share your journey and earn money</CardDescription>
               </div>
-              <div className="w-16 h-16 bg-gradient-to-br from-secondary to-secondary/90 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <CirclePlus className="w-8 h-8 text-white" />
+              <div className="size-16 bg-gradient-to-br from-secondary to-secondary/90 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <CirclePlus className="size-8 text-white" />
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4 relative z-10">
             <div className="grid grid-cols-2 gap-3">
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <UsersRound className="w-4 h-4 text-primary" />
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <UsersRound className="size-4 text-primary flex-shrink-0" />
                 <span>Help 3-4 travelers</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <Clock className="w-4 h-4 text-primary" />
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Clock className="size-4 text-primary flex-shrink-0" />
                 <span>24/7 Available</span>
               </div>
             </div>

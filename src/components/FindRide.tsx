@@ -86,7 +86,7 @@ export function FindRide() {
             <div className="space-y-2">
               <Label>From</Label>
               <div className="relative">
-                <Locate className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Locate className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                 <Input
                   placeholder="Starting location"
                   value={searchFrom}
@@ -99,7 +99,7 @@ export function FindRide() {
             <div className="space-y-2">
               <Label>To</Label>
               <div className="relative">
-                <Locate className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Locate className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                 <Input
                   placeholder="Destination"
                   value={searchTo}
@@ -112,7 +112,7 @@ export function FindRide() {
             <div className="space-y-2">
               <Label>Date</Label>
               <div className="relative">
-                <CalendarClock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <CalendarClock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                 <Input
                   type="date"
                   value={searchDate}
@@ -125,7 +125,7 @@ export function FindRide() {
             <div className="space-y-2">
               <Label>Passengers</Label>
               <div className="relative">
-                <UsersRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <UsersRound className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                 <Input
                   type="number"
                   min="1"

@@ -117,10 +117,10 @@ export function Header({ onMenuClick, onNavigate }: HeaderProps) {
           <div className="flex items-center gap-2 sm:gap-4">
             <button
               onClick={onMenuClick}
-              className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
               aria-label="Open menu"
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="size-5" />
             </button>
             <Logo size="xs" showText={false} className="lg:hidden" />
             <div className="hidden sm:block">
@@ -141,7 +141,7 @@ export function Header({ onMenuClick, onNavigate }: HeaderProps) {
                   Journey: {completedSteps.length}/5
                 </span>
                 <ChevronDown
-                  className={`w-4 h-4 transition-transform ${showJourneyProgress ? 'rotate-180' : ''
+                  className={`size-4 transition-transform ${showJourneyProgress ? 'rotate-180' : ''
                     }`}
                 />
               </button>
@@ -149,13 +149,13 @@ export function Header({ onMenuClick, onNavigate }: HeaderProps) {
 
             {/* Notifications */}
             <button
-              className="relative p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              className="relative p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
               onClick={() => onNavigate?.('notifications')}
               aria-label="Notifications"
             >
-              <BellDot className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+              <BellDot className="size-5 text-gray-700 dark:text-gray-300" />
               {unreadCount > 0 && (
-                <span className="absolute top-0 right-0 size-5 bg-accent text-white text-xs rounded-full flex items-center justify-center">
+                <span className="absolute top-0 right-0 size-5 bg-accent text-white text-xs rounded-full flex items-center justify-center font-semibold">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
@@ -163,24 +163,24 @@ export function Header({ onMenuClick, onNavigate }: HeaderProps) {
 
             {/* User Avatar */}
             <button
-              className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary/20 transition-colors"
+              className="size-11 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary/20 transition-colors min-w-[44px] min-h-[44px]"
               onClick={() => onNavigate?.('profile')}
               aria-label="Profile"
             >
-              <CircleUserRound className="w-5 h-5 text-primary" />
+              <CircleUserRound className="size-5 text-primary" />
             </button>
 
             {/* Language Menu */}
             <div className="relative">
               <button
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowLanguageMenu(!showLanguageMenu);
                 }}
                 aria-label="Change language"
               >
-                <Languages className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                <Languages className="size-5 text-gray-700 dark:text-gray-300" />
               </button>
               {showLanguageMenu && (
                 <div className="absolute top-12 right-0 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg z-50 min-w-[120px]">
@@ -226,10 +226,10 @@ export function Header({ onMenuClick, onNavigate }: HeaderProps) {
             <div className="container mx-auto px-6 py-4 relative">
               <button
                 onClick={() => setShowJourneyProgress(false)}
-                className="absolute top-4 right-6 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors"
+                className="absolute top-4 right-6 p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
                 aria-label="Close journey progress"
               >
-                <X className="w-4 h-4" />
+                <X className="size-4" />
               </button>
               <JourneyProgress
                 currentStep={currentStep}

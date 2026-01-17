@@ -82,9 +82,10 @@ export function Sidebar({ currentPage, onNavigate, isOpen, onClose }: SidebarPro
             <Logo size="sm" />
             <button 
               onClick={onClose}
-              className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+              className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+              aria-label="Close sidebar"
             >
-              <CircleX className="w-5 h-5" />
+              <CircleX className="size-5" />
             </button>
           </div>
 
@@ -104,14 +105,14 @@ export function Sidebar({ currentPage, onNavigate, isOpen, onClose }: SidebarPro
                     }}
                     className={`
                       w-full flex items-center gap-3 px-4 py-3 rounded-lg
-                      transition-colors
+                      transition-colors min-h-[44px]
                       ${isActive 
-                        ? 'bg-primary text-primary-foreground' 
+                        ? 'bg-primary text-primary-foreground shadow-sm' 
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                       }
                     `}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon className="size-5 flex-shrink-0" />
                     <span>{t(`sidebar.${item.id.replace('-', '')}`)}</span>
                   </button>
                 );
@@ -137,14 +138,14 @@ export function Sidebar({ currentPage, onNavigate, isOpen, onClose }: SidebarPro
                     }}
                     className={`
                       w-full flex items-center gap-3 px-4 py-3 rounded-lg
-                      transition-colors
+                      transition-colors min-h-[44px]
                       ${isActive 
-                        ? 'bg-primary text-primary-foreground' 
+                        ? 'bg-primary text-primary-foreground shadow-sm' 
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                       }
                     `}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon className="size-5 flex-shrink-0" />
                     <span>{t(`sidebar.${item.id.replace('-', '')}`)}</span>
                   </button>
                 );
