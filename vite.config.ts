@@ -19,6 +19,7 @@ export default defineConfig({
     sourcemap: false,
     // Code splitting configuration
     rollupOptions: {
+      external: ['core-js/modules/es.promise.js'],
       output: {
         // Manual chunk splitting for better caching
         manualChunks: {
