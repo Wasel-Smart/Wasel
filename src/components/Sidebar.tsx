@@ -20,7 +20,9 @@ import {
   BellDot,
   BadgeCheck,
   Gift,
-  CircleX
+  CircleX,
+  Bus,
+  Users
 } from 'lucide-react';
 import { Logo } from './Logo';
 import { Separator } from './ui/separator';
@@ -42,6 +44,11 @@ const mainMenuItems = [
   { id: 'recurring', icon: Repeat },
   { id: 'messages', icon: MessagesSquare },
   { id: 'favorites', icon: Heart },
+];
+
+const specialServicesItems = [
+  { id: 'elderly-care', icon: Heart, label: 'Elderly Care' },
+  { id: 'kids-activity', icon: Bus, label: 'Kids Activity' },
 ];
 
 const accountMenuItems = [
@@ -114,6 +121,39 @@ export function Sidebar({ currentPage, onNavigate, isOpen, onClose }: SidebarPro
                   >
                     <Icon className="size-5 flex-shrink-0" />
                     <span>{t(`sidebar.${item.id.replace('-', '')}`)}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <Separator className="my-4" />
+
+            <div className="space-y-1">
+              <p className="px-4 text-xs text-muted-foreground uppercase tracking-wider mb-2">
+                {language === 'ar' ? 'خدمات خاصة' : 'Special Services'}
+              </p>
+              {specialServicesItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = currentPage === item.id;
+                
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      onNavigate(item.id);
+                      onClose();
+                    }}
+                    className={`
+                      w-full flex items-center gap-3 px-4 py-3 rounded-lg
+                      transition-colors min-h-[44px]
+                      ${isActive 
+                        ? 'bg-primary text-primary-foreground shadow-sm' 
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                      }
+                    `}
+                  >
+                    <Icon className="size-5 flex-shrink-0" />
+                    <span>{item.label}</span>
                   </button>
                 );
               })}

@@ -62,6 +62,10 @@ const CarRentals = lazy(() => import('./components/CarRentals').then(m => ({ def
 const ShuttleService = lazy(() => import('./components/ShuttleService').then(m => ({ default: m.ShuttleService })));
 const LuxuryRides = lazy(() => import('./components/LuxuryRides').then(m => ({ default: m.LuxuryRides })));
 
+// Special Services (NEW)
+const ElderlyCare = lazy(() => import('./components/ElderlyCare').then(m => ({ default: m.ElderlyCare })));
+const KidsActivity = lazy(() => import('./components/KidsActivity').then(m => ({ default: m.KidsActivity })));
+
 // Admin
 const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
 
@@ -149,6 +153,10 @@ const PageRenderer = memo(({ currentPage, onNavigate }: { currentPage: string; o
       return <ShuttleService />;
     case 'luxury':
       return <LuxuryRides />;
+    case 'elderly-care':
+      return <ElderlyCare />;
+    case 'kids-activity':
+      return <KidsActivity />;
     case 'driver-earnings':
       return <DriverEarnings />;
     case 'dispute-center':
