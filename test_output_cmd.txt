@@ -1,0 +1,34 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.17 [39m[90mC:/Users/user/OneDrive/Desktop/Wasel 14 new.worktrees/Wasel[39m
+
+ [31m❯[39m src/__tests__/components/AuthPage.test.tsx [2m([22m[2m0 test[22m[2m)[22m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Suites 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/__tests__/components/AuthPage.test.tsx[2m [ src/__tests__/components/AuthPage.test.tsx ][22m
+[31m[1mError[22m: Failed to resolve entry for package "tailwind-merge". The package may have incorrect main/module/exports specified in its package.json.[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/user/OneDrive/Desktop/Wasel 14 new.worktrees/Wasel/src/components/ui/utils.ts[39m:2:24
+[33m  1  |  import { clsx } from "clsx";
+  2  |  import { twMerge } from "tailwind-merge";
+     |                           ^
+  3  |  export function cn(...inputs) {
+  4  |      return twMerge(clsx(inputs));[39m
+[90m [2m❯[22m packageEntryFailure ../../Wasel%2014%20new.worktrees/Wasel/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m16198:15[22m[39m
+[90m [2m❯[22m resolvePackageEntry ../../Wasel%2014%20new.worktrees/Wasel/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m16195:3[22m[39m
+[90m [2m❯[22m tryNodeResolve ../../Wasel%2014%20new.worktrees/Wasel/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m16060:18[22m[39m
+[90m [2m❯[22m ResolveIdContext.resolveId ../../Wasel%2014%20new.worktrees/Wasel/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m15831:19[22m[39m
+[90m [2m❯[22m EnvironmentPluginContainer.resolveId ../../Wasel%2014%20new.worktrees/Wasel/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m42242:17[22m[39m
+[90m [2m❯[22m TransformPluginContext.resolve ../../Wasel%2014%20new.worktrees/Wasel/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m42449:15[22m[39m
+[90m [2m❯[22m normalizeUrl ../../Wasel%2014%20new.worktrees/Wasel/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m40492:26[22m[39m
+[90m [2m❯[22m ../../Wasel%2014%20new.worktrees/Wasel/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m40623:37[22m[39m
+[90m [2m❯[22m TransformPluginContext.transform ../../Wasel%2014%20new.worktrees/Wasel/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m40550:7[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [2mno tests[22m
+[2m   Start at [22m 07:27:30
+[2m   Duration [22m 3.60s[2m (transform 470ms, setup 442ms, import 0ms, tests 0ms, environment 1.43s)[22m
+
