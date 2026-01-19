@@ -1,4 +1,4 @@
-import { supabase } from '../../services/api';
+import { supabase } from '../supabase';
 
 export class TrackingService {
   static async updateLocation(userId: string, tripId: string, lat: number, lng: number, heading?: number) {

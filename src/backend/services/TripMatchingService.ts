@@ -1,4 +1,4 @@
-import { supabase } from '../../services/api';
+import { supabase } from '../supabase';
 
 export class TripMatchingService {
   static async findNearbyDrivers(lat: number, lng: number, radius = 5) {

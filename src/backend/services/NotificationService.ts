@@ -1,5 +1,5 @@
 import { Twilio } from 'twilio';
-import { supabase } from '../../services/api';
+import { supabase } from '../supabase';
 
 const twilio = new Twilio(process.env.TWILIO_SID!, process.env.TWILIO_TOKEN!);
 
