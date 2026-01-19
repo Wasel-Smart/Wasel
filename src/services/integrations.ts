@@ -205,7 +205,9 @@ export const mapsService = {
     try {
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?` +
-        `latlng=${lat},${lng}&` +
+        `async (params:type) => {
+          latlng
+        }=${lat},${lng}&` +
         `key=${INTEGRATION_CONFIG.googleMaps.apiKey}`
       );
 

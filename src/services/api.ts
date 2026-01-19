@@ -1,16 +1,63 @@
-import { supabase } from './api';
-import { validateInput, rateLimit } from '../middleware/authSecurity';
-import { globalErrorHandler, ErrorSeverity } from '../utils/errorHandler';
+import { createClient } from '@supabase/supabase-js';
 
+// Simple validation functions
+const validateInput = {
+  sanitize: (input: string): string => {
+    return input
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/[<>]/g, '')
+      .replace(/javascript:/gi, '')
+      .replace(/on\w+=/gi, '')
+      .trim();
+  },
+  validateEmail: (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  },
+  validatePassword: (password: string): boolean => {
+    return password.length >= 8 && 
+           /[A-Z]/.test(password) && 
+           /[a-z]/.test(password) && 
+           /\d/.test(password);
+  }
+};
+
+// Simple rate limiter
+const rateLimiter = {
+  requests: new Map<string, { count: number; resetTime: number }>(),
+  checkLimit: (key: string, limit: number, windowMs: number): boolean => {
+    const now = Date.now();
+    const userRequests = rateLimiter.requests.get(key);
+    
+    if (!userRequests || now > userRequests.resetTime) {
+      rateLimiter.requests.set(key, { count: 1, resetTime: now + windowMs });
+      return true;
+    }
+    
+    if (userRequests.count >= limit) {
+      return false;
+    }
+    
+    userRequests.count++;
+    return true;
+  }
+};
+
+// Simple error handler
+const handleError = (error: Error, context?: string) => {
+  console.error(`[${context || 'API'}] Error:`, error.message);
+};
+
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL!;
+const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY!;
+const projectId = supabaseUrl?.split('//')[1]?.split('.')[0] || 'default';
+
+const supabaseClient = createClient(supabaseUrl, supabaseKey);
 const API_URL = `https://${projectId}.supabase.co/functions/v1/make-server-0b1f4071`;
 
 // Ensure client exists with proper error handling
 if (!supabaseClient) {
-  globalErrorHandler.handleError(
-    new Error('Supabase client not initialized'),
-    ErrorSeverity.CRITICAL,
-    { component: 'api', action: 'initialization' }
-  );
+  handleError(new Error('Supabase client not initialized'), 'initialization');
   throw new Error('Supabase client not initialized');
 }
 
@@ -25,10 +72,7 @@ async function getAuthDetails() {
     
     const { data: { session }, error } = await supabase.auth.getSession();
     if (error) {
-      globalErrorHandler.handleError(error, ErrorSeverity.HIGH, {
-        component: 'api',
-        action: 'getAuthDetails'
-      });
+      handleError(error as Error, 'getAuthDetails');
       throw new Error('Authentication failed. Please sign in again.');
     }
     
@@ -47,10 +91,7 @@ async function getAuthDetails() {
       userId: session.user.id
     };
   } catch (error) {
-    globalErrorHandler.handleError(error as Error, ErrorSeverity.HIGH, {
-      component: 'api',
-      action: 'getAuthDetails'
-    });
+    handleError(error as Error, 'getAuthDetails');
     throw error;
   }
 }
@@ -61,10 +102,10 @@ export const authAPI = {
   async signUp(email: string, password: string, firstName: string, lastName: string, phone: string) {
     try {
       // Input validation
-      if (!validateInput.email(email)) {
+      if (!validateInput.validateEmail(email)) {
         throw new Error('Invalid email format');
       }
-      if (!validateInput.password(password)) {
+      if (!validateInput.validatePassword(password)) {
         throw new Error('Password must be 8+ characters with uppercase, lowercase, and number');
       }
       if (!firstName?.trim()) {
@@ -72,7 +113,7 @@ export const authAPI = {
       }
       
       // Rate limiting
-      if (!rateLimit(`signup_${email}`, 3, 3600000)) {
+      if (!rateLimiter.checkLimit(`signup_${email}`, 3, 3600000)) {
         throw new Error('Too many signup attempts. Try again in 1 hour.');
       }
       
@@ -85,7 +126,7 @@ export const authAPI = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${publicAnonKey}`
+          'Authorization': `Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY || ''}`
         },
         body: JSON.stringify({ 
           email: email.toLowerCase().trim(), 
@@ -101,11 +142,7 @@ export const authAPI = {
 
       return await response.json();
     } catch (error) {
-      globalErrorHandler.handleError(error as Error, ErrorSeverity.HIGH, {
-        component: 'api',
-        action: 'signUp',
-        metadata: { email }
-      });
+      handleError(error as Error, 'signUp');
       throw error;
     }
   },
@@ -113,7 +150,7 @@ export const authAPI = {
   async signIn(email: string, password: string) {
     try {
       // Input validation
-      if (!validateInput.email(email)) {
+      if (!validateInput.validateEmail(email)) {
         throw new Error('Invalid email format');
       }
       if (!password?.trim()) {
@@ -121,7 +158,7 @@ export const authAPI = {
       }
       
       // Rate limiting
-      if (!rateLimit(`signin_${email}`, 5, 900000)) {
+      if (!rateLimiter.checkLimit(`signin_${email}`, 5, 900000)) {
         throw new Error('Too many login attempts. Try again in 15 minutes.');
       }
       
@@ -131,72 +168,85 @@ export const authAPI = {
       });
 
       if (error) {
-        globalErrorHandler.handleError(error, ErrorSeverity.MEDIUM, {
-          component: 'api',
-          action: 'signIn',
-          metadata: { email }
-        });
+        handleError(error as Error, 'signIn');
         throw error;
       }
       
       return data;
     } catch (error) {
-      globalErrorHandler.handleError(error as Error, ErrorSeverity.MEDIUM, {
-        component: 'api',
-        action: 'signIn'
-      });
+      handleError(error as Error, 'signIn');
       throw error;
     }
   },
 
   async signOut() {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    } catch (error) {
+      handleError(error as Error, 'signOut');
+      throw error;
+    }
   },
 
   async getSession() {
-    const { data, error } = await supabase.auth.getSession();
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      handleError(error as Error, 'getSession');
+      throw error;
+    }
   },
 
   async getProfile() {
-    const { token, userId } = await getAuthDetails();
+    try {
+      const { token, userId } = await getAuthDetails();
 
-    const response = await fetch(`${API_URL}/profile/${userId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
+      const response = await fetch(`${API_URL}/profile/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        // If 404, profile might not exist yet (e.g. just signed up via Supabase Auth but not API)
+        // The signup API creates the profile, so this should be rare unless manually inserted.
+        if (response.status === 404) return null;
+        throw new Error('Failed to fetch profile');
       }
-    });
 
-    if (!response.ok) {
-      // If 404, profile might not exist yet (e.g. just signed up via Supabase Auth but not API)
-      // The signup API creates the profile, so this should be rare unless manually inserted.
-      if (response.status === 404) return null;
-      throw new Error('Failed to fetch profile');
+      return await response.json();
+    } catch (error) {
+      handleError(error as Error, 'getProfile');
+      throw error;
     }
-
-    return await response.json();
   },
 
   async updateProfile(updates: any) {
-    const { token, userId } = await getAuthDetails();
+    try {
+      const { token, userId } = await getAuthDetails();
 
-    const response = await fetch(`${API_URL}/profile/${userId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(updates)
-    });
+      const response = await fetch(`${API_URL}/profile/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(updates)
+      });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to update profile');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to update profile');
+      }
+
+      return await response.json();
+    } catch (error) {
+      handleError(error as Error, 'updateProfile');
+      throw error;
     }
-
-    return await response.json();
   }
 };
 
@@ -245,114 +295,141 @@ export const tripsAPI = {
 
       return await response.json();
     } catch (error) {
-      globalErrorHandler.handleError(error as Error, ErrorSeverity.HIGH, {
-        component: 'api',
-        action: 'createTrip'
-      });
+      handleError(error as Error, 'createTrip');
       throw error;
     }
   },
 
   async searchTrips(from?: string, to?: string, date?: string, seats?: number) {
-    const params = new URLSearchParams();
-    if (from) params.append('from', from);
-    if (to) params.append('to', to);
-    if (date) params.append('date', date);
-    if (seats) params.append('seats', seats.toString());
+    try {
+      const params = new URLSearchParams();
+      if (from) params.append('from', from);
+      if (to) params.append('to', to);
+      if (date) params.append('date', date);
+      if (seats) params.append('seats', seats.toString());
 
-    const response = await fetch(`${API_URL}/trips/search?${params}`, {
-      headers: {
-        'Authorization': `Bearer ${publicAnonKey}`
+      const response = await fetch(`${API_URL}/trips/search?${params}`, {
+        headers: {
+          'Authorization': `Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY || ''}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to search trips');
       }
-    });
 
-    if (!response.ok) {
-      throw new Error('Failed to search trips');
+      return await response.json();
+    } catch (error) {
+      handleError(error as Error, 'searchTrips');
+      throw error;
     }
-
-    return await response.json();
   },
 
   async getTripById(tripId: string) {
-    const response = await fetch(`${API_URL}/trips/${tripId}`, {
-      headers: {
-        'Authorization': `Bearer ${publicAnonKey}`
+    try {
+      const response = await fetch(`${API_URL}/trips/${tripId}`, {
+        headers: {
+          'Authorization': `Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY || ''}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch trip');
       }
-    });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch trip');
+      return await response.json();
+    } catch (error) {
+      handleError(error as Error, 'getTripById');
+      throw error;
     }
-
-    return await response.json();
   },
 
   async getDriverTrips() {
-    const { token, userId } = await getAuthDetails();
+    try {
+      const { token, userId } = await getAuthDetails();
 
-    const response = await fetch(`${API_URL}/trips/user/${userId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
+      const response = await fetch(`${API_URL}/trips/user/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch driver trips');
       }
-    });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch driver trips');
+      return await response.json();
+    } catch (error) {
+      handleError(error as Error, 'getDriverTrips');
+      throw error;
     }
-
-    return await response.json();
   },
   
   async calculatePrice(type: 'passenger' | 'package', weight?: number, distance_km?: number, base_price?: number) {
-    const response = await fetch(`${API_URL}/trips/calculate-price`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type, weight, distance_km, base_price })
-    });
-    
-    if (!response.ok) {
-        throw new Error('Failed to calculate price');
+    try {
+      const response = await fetch(`${API_URL}/trips/calculate-price`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type, weight, distance_km, base_price })
+      });
+      
+      if (!response.ok) {
+          throw new Error('Failed to calculate price');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      handleError(error as Error, 'calculatePrice');
+      throw error;
     }
-    
-    return await response.json();
   },
 
   async updateTrip(tripId: string, updates: any) {
-    const { token } = await getAuthDetails();
+    try {
+      const { token } = await getAuthDetails();
 
-    const response = await fetch(`${API_URL}/trips/${tripId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(updates)
-    });
+      const response = await fetch(`${API_URL}/trips/${tripId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(updates)
+      });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to update trip');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to update trip');
+      }
+
+      return await response.json();
+    } catch (error) {
+      handleError(error as Error, 'updateTrip');
+      throw error;
     }
-
-    return await response.json();
   },
 
   async deleteTrip(tripId: string) {
-    const { token } = await getAuthDetails();
+    try {
+      const { token } = await getAuthDetails();
 
-    const response = await fetch(`${API_URL}/trips/${tripId}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`
+      const response = await fetch(`${API_URL}/trips/${tripId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to delete trip');
       }
-    });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to delete trip');
+      return { success: true };
+    } catch (error) {
+      handleError(error as Error, 'deleteTrip');
+      throw error;
     }
-
-    return { success: true };
   }
 };
 
@@ -360,74 +437,94 @@ export const tripsAPI = {
 
 export const bookingsAPI = {
   async createBooking(tripId: string, seatsRequested: number, pickup?: string, dropoff?: string) {
-    const { token } = await getAuthDetails();
+    try {
+      const { token } = await getAuthDetails();
 
-    const response = await fetch(`${API_URL}/bookings`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ trip_id: tripId, seats_requested: seatsRequested, pickup_stop: pickup, dropoff_stop: dropoff })
-    });
+      const response = await fetch(`${API_URL}/bookings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ trip_id: tripId, seats_requested: seatsRequested, pickup_stop: pickup, dropoff_stop: dropoff })
+      });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to create booking');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create booking');
+      }
+
+      return await response.json();
+    } catch (error) {
+      handleError(error as Error, 'createBooking');
+      throw error;
     }
-
-    return await response.json();
   },
 
   async getUserBookings() {
-    const { token, userId } = await getAuthDetails();
+    try {
+      const { token, userId } = await getAuthDetails();
 
-    const response = await fetch(`${API_URL}/bookings/user/${userId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
+      const response = await fetch(`${API_URL}/bookings/user/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch bookings');
       }
-    });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch bookings');
+      return await response.json();
+    } catch (error) {
+      handleError(error as Error, 'getUserBookings');
+      throw error;
     }
-
-    return await response.json();
   },
 
   async getTripBookings(tripId: string) {
-    const { token } = await getAuthDetails();
+    try {
+      const { token } = await getAuthDetails();
 
-    const response = await fetch(`${API_URL}/trips/${tripId}/bookings`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
+      const response = await fetch(`${API_URL}/trips/${tripId}/bookings`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch trip bookings');
       }
-    });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch trip bookings');
+      return await response.json();
+    } catch (error) {
+      handleError(error as Error, 'getTripBookings');
+      throw error;
     }
-
-    return await response.json();
   },
 
   async updateBookingStatus(bookingId: string, status: 'accepted' | 'rejected' | 'cancelled') {
-    const { token } = await getAuthDetails();
+    try {
+      const { token } = await getAuthDetails();
 
-    const response = await fetch(`${API_URL}/bookings/${bookingId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ status })
-    });
+      const response = await fetch(`${API_URL}/bookings/${bookingId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ status })
+      });
 
-    if (!response.ok) {
-       const error = await response.json();
-       throw new Error(error.error || 'Failed to update booking');
+      if (!response.ok) {
+         const error = await response.json();
+         throw new Error(error.error || 'Failed to update booking');
+      }
+      return await response.json();
+    } catch (error) {
+      handleError(error as Error, 'updateBookingStatus');
+      throw error;
     }
-    return await response.json();
   }
 };
 
@@ -435,55 +532,70 @@ export const bookingsAPI = {
 
 export const messagesAPI = {
   async sendMessage(recipientId: string, tripId: string, content: string) {
-    const { token } = await getAuthDetails();
+    try {
+      const { token } = await getAuthDetails();
 
-    const response = await fetch(`${API_URL}/messages`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ recipient_id: recipientId, trip_id: tripId, content })
-    });
+      const response = await fetch(`${API_URL}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ recipient_id: recipientId, trip_id: tripId, content })
+      });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to send message');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to send message');
+      }
+
+      return await response.json();
+    } catch (error) {
+      handleError(error as Error, 'sendMessage');
+      throw error;
     }
-
-    return await response.json();
   },
 
   async getConversations() {
-    const { token, userId } = await getAuthDetails();
+    try {
+      const { token, userId } = await getAuthDetails();
 
-    const response = await fetch(`${API_URL}/messages/user/${userId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
+      const response = await fetch(`${API_URL}/messages/user/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch conversations');
       }
-    });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch conversations');
+      return await response.json();
+    } catch (error) {
+      handleError(error as Error, 'getConversations');
+      throw error;
     }
-
-    return await response.json();
   },
   
   async getConversationWithUser(otherUserId: string) {
-    const { token, userId } = await getAuthDetails();
-    
-    const response = await fetch(`${API_URL}/messages/conversation/${userId}/${otherUserId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
+    try {
+      const { token, userId } = await getAuthDetails();
+      
+      const response = await fetch(`${API_URL}/messages/conversation/${userId}/${otherUserId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+          throw new Error('Failed to fetch messages');
       }
-    });
-    
-    if (!response.ok) {
-        throw new Error('Failed to fetch messages');
+      
+      return await response.json();
+    } catch (error) {
+      handleError(error as Error, 'getConversationWithUser');
+      throw error;
     }
-    
-    return await response.json();
   }
 };
 
@@ -491,38 +603,48 @@ export const messagesAPI = {
 
 export const walletAPI = {
   async getWallet() {
-    const { token, userId } = await getAuthDetails();
+    try {
+      const { token, userId } = await getAuthDetails();
 
-    const response = await fetch(`${API_URL}/wallet/${userId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
+      const response = await fetch(`${API_URL}/wallet/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch wallet');
       }
-    });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch wallet');
+      return await response.json();
+    } catch (error) {
+      handleError(error as Error, 'getWallet');
+      throw error;
     }
-
-    return await response.json();
   },
 
   async addFunds(amount: number) {
-    const { token, userId } = await getAuthDetails();
+    try {
+      const { token, userId } = await getAuthDetails();
 
-    const response = await fetch(`${API_URL}/wallet/${userId}/add-funds`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ amount })
-    });
+      const response = await fetch(`${API_URL}/wallet/${userId}/add-funds`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ amount })
+      });
 
-    if (!response.ok) {
-      throw new Error('Failed to add funds');
+      if (!response.ok) {
+        throw new Error('Failed to add funds');
+      }
+
+      return await response.json();
+    } catch (error) {
+      handleError(error as Error, 'addFunds');
+      throw error;
     }
-
-    return await response.json();
   }
 };
 
@@ -530,50 +652,70 @@ export const walletAPI = {
 
 export const notificationsAPI = {
   async getNotifications() {
-    const { token, userId } = await getAuthDetails();
-    const response = await fetch(`${API_URL}/notifications/${userId}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (!response.ok) throw new Error('Failed to fetch notifications');
-    return await response.json();
+    try {
+      const { token, userId } = await getAuthDetails();
+      const response = await fetch(`${API_URL}/notifications/${userId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Failed to fetch notifications');
+      return await response.json();
+    } catch (error) {
+      handleError(error as Error, 'getNotifications');
+      throw error;
+    }
   },
 
   async markAsRead(notificationId: string) {
-    const { token } = await getAuthDetails();
-    const response = await fetch(`${API_URL}/notifications/${notificationId}/read`, {
-        method: 'PUT',
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (!response.ok) throw new Error('Failed to mark notification as read');
-    return await response.json();
+    try {
+      const { token } = await getAuthDetails();
+      const response = await fetch(`${API_URL}/notifications/${notificationId}/read`, {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Failed to mark notification as read');
+      return await response.json();
+    } catch (error) {
+      handleError(error as Error, 'markAsRead');
+      throw error;
+    }
   }
 };
 
 // ============ REFERRAL API ============
 export const referralAPI = {
     async getReferralCode() {
-        const { token, userId } = await getAuthDetails();
-        const response = await fetch(`${API_URL}/referral/${userId}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!response.ok) throw new Error('Failed to fetch referral code');
-        return await response.json();
+        try {
+            const { token, userId } = await getAuthDetails();
+            const response = await fetch(`${API_URL}/referral/${userId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Failed to fetch referral code');
+            return await response.json();
+        } catch (error) {
+            handleError(error as Error, 'getReferralCode');
+            throw error;
+        }
     },
     
     async applyReferralCode(code: string) {
-        const { token } = await getAuthDetails();
-        const response = await fetch(`${API_URL}/referral/apply`, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` 
-            },
-            body: JSON.stringify({ referral_code: code })
-        });
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Failed to apply code');
+        try {
+            const { token } = await getAuthDetails();
+            const response = await fetch(`${API_URL}/referral/apply`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                },
+                body: JSON.stringify({ referral_code: code })
+            });
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to apply code');
+            }
+            return await response.json();
+        } catch (error) {
+            handleError(error as Error, 'applyReferralCode');
+            throw error;
         }
-        return await response.json();
     }
 };

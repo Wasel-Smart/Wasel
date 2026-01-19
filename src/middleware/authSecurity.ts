@@ -15,6 +15,13 @@ export const validateInput = {
     return emailRegex.test(email);
   },
 
+  validatePassword: (password: string): boolean => {
+    return password.length >= 8 && 
+           /[A-Z]/.test(password) && 
+           /[a-z]/.test(password) && 
+           /\d/.test(password);
+  },
+
   validatePhone: (phone: string): boolean => {
     const phoneRegex = /^\+?[\d\s\-\(\)]{10,15}$/;
     return phoneRegex.test(phone);
@@ -30,10 +37,10 @@ export const rateLimiter = {
   
   check: (ip: string, limit: number = 100, windowMs: number = 15 * 60 * 1000): boolean => {
     const now = Date.now();
-    const userRequests = this.requests.get(ip);
+    const userRequests = rateLimiter.requests.get(ip);
     
     if (!userRequests || now > userRequests.resetTime) {
-      this.requests.set(ip, { count: 1, resetTime: now + windowMs });
+      rateLimiter.requests.set(ip, { count: 1, resetTime: now + windowMs });
       return true;
     }
     
@@ -43,6 +50,10 @@ export const rateLimiter = {
     
     userRequests.count++;
     return true;
+  },
+  
+  checkLimit: (key: string, limit: number, windowMs: number): boolean => {
+    return rateLimiter.check(key, limit, windowMs);
   }
 };
 
