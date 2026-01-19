@@ -75,6 +75,7 @@
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview",
+        "backend": "cd src/backend && npm start",
         "test": "vitest",
         "test:ui": "vitest --ui",
         "test:coverage": "vitest run --coverage",
