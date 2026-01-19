@@ -245,7 +245,7 @@ export const paymentService = {
       // Fallback: mock payment
       return {
         id: `pi_mock_${Date.now()}`,
-        clientSecret: 'mock_secret',
+        clientSecret: `pi_mock_${Date.now()}_secret_${Math.random().toString(36).substring(2)}`,
         amount,
         currency,
         status: 'succeeded',
