@@ -1,9 +1,17 @@
-export declare const supabase: any;
+export declare const supabase: import("@supabase/supabase-js").SupabaseClient<any, "public", "public", any, any>;
 export declare const authAPI: {
     signUp(email: string, password: string, firstName: string, lastName: string, phone: string): Promise<unknown>;
-    signIn(email: string, password: string): Promise<any>;
+    signIn(email: string, password: string): Promise<{
+        user: import("@supabase/supabase-js").AuthUser;
+        session: import("@supabase/supabase-js").AuthSession;
+        weakPassword?: import("@supabase/supabase-js").WeakPassword;
+    }>;
     signOut(): Promise<void>;
-    getSession(): Promise<any>;
+    getSession(): Promise<{
+        session: import("@supabase/supabase-js").AuthSession;
+    } | {
+        session: null;
+    }>;
     getProfile(): Promise<unknown>;
     updateProfile(updates: any): Promise<unknown>;
 };
