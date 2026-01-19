@@ -1,21 +1,95 @@
 
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Wassel Ride Sharing (14)</title>
-      <script type="module" crossorigin src="/assets/js/index-CcjVERrS.js"></script>
-      <link rel="modulepreload" crossorigin href="/assets/js/vendor-react-7PqXWhc5.js">
-      <link rel="modulepreload" crossorigin href="/assets/js/vendor-ui-Cj-e85pn.js">
-      <link rel="modulepreload" crossorigin href="/assets/js/vendor-utils-MHJ_mICC.js">
-      <link rel="modulepreload" crossorigin href="/assets/js/vendor-supabase-BfzcFBqZ.js">
-      <link rel="modulepreload" crossorigin href="/assets/js/vendor-animation-BozBRtxF.js">
-      <link rel="stylesheet" crossorigin href="/assets/css/index-CBL1fn7d.css">
-    </head>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#008080" />
+    <meta name="description" content="Wasel: Your complete multi-service transportation and delivery platform. Book rides, delivery, school transport, elderly care, kids activities, and more." />
+    <meta name="keywords" content="ride-sharing, transportation, delivery, carpool, elderly care, kids activity, scooter rental, car rental" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Wasel" />
+    <meta name="apple-mobile-web-app-icon" content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23008080' width='192' height='192' rx='45'/><text x='96' y='96' font-size='32' fill='white' text-anchor='middle' dominant-baseline='middle' font-weight='bold'>W</text></svg>" />
+    
+    <!-- Chrome Mobile -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#008080" />
+    
+    <!-- Microsoft Edge and Windows -->
+    <meta name="msapplication-TileColor" content="#008080" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    
+    <!-- Facebook / Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://wasel.app" />
+    <meta property="og:title" content="Wasel - Smart Transportation Platform" />
+    <meta property="og:description" content="Your complete multi-service transportation and delivery platform" />
+    <meta property="og:image" content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 630'><rect fill='%23008080' width='1200' height='630'/><text x='600' y='315' font-size='96' fill='white' text-anchor='middle' dominant-baseline='middle' font-weight='bold'>Wasel</text></svg>" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://wasel.app" />
+    <meta property="twitter:title" content="Wasel - Smart Transportation" />
+    <meta property="twitter:description" content="Book rides, delivery, elderly care, kids activities and more" />
+    <meta property="twitter:image" content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 630'><rect fill='%23008080' width='1200' height='630'/><text x='600' y='315' font-size='96' fill='white' text-anchor='middle' dominant-baseline='middle' font-weight='bold'>Wasel</text></svg>" />
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Icons -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%23008080' width='32' height='32'/><text x='16' y='16' font-size='20' fill='white' text-anchor='middle' dominant-baseline='middle' font-weight='bold'>W</text></svg>" />
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23008080' width='192' height='192' rx='45'/><text x='96' y='96' font-size='32' fill='white' text-anchor='middle' dominant-baseline='middle' font-weight='bold'>W</text></svg>" />
+    <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%23008080' width='32' height='32'/><text x='16' y='16' font-size='20' fill='white' text-anchor='middle' dominant-baseline='middle' font-weight='bold'>W</text></svg>" />
+    
+    <!-- Preconnect to external resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://api.supabase.co" />
+    
+    <!-- Page title -->
+    <title>Wasel - Smart Transportation Platform</title>
+    <script type="module" crossorigin src="/assets/js/index-C4myuZdd.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/js/vendor-react-7PqXWhc5.js">
+    <link rel="modulepreload" crossorigin href="/assets/js/vendor-ui-S1-b02vM.js">
+    <link rel="modulepreload" crossorigin href="/assets/js/vendor-utils-Drrw94dm.js">
+    <link rel="modulepreload" crossorigin href="/assets/js/vendor-supabase-DCWnlmhc.js">
+    <link rel="modulepreload" crossorigin href="/assets/js/vendor-animation-BozBRtxF.js">
+    <link rel="stylesheet" crossorigin href="/assets/css/index-Ds2L_J4X.css">
+  </head>
 
-    <body>
-      <div id="root"></div>
-    </body>
-  </html>
+  <body>
+    <div id="root"></div>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+            .then(registration => {
+              console.log('[PWA] Service Worker registered successfully:', registration);
+            })
+            .catch(error => {
+              console.error('[PWA] Service Worker registration failed:', error);
+            });
+        });
+      }
+      
+      // Handle app installation prompt
+      let deferredPrompt;
+      window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        deferredPrompt = event;
+        console.log('[PWA] Install prompt ready');
+      });
+      
+      window.addEventListener('appinstalled', () => {
+        console.log('[PWA] App installed successfully');
+      });
+    </script>
+    
+    <!-- Main React App -->
+  </body>
+</html>
   

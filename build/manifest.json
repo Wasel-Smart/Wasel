@@ -1,0 +1,116 @@
+{
+  "name": "Wasel - Smart Transportation Platform",
+  "short_name": "Wasel",
+  "description": "Wasel: Your complete multi-service transportation and delivery platform. Ride-sharing, school transport, scooter rentals, elderly care, kids activities, and more.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#008080",
+  "background_color": "#ffffff",
+  "categories": ["transportation", "lifestyle"],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23008080' width='192' height='192'/><text x='96' y='96' font-size='32' fill='white' text-anchor='middle' dominant-baseline='middle' font-weight='bold'>Wasel</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%23008080' width='512' height='512'/><text x='256' y='256' font-size='96' fill='white' text-anchor='middle' dominant-baseline='middle' font-weight='bold'>Wasel</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23008080' width='192' height='192' rx='45'/><text x='96' y='96' font-size='32' fill='white' text-anchor='middle' dominant-baseline='middle' font-weight='bold'>W</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%23008080' width='512' height='512' rx='120'/><text x='256' y='256' font-size='256' fill='white' text-anchor='middle' dominant-baseline='middle' font-weight='bold'>W</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23008080' width='192' height='192' rx='45'/><text x='96' y='96' font-size='32' fill='white' text-anchor='middle' dominant-baseline='middle' font-weight='bold'>W</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%23008080' width='512' height='512' rx='120'/><text x='256' y='256' font-size='256' fill='white' text-anchor='middle' dominant-baseline='middle' font-weight='bold'>W</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Find a Ride",
+      "short_name": "Find Ride",
+      "description": "Book a ride to your destination",
+      "url": "/?page=find-ride",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23008080' width='192' height='192' rx='45'/><text x='96' y='96' font-size='32' fill='white' text-anchor='middle' dominant-baseline='middle'>🚗</text></svg>",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Offer a Ride",
+      "short_name": "Offer Ride",
+      "description": "Share your trip and earn money",
+      "url": "/?page=offer-ride",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23607D4B' width='192' height='192' rx='45'/><text x='96' y='96' font-size='32' fill='white' text-anchor='middle' dominant-baseline='middle'>🚙</text></svg>",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "short_name": "Messages",
+      "description": "Check your messages",
+      "url": "/?page=messages",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23880044' width='192' height='192' rx='45'/><text x='96' y='96' font-size='32' fill='white' text-anchor='middle' dominant-baseline='middle'>💬</text></svg>",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "My Profile",
+      "short_name": "Profile",
+      "description": "View your profile",
+      "url": "/?page=profile",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23F59E0B' width='192' height='192' rx='45'/><text x='96' y='96' font-size='32' fill='white' text-anchor='middle' dominant-baseline='middle'>👤</text></svg>",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "serviceworker": {
+    "src": "/service-worker.js",
+    "scope": "/"
+  }
+}
