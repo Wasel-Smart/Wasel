@@ -12,33 +12,54 @@ export const supabase = supabaseClient;
 
 // Helper to get current user ID and session token
 async function getAuthDetails() {
-  const { data: { session }, error } = await supabase.auth.getSession();
-  if (error || !session) throw new Error('Not authenticated');
-  return { 
-    token: session.access_token,
-    userId: session.user.id
-  };
+  try {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (error) {
+      console.error('Authentication error:', error);
+      throw new Error('Authentication failed. Please sign in again.');
+    }
+    if (!session) {
+      throw new Error('No active session. Please sign in.');
+    }
+    return { 
+      token: session.access_token,
+      userId: session.user.id
+    };
+  } catch (error) {
+    console.error('Failed to get auth details:', error);
+    throw error;
+  }
 }
 
 // ============ AUTH API ============
 
 export const authAPI = {
   async signUp(email: string, password: string, firstName: string, lastName: string, phone: string) {
-    const response = await fetch(`${API_URL}/auth/signup`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${publicAnonKey}`
-      },
-      body: JSON.stringify({ email, password, fullName: `${firstName} ${lastName}` })
-    });
+    try {
+      // Input validation
+      if (!email || !password || !firstName) {
+        throw new Error('Email, password, and first name are required');
+      }
+      
+      const response = await fetch(`${API_URL}/auth/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${publicAnonKey}`
+        },
+        body: JSON.stringify({ email, password, fullName: `${firstName} ${lastName}` })
+      });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Signup failed');
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ error: 'Network error occurred' }));
+        throw new Error(error.error || `Signup failed with status ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Signup error:', error);
+      throw error;
     }
-
-    return await response.json();
   },
 
   async signIn(email: string, password: string) {

@@ -23,6 +23,9 @@ class ErrorTrackingService {
   private sentryDSN = import.meta.env.VITE_SENTRY_DSN;
   private errorQueue: ErrorEvent[] = [];
   private maxQueueSize = 50;
+  private userContext?: { userId: string; email?: string; name?: string };
+  private breadcrumbs: Array<{ message: string; data?: any; timestamp: string }> = [];
+  private performanceMetrics: Array<{ metric: string; duration: number; tags?: any; timestamp: string }> = [];
 
   constructor() {
     this.initializeSentry();
@@ -34,20 +37,13 @@ class ErrorTrackingService {
    */
   private initializeSentry() {
     if (!this.sentryDSN) {
-      console.warn('Sentry DSN not configured. Error tracking disabled.');
+      console.warn('Sentry DSN not configured. Using local error tracking only.');
       return;
     }
 
-    // TODO: Initialize Sentry
-    // import * as Sentry from "@sentry/react";
-    // Sentry.init({
-    //   dsn: this.sentryDSN,
-    //   environment: this.isDevelopment ? 'development' : 'production',
-    //   tracesSampleRate: this.isDevelopment ? 1.0 : 0.1,
-    //   debug: this.isDevelopment,
-    // });
-
-    console.log('[ErrorTracking] Sentry initialized');
+    // Sentry integration would be initialized here in production
+    // For now, using local error tracking and console logging
+    console.log('[ErrorTracking] Error tracking service initialized');
   }
 
   /**
@@ -97,9 +93,11 @@ class ErrorTrackingService {
       });
     }
 
-    // TODO: Send to Sentry
-    // import * as Sentry from "@sentry/react";
-    // Sentry.captureException(error, { contexts: { custom: context } });
+    // Log to external service in production
+    if (!this.isDevelopment && this.sentryDSN) {
+      // External error tracking would be implemented here
+      this.sendToExternalService(error, context);
+    }
 
     // Send to backend for persistent storage
     this.sendToBackend(errorEvent, errorStack);
@@ -122,9 +120,10 @@ class ErrorTrackingService {
       console.log(`[ErrorTracking] ${level.toUpperCase()}: ${message}`, context);
     }
 
-    // TODO: Send to Sentry
-    // import * as Sentry from "@sentry/react";
-    // Sentry.captureMessage(message, level);
+    // Log to external service in production
+    if (!this.isDevelopment && this.sentryDSN) {
+      this.sendToExternalService(message, context, level);
+    }
 
     this.sendToBackend(errorEvent);
   }
@@ -133,14 +132,8 @@ class ErrorTrackingService {
    * Set user context for error tracking
    */
   setUserContext(userId: string, email?: string, name?: string) {
-    // TODO: Set Sentry user context
-    // import * as Sentry from "@sentry/react";
-    // Sentry.setUser({
-    //   id: userId,
-    //   email,
-    //   username: name,
-    // });
-
+    // Store user context for error reports
+    this.userContext = { userId, email, name };
     console.log('[ErrorTracking] User context set:', userId);
   }
 
@@ -148,10 +141,7 @@ class ErrorTrackingService {
    * Clear user context
    */
   clearUserContext() {
-    // TODO: Clear Sentry user context
-    // import * as Sentry from "@sentry/react";
-    // Sentry.setUser(null);
-
+    this.userContext = undefined;
     console.log('[ErrorTracking] User context cleared');
   }
 
@@ -159,13 +149,13 @@ class ErrorTrackingService {
    * Add breadcrumb for navigation tracking
    */
   addBreadcrumb(message: string, data?: Record<string, any>) {
-    // TODO: Add Sentry breadcrumb
-    // import * as Sentry from "@sentry/react";
-    // Sentry.addBreadcrumb({
-    //   message,
-    //   data,
-    //   level: 'info',
-    // });
+    // Store breadcrumb for context
+    this.breadcrumbs.push({ message, data, timestamp: new Date().toISOString() });
+    
+    // Keep only last 10 breadcrumbs
+    if (this.breadcrumbs.length > 10) {
+      this.breadcrumbs = this.breadcrumbs.slice(-10);
+    }
 
     if (this.isDevelopment) {
       console.log('[ErrorTracking] Breadcrumb:', message, data);
@@ -176,9 +166,20 @@ class ErrorTrackingService {
    * Track performance metric
    */
   trackPerformance(metricName: string, duration: number, tags?: Record<string, string>) {
-    // TODO: Track with Sentry
-    // import * as Sentry from "@sentry/react";
-    // Sentry.captureMessage(`Performance: ${metricName}: ${duration}ms`, 'info');
+    const performanceEvent = {
+      metric: metricName,
+      duration,
+      tags,
+      timestamp: new Date().toISOString()
+    };
+    
+    // Store performance metrics
+    this.performanceMetrics.push(performanceEvent);
+    
+    // Keep only last 50 metrics
+    if (this.performanceMetrics.length > 50) {
+      this.performanceMetrics = this.performanceMetrics.slice(-50);
+    }
 
     if (this.isDevelopment) {
       console.log(`[Performance] ${metricName}: ${duration}ms`, tags);
@@ -207,21 +208,24 @@ class ErrorTrackingService {
     }
 
     try {
-      // TODO: Send to backend error logging endpoint
-      // fetch('/api/errors', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     ...errorEvent,
-      //     stack,
-      //     userAgent: navigator.userAgent,
-      //     url: window.location.href,
-      //   }),
-      // }).catch(err => console.error('Failed to send error to backend:', err));
-
-      console.log('[ErrorTracking] Would send to backend:', errorEvent);
+      // In production, this would send to a backend error logging endpoint
+      const errorData = {
+        ...errorEvent,
+        stack,
+        userAgent: navigator.userAgent,
+        url: window.location.href,
+        userContext: this.userContext,
+        breadcrumbs: this.breadcrumbs
+      };
+      
+      // Store locally for now (in production, send to backend)
+      localStorage.setItem('wassel_last_error', JSON.stringify(errorData));
+      
+      if (this.isDevelopment) {
+        console.log('[ErrorTracking] Error logged locally:', errorData);
+      }
     } catch (err) {
-      console.error('Error sending error to backend:', err);
+      console.error('Error logging error:', err);
     }
   }
 
@@ -237,6 +241,16 @@ class ErrorTrackingService {
    */
   clearErrorQueue() {
     this.errorQueue = [];
+  }
+
+  /**
+   * Send to external error tracking service
+   */
+  private sendToExternalService(error: any, context?: ErrorContext, level?: string) {
+    // In production, this would integrate with Sentry or similar service
+    if (this.isDevelopment) {
+      console.log('[ErrorTracking] Would send to external service:', { error, context, level });
+    }
   }
 
   /**
