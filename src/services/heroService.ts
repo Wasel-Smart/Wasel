@@ -20,7 +20,7 @@ class HeroService {
     /**
      * Discover community tasks near a specific location or along a route
      */
-    async discoverTasks(lat: number, lng: number, radiusKm: number = 5): Promise<HeroTask[]> {
+    async discoverTasks(_lat: number, _lng: number, _radiusKm: number = 5): Promise<HeroTask[]> {
         // For now, we fetch pending package deliveries that don't have a captain
         const { data, error } = await supabase
             .from('package_deliveries')
@@ -33,7 +33,7 @@ class HeroService {
             return [];
         }
 
-        return (data || []).map(item => ({
+        return (data || []).map((item: any) => ({
             id: item.id,
             sender_id: item.sender_id,
             from_location: item.from_location,

@@ -25,7 +25,9 @@ import {
   Stethoscope,
   Key,
   Bus,
-  Crown
+  Crown,
+  Heart,
+  ArrowRight
 } from 'lucide-react';
 import { PremiumCard, PremiumCardContent } from './PremiumCard';
 import { Button } from '../ui/button';
@@ -53,7 +55,8 @@ export function EnhancedDashboard({ onNavigate }: EnhancedDashboardProps) {
     { id: 'medical', name: 'Medical', icon: Stethoscope, color: 'from-red-500 to-rose-700' },
     { id: 'rentals', name: 'Rentals', icon: Key, color: 'from-indigo-500 to-purple-600' },
     { id: 'shuttles', name: 'Shuttles', icon: Bus, color: 'from-blue-600 to-indigo-700' },
-    { id: 'luxury', name: 'Luxury', icon: Crown, color: 'from-amber-500 to-yellow-600' }
+    { id: 'luxury', name: 'Luxury', icon: Crown, color: 'from-amber-500 to-yellow-600' },
+    { id: 'hero', name: 'Hero', icon: Heart, color: 'from-rose-500 to-pink-600' }
   ];
 
   const recentTrips = [
@@ -87,6 +90,7 @@ export function EnhancedDashboard({ onNavigate }: EnhancedDashboardProps) {
       case 'rentals': return 'car-rentals';
       case 'shuttles': return 'shuttle';
       case 'luxury': return 'luxury';
+      case 'hero': return 'wasel-hero';
       default: return 'find-ride';
     }
   };
@@ -267,6 +271,36 @@ export function EnhancedDashboard({ onNavigate }: EnhancedDashboardProps) {
             </motion.div>
           ))}
         </div>
+      </motion.div>
+
+      {/* Wasel Hero CTA Card */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.6 }}
+        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-rose-500 to-pink-600 p-8 text-white shadow-xl cursor-pointer hover:shadow-2xl transition-all"
+        onClick={() => onNavigate('wasel-hero')}
+      >
+        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="space-y-3">
+            <Badge className="bg-white/20 text-white border-0 w-fit">Community Hero</Badge>
+            <h3 className="text-2xl font-black flex items-center gap-3">
+              <Heart className="w-8 h-8 fill-white" />
+              Become a Wasel Hero
+            </h3>
+            <p className="text-rose-50 opacity-90 max-w-lg font-medium">
+              Help your community by delivering packages on your existing route. Earn double credits and exclusive status rewards!
+            </p>
+          </div>
+          <Button variant="secondary" className="bg-white text-rose-600 hover:bg-rose-50 font-bold px-8 py-6 h-auto text-lg rounded-2xl">
+            Join the Heros
+            <ArrowRight className="ml-2 w-5 h-5" />
+          </Button>
+        </div>
+
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full -ml-10 -mb-10 blur-2xl" />
       </motion.div>
 
       {/* Recent Trips */}
