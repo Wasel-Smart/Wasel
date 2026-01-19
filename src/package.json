@@ -10,13 +10,6 @@
     "backend": "node backend/server.js"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "@supabase/supabase-js": "^2.38.0",
-    "lucide-react": "^0.263.1",
-    "class-variance-authority": "^0.7.0",
-    "clsx": "^2.0.0",
-    "tailwind-merge": "^1.14.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-avatar": "^1.0.4",
@@ -34,20 +27,27 @@
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/react-tooltip": "^1.0.7",
-    "sonner": "^1.4.0",
+    "@supabase/supabase-js": "^2.38.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
+    "date-fns": "^2.30.0",
+    "lucide-react": "^0.263.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.0",
-    "date-fns": "^2.30.0"
+    "sonner": "^1.4.0",
+    "tailwind-merge": "^1.14.0"
   },
   "devDependencies": {
+    "@types/node": "^20.0.0",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
-    "typescript": "^5.0.2",
-    "vite": "^4.4.5",
-    "tailwindcss": "^3.3.0",
-    "tailwindcss-animate": "^1.0.7",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.24",
-    "@types/node": "^20.0.0"
+    "tailwindcss": "^3.3.0",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "^5.0.2",
+    "vite": "^7.3.1"
   }
 }
