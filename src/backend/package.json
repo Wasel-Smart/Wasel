@@ -2,7 +2,7 @@
   "name": "wasel-backend",
   "version": "1.0.0",
   "scripts": {
-    "start": "node dist/server-fixed.js",
+    "start": "node server-production.js",
     "dev": "ts-node server-fixed.ts",
     "build": "tsc"
   },
