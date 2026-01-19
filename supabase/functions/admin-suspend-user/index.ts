@@ -1,5 +1,5 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -10,7 +10,6 @@ interface SuspendUserRequest {
   userId: string;
   reason: string;
   duration?: number; // Days, or null for indefinite
-  suspendedBy: string;
 }
 
 serve(async (req) => {
@@ -44,7 +43,11 @@ serve(async (req) => {
       .eq('id', user.id)
       .single();
 
-    if (profile?.role !== 'admin' && profile?.role !== 'super_admin') {
+    if (!profile) {
+      throw new Error('Admin profile not found');
+    }
+
+    if (profile.role !== 'admin' && profile.role !== 'super_admin') {
       return new Response(
         JSON.stringify({ error: 'Access denied. Admin privileges required.' }),
         { 
@@ -54,14 +57,14 @@ serve(async (req) => {
       );
     }
 
-    const { userId, reason, duration, suspendedBy }: SuspendUserRequest = await req.json();
+    const { userId, reason, duration }: SuspendUserRequest = await req.json();
 
     if (!userId || !reason) {
       return new Response(
         JSON.stringify({ error: 'User ID and reason are required' }),
-        { 
-          status: 400, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       );
     }
@@ -90,7 +93,7 @@ serve(async (req) => {
     await supabaseClient
       .from('admin_actions')
       .insert({
-        admin_id: suspendedBy,
+        admin_id: user.id,
         action_type: 'suspend_user',
         target_user_id: userId,
         details: {
