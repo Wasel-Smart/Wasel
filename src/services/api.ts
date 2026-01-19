@@ -90,7 +90,7 @@ async function getAuthDetails() {
       token: session.access_token,
       userId: session.user.id
     };
-  } catch (error) {
+  } catch (error: unknown) {
     handleError(error as Error, 'getAuthDetails');
     throw error;
   }
@@ -141,7 +141,7 @@ export const authAPI = {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'signUp');
       throw error;
     }
@@ -173,7 +173,7 @@ export const authAPI = {
       }
       
       return data;
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'signIn');
       throw error;
     }
@@ -183,7 +183,7 @@ export const authAPI = {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'signOut');
       throw error;
     }
@@ -194,7 +194,7 @@ export const authAPI = {
       const { data, error } = await supabase.auth.getSession();
       if (error) throw error;
       return data;
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'getSession');
       throw error;
     }
@@ -218,7 +218,7 @@ export const authAPI = {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'getProfile');
       throw error;
     }
@@ -243,7 +243,7 @@ export const authAPI = {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'updateProfile');
       throw error;
     }
@@ -294,7 +294,7 @@ export const tripsAPI = {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'createTrip');
       throw error;
     }
@@ -319,7 +319,7 @@ export const tripsAPI = {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'searchTrips');
       throw error;
     }
@@ -338,7 +338,7 @@ export const tripsAPI = {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'getTripById');
       throw error;
     }
@@ -359,7 +359,7 @@ export const tripsAPI = {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'getDriverTrips');
       throw error;
     }
@@ -378,7 +378,7 @@ export const tripsAPI = {
       }
       
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'calculatePrice');
       throw error;
     }
@@ -403,7 +403,7 @@ export const tripsAPI = {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'updateTrip');
       throw error;
     }
@@ -426,7 +426,7 @@ export const tripsAPI = {
       }
 
       return { success: true };
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'deleteTrip');
       throw error;
     }
@@ -455,7 +455,7 @@ export const bookingsAPI = {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'createBooking');
       throw error;
     }
@@ -476,7 +476,7 @@ export const bookingsAPI = {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'getUserBookings');
       throw error;
     }
@@ -497,7 +497,7 @@ export const bookingsAPI = {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'getTripBookings');
       throw error;
     }
@@ -521,7 +521,7 @@ export const bookingsAPI = {
          throw new Error(error.error || 'Failed to update booking');
       }
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'updateBookingStatus');
       throw error;
     }
@@ -550,7 +550,7 @@ export const messagesAPI = {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'sendMessage');
       throw error;
     }
@@ -571,7 +571,7 @@ export const messagesAPI = {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'getConversations');
       throw error;
     }
@@ -592,7 +592,7 @@ export const messagesAPI = {
       }
       
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'getConversationWithUser');
       throw error;
     }
@@ -617,7 +617,7 @@ export const walletAPI = {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'getWallet');
       throw error;
     }
@@ -641,7 +641,7 @@ export const walletAPI = {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'addFunds');
       throw error;
     }
@@ -659,7 +659,7 @@ export const notificationsAPI = {
       });
       if (!response.ok) throw new Error('Failed to fetch notifications');
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'getNotifications');
       throw error;
     }
@@ -674,7 +674,7 @@ export const notificationsAPI = {
       });
       if (!response.ok) throw new Error('Failed to mark notification as read');
       return await response.json();
-    } catch (error) {
+    } catch (error: unknown) {
       handleError(error as Error, 'markAsRead');
       throw error;
     }
@@ -691,7 +691,7 @@ export const referralAPI = {
             });
             if (!response.ok) throw new Error('Failed to fetch referral code');
             return await response.json();
-        } catch (error) {
+        } catch (error: unknown) {
             handleError(error as Error, 'getReferralCode');
             throw error;
         }
@@ -713,7 +713,7 @@ export const referralAPI = {
                 throw new Error(error.error || 'Failed to apply code');
             }
             return await response.json();
-        } catch (error) {
+        } catch (error: unknown) {
             handleError(error as Error, 'applyReferralCode');
             throw error;
         }

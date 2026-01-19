@@ -10,8 +10,19 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { supabase } from '../services/api';
-import { validateInput } from '../middleware/authSecurity';
 import './types.d.ts';
+
+// Local validation functions to avoid import path issues
+const validateInput = {
+  sanitize: (input: string): string => {
+    return input
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/[<>]/g, '')
+      .replace(/javascript:/gi, '')
+      .replace(/on\w+=/gi, '')
+      .trim();
+  }
+};
 
 type Request = express.Request;
 type Response = express.Response;
@@ -47,8 +58,8 @@ app.use('/api/', limiter);
 const validateRequest = (req: Request, res: Response, next: NextFunction) => {
   try {
     if (req.body && typeof req.body === 'object' && !Array.isArray(req.body)) {
-      // Create a prototype-less object to prevent pollution
-      const sanitizedBody = Object.create(null);
+      // Create a safe sanitized object without modifying req.body directly
+      const sanitizedBody: Record<string, any> = {};
       const allowedKeys = ['type', 'source', 'data', 'userId', 'tripId', 'location', 'query', 'distance_km', 'seats', 'tripType', 'departureTime', 'title', 'body', 'reason'];
       
       for (const key of Object.keys(req.body)) {
@@ -62,40 +73,26 @@ const validateRequest = (req: Request, res: Response, next: NextFunction) => {
           
           const value = req.body[key];
           if (typeof value === 'string' && value.length < 1000) {
-            Object.defineProperty(sanitizedBody, key, {
-              value: validateInput.sanitize(value),
-              writable: false,
-              enumerable: true,
-              configurable: false
-            });
+            sanitizedBody[key] = validateInput.sanitize(value);
           } else if (typeof value === 'number' && isFinite(value)) {
-            Object.defineProperty(sanitizedBody, key, {
-              value: value,
-              writable: false,
-              enumerable: true,
-              configurable: false
-            });
+            sanitizedBody[key] = value;
           } else if (typeof value === 'boolean') {
-            Object.defineProperty(sanitizedBody, key, {
-              value: value,
-              writable: false,
-              enumerable: true,
-              configurable: false
-            });
+            sanitizedBody[key] = value;
           } else if (value && typeof value === 'object' && !Array.isArray(value)) {
             // Only allow simple objects for location coordinates
             if (key === 'location' && value.lat && value.lng) {
-              Object.defineProperty(sanitizedBody, key, {
-                value: { lat: Number(value.lat), lng: Number(value.lng) },
-                writable: false,
-                enumerable: true,
-                configurable: false
-              });
+              sanitizedBody[key] = { lat: Number(value.lat), lng: Number(value.lng) };
             }
           }
         }
       }
-      req.body = sanitizedBody;
+      // Safely replace req.body with sanitized version
+      Object.defineProperty(req, 'body', {
+        value: Object.freeze(sanitizedBody),
+        writable: false,
+        enumerable: true,
+        configurable: false
+      });
     }
     next();
   } catch (error) {

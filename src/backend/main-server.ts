@@ -7,7 +7,6 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
-import { supabase } from '../services/api';
 
 // Import all services
 import { PaymentService } from './services/PaymentService';
