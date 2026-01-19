@@ -1,4 +1,4 @@
-import wasselLogo from 'figma:asset/1ccf434105a811706fd618a3b652ae052ecf47e1.png';
+import React from 'react';
 
 interface LogoProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -18,11 +18,9 @@ const sizeMap = {
 export function Logo({ size = 'sm', showText = true, className = '' }: LogoProps) {
   return (
     <div className={`flex items-center gap-2.5 ${className}`}>
-      <img 
-        src={wasselLogo} 
-        alt="Wassel" 
-        className={`${sizeMap[size]} w-auto drop-shadow-md`}
-      />
+      <div className={`${sizeMap[size]} aspect-square bg-gradient-to-br from-primary to-blue-600 rounded-xl flex items-center justify-center shadow-lg`}>
+        <span className="text-white font-bold text-lg">W</span>
+      </div>
       {showText && (
         <div className="flex flex-col justify-center">
           <h3 className="text-primary font-bold leading-none tracking-tight">Wassel</h3>

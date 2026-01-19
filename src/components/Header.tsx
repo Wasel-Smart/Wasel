@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BellDot, Menu, CircleUserRound, ChevronDown, X, Languages } from 'lucide-react';
 import { Badge } from './ui/badge';
 import { Logo } from './Logo';

@@ -1,10 +1,10 @@
-import { ScanSearch, CirclePlus, TrendingUp, MessagesSquare, CreditCard, Locate, UsersRound, TrendingUpIcon, MapPin, Clock, Star, Zap, Target, Award } from 'lucide-react';
+import React from 'react';
+import { ScanSearch, CirclePlus, TrendingUp, MessageSquare, CreditCard, Locate, UsersRound, TrendingUp as TrendingUpIcon, MapPin, Clock, Star, Zap, Target, Award } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { WorkflowGuide } from './WorkflowGuide';
 import { Logo } from './Logo';
-import wasselLogo from 'figma:asset/1ccf434105a811706fd618a3b652ae052ecf47e1.png';
 import { useAuth } from '../contexts/AuthContext';
 
 interface DashboardProps {
@@ -90,7 +90,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div className="flex items-start gap-4">
             <div className="bg-white rounded-2xl p-4 shadow-xl">
-              <img src={wasselLogo} alt="Wassel" className="h-14 w-auto" />
+              <Logo className="h-14 w-auto" />
             </div>
             <div>
               <h1 className="text-white text-3xl mb-1">
@@ -229,7 +229,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-base">Messages</CardTitle>
-              <MessagesSquare className="w-5 h-5 text-gray-400" />
+              <MessageSquare className="w-5 h-5 text-gray-400" />
             </div>
           </CardHeader>
           <CardContent>

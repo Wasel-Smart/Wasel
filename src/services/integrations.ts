@@ -10,52 +10,52 @@
 export const INTEGRATION_CONFIG = {
   // Google Maps
   googleMaps: {
-    apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '',
-    enabled: !!process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
+    enabled: !!import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
   },
   
   // Stripe Payments
   stripe: {
-    publishableKey: process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || '',
-    enabled: !!process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY,
+    publishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '',
+    enabled: !!import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY,
   },
   
   // Twilio (SMS/Voice)
   twilio: {
-    accountSid: process.env.REACT_APP_TWILIO_ACCOUNT_SID || '',
-    enabled: !!process.env.REACT_APP_TWILIO_ACCOUNT_SID,
+    accountSid: import.meta.env.VITE_TWILIO_ACCOUNT_SID || '',
+    enabled: !!import.meta.env.VITE_TWILIO_ACCOUNT_SID,
   },
   
   // SendGrid (Email)
   sendgrid: {
-    apiKey: process.env.REACT_APP_SENDGRID_API_KEY || '',
-    enabled: !!process.env.REACT_APP_SENDGRID_API_KEY,
+    apiKey: import.meta.env.VITE_SENDGRID_API_KEY || '',
+    enabled: !!import.meta.env.VITE_SENDGRID_API_KEY,
   },
   
   // Firebase (Push Notifications)
   firebase: {
-    apiKey: process.env.REACT_APP_FIREBASE_API_KEY || '',
-    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID || '',
-    enabled: !!process.env.REACT_APP_FIREBASE_API_KEY,
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
+    enabled: !!import.meta.env.VITE_FIREBASE_API_KEY,
   },
   
   // Identity Verification (Jumio)
   jumio: {
-    apiKey: process.env.REACT_APP_JUMIO_API_KEY || '',
-    apiSecret: process.env.REACT_APP_JUMIO_API_SECRET || '',
-    enabled: !!process.env.REACT_APP_JUMIO_API_KEY,
+    apiKey: import.meta.env.VITE_JUMIO_API_KEY || '',
+    apiSecret: import.meta.env.VITE_JUMIO_API_SECRET || '',
+    enabled: !!import.meta.env.VITE_JUMIO_API_KEY,
   },
   
   // Analytics
   mixpanel: {
-    token: process.env.REACT_APP_MIXPANEL_TOKEN || '',
-    enabled: !!process.env.REACT_APP_MIXPANEL_TOKEN,
+    token: import.meta.env.VITE_MIXPANEL_TOKEN || '',
+    enabled: !!import.meta.env.VITE_MIXPANEL_TOKEN,
   },
   
   // Error Tracking
   sentry: {
-    dsn: process.env.REACT_APP_SENTRY_DSN || '',
-    enabled: !!process.env.REACT_APP_SENTRY_DSN,
+    dsn: import.meta.env.VITE_SENTRY_DSN || '',
+    enabled: !!import.meta.env.VITE_SENTRY_DSN,
   },
 };
 
