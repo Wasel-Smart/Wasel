@@ -45,7 +45,7 @@ describe('Authentication Flow Integration Tests', () => {
 
     it('should validate password requirements', async () => {
       const weakPassword = '123456'; // Too weak
-      const strongPassword = 'SecurePass123!'; // Strong
+      const strongPassword = process.env.TEST_PASSWORD || 'SecurePass123!'; // Strong
 
       expect(weakPassword.length).toBeLessThan(8);
       expect(strongPassword.length).toBeGreaterThanOrEqual(8);
