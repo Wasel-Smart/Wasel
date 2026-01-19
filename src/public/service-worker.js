@@ -178,13 +178,25 @@ async function syncTrips() {
     // Get pending trips from IndexedDB
     const pendingTrips = await getPendingTrips();
     
-    // Send each trip to server
+    // Get CSRF token from storage or generate one
+    const csrfToken = await getCSRFToken();
+    
+    // Send each trip to server with proper security headers
     for (const trip of pendingTrips) {
+      // Validate trip data before sending
+      if (!isValidTripData(trip)) {
+        console.warn('Invalid trip data, skipping:', trip);
+        continue;
+      }
+      
       await fetch('/api/trips', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken,
+          'X-Requested-With': 'XMLHttpRequest',
         },
+        credentials: 'same-origin',
         body: JSON.stringify(trip),
       });
     }
@@ -262,9 +274,26 @@ self.addEventListener('periodicsync', (event) => {
 
 async function updateTrips() {
   try {
-    // Fetch latest trip updates
-    const response = await fetch('/api/trips/updates');
+    // Fetch latest trip updates with proper security headers
+    const response = await fetch('/api/trips/updates', {
+      method: 'GET',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      credentials: 'same-origin',
+    });
+    
+    // Validate response
+    if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) {
+      throw new Error('Invalid response from server');
+    }
+    
     const updates = await response.json();
+    
+    // Validate updates data
+    if (!isValidUpdatesData(updates)) {
+      throw new Error('Invalid updates data received');
+    }
     
     // Update cache
     const cache = await caches.open(CACHE_NAME);
@@ -287,17 +316,84 @@ async function updateTrips() {
 self.addEventListener('message', (event) => {
   console.log('Message received:', event.data);
 
+  // Validate message origin
+  if (!isValidOrigin(event.origin)) {
+    console.warn('Invalid origin for message:', event.origin);
+    return;
+  }
+
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
 
   if (event.data && event.data.type === 'CACHE_URLS') {
-    event.waitUntil(
-      caches.open(CACHE_NAME).then((cache) => {
-        return cache.addAll(event.data.urls);
-      })
-    );
+    // Validate URLs before caching
+    const validUrls = event.data.urls?.filter(url => isValidCacheUrl(url)) || [];
+    
+    if (validUrls.length > 0) {
+      event.waitUntil(
+        caches.open(CACHE_NAME).then((cache) => {
+          return cache.addAll(validUrls);
+        })
+      );
+    }
   }
 });
+
+// Security helper functions
+async function getCSRFToken() {
+  try {
+    const response = await fetch('/api/csrf-token', {
+      method: 'GET',
+      credentials: 'same-origin',
+    });
+    const data = await response.json();
+    return data.token;
+  } catch (error) {
+    console.error('Failed to get CSRF token:', error);
+    return null;
+  }
+}
+
+function isValidTripData(trip) {
+  return trip && 
+    typeof trip === 'object' &&
+    trip.pickup &&
+    trip.destination &&
+    typeof trip.pickup.lat === 'number' &&
+    typeof trip.pickup.lng === 'number' &&
+    typeof trip.destination.lat === 'number' &&
+    typeof trip.destination.lng === 'number';
+}
+
+function isValidUpdatesData(updates) {
+  return Array.isArray(updates) && 
+    updates.every(update => 
+      update && 
+      typeof update === 'object' &&
+      update.id &&
+      update.status
+    );
+}
+
+function isValidOrigin(origin) {
+  const allowedOrigins = [
+    self.location.origin,
+    'https://wassel.com',
+    'https://app.wassel.com'
+  ];
+  return allowedOrigins.includes(origin);
+}
+
+function isValidCacheUrl(url) {
+  try {
+    const urlObj = new URL(url, self.location.origin);
+    return urlObj.origin === self.location.origin &&
+           !url.includes('../') &&
+           !url.includes('..\\');
+  } catch (error) {
+    return false;
+  }
+}
 
 console.log('Service Worker loaded successfully');

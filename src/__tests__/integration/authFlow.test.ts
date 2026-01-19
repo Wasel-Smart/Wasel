@@ -18,7 +18,7 @@ describe('Authentication Flow Integration Tests', () => {
         lastName: 'Hassan',
         email: 'ahmed@wassel.com',
         phone: '+971501234567',
-        password: 'SecurePassword123!',
+        password: process.env.TEST_PASSWORD || 'SecurePassword123!',
       };
 
       // Validate email format
@@ -56,7 +56,7 @@ describe('Authentication Flow Integration Tests', () => {
     it('should login with correct credentials', async () => {
       const credentials = {
         email: 'test@wassel.com',
-        password: 'SecurePassword123!',
+        password: process.env.TEST_PASSWORD || 'SecurePassword123!',
       };
 
       expect(credentials.email).toBeDefined();

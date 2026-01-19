@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
   *, :after, :before, ::backdrop {
@@ -28,7 +30,6 @@
   body {
     line-height: inherit;
   }
-}
 
   hr {
     height: 0;

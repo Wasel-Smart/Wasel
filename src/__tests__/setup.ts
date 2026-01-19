@@ -146,7 +146,7 @@ vi.mock('motion/react', () => ({
 
 // Suppress console errors during tests
 const originalError = console.error;
-beforeAll(() => {
+const setupConsole = () => {
     console.error = (...args: any[]) => {
         if (
             typeof args[0] === 'string' &&
@@ -158,8 +158,11 @@ beforeAll(() => {
         }
         originalError.call(console, ...args);
     };
-});
+};
 
-afterAll(() => {
+const teardownConsole = () => {
     console.error = originalError;
-});
+};
+
+// Export setup functions for use in tests
+export { setupConsole, teardownConsole };
