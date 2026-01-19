@@ -1,57 +1,56 @@
-/**
- * Security Middleware - Production Ready
- */
+import { Request, Response, NextFunction } from 'express';
 
-import { supabase } from '../utils/supabase/client';
-
-// Input validation
 export const validateInput = {
-  email: (email: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
-  phone: (phone: string): boolean => /^\+?[1-9]\d{1,14}$/.test(phone),
-  password: (password: string): boolean => password.length >= 8 && /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password),
-  sanitize: (input: string): string => input.replace(/[<>\"'&]/g, ''),
-};
+  sanitize: (input: string): string => {
+    return input
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/[<>]/g, '')
+      .replace(/javascript:/gi, '')
+      .replace(/on\w+=/gi, '')
+      .trim();
+  },
 
-// Rate limiting
-const rateLimits = new Map<string, { count: number; resetTime: number }>();
+  validateEmail: (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  },
 
-export const rateLimit = (key: string, maxAttempts: number = 5, windowMs: number = 900000): boolean => {
-  const now = Date.now();
-  const limit = rateLimits.get(key);
-  
-  if (!limit || now > limit.resetTime) {
-    rateLimits.set(key, { count: 1, resetTime: now + windowMs });
-    return true;
+  validatePhone: (phone: string): boolean => {
+    const phoneRegex = /^\+?[\d\s\-\(\)]{10,15}$/;
+    return phoneRegex.test(phone);
+  },
+
+  validateCoordinates: (lat: number, lng: number): boolean => {
+    return lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
   }
-  
-  if (limit.count >= maxAttempts) return false;
-  
-  limit.count++;
-  return true;
 };
 
-// Session validation
-export const validateSession = async (): Promise<{ valid: boolean; user?: any }> => {
-  try {
-    const { data: { session }, error } = await supabase.auth.getSession();
-    if (error || !session) return { valid: false };
+export const rateLimiter = {
+  requests: new Map<string, { count: number; resetTime: number }>(),
+  
+  check: (ip: string, limit: number = 100, windowMs: number = 15 * 60 * 1000): boolean => {
+    const now = Date.now();
+    const userRequests = this.requests.get(ip);
     
-    // Check session expiry
-    if (new Date(session.expires_at!) < new Date()) {
-      await supabase.auth.signOut();
-      return { valid: false };
+    if (!userRequests || now > userRequests.resetTime) {
+      this.requests.set(ip, { count: 1, resetTime: now + windowMs });
+      return true;
     }
     
-    return { valid: true, user: session.user };
-  } catch {
-    return { valid: false };
+    if (userRequests.count >= limit) {
+      return false;
+    }
+    
+    userRequests.count++;
+    return true;
   }
 };
 
-// Secure headers
-export const securityHeaders = {
-  'X-Content-Type-Options': 'nosniff',
-  'X-Frame-Options': 'DENY',
-  'X-XSS-Protection': '1; mode=block',
-  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+export const securityHeaders = (req: Request, res: Response, next: NextFunction) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  res.setHeader('Content-Security-Policy', "default-src 'self'");
+  next();
 };
