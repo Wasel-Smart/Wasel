@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session, AuthChangeEvent } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured } from '../utils/supabase/client';
 import { authAPI } from '../services/api';
+import { validateInput, rateLimit } from '../middleware/authSecurity';
 import type { Database } from '../utils/supabase/database.types';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
