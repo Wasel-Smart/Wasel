@@ -3,7 +3,7 @@
  * 10 Core Services for Full Platform Launch
  */
 
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
@@ -30,120 +30,120 @@ app.use(cors());
 ScheduledJobsService.init();
 
 // === PAYMENT ENDPOINTS ===
-app.post('/api/payments/process', async (req, res) => {
+app.post('/api/payments/process', async (req: Request, res: Response) => {
   const { tripId, amount, currency } = req.body;
   const result = await PaymentService.processPayment(tripId, amount, currency);
   res.json(result);
 });
 
-app.post('/api/payments/webhook', async (req, res) => {
+app.post('/api/payments/webhook', async (req: Request, res: Response) => {
   await PaymentService.handleWebhook(req.body);
   res.json({ received: true });
 });
 
 // === TRIP MATCHING ENDPOINTS ===
-app.post('/api/trips/match-driver', async (req, res) => {
+app.post('/api/trips/match-driver', async (req: Request, res: Response) => {
   const { tripId } = req.body;
   const result = await TripMatchingService.matchDriver(tripId);
   res.json(result);
 });
 
-app.get('/api/drivers/nearby', async (req, res) => {
+app.get('/api/drivers/nearby', async (req: Request, res: Response) => {
   const { lat, lng, radius } = req.query;
   const drivers = await TripMatchingService.findNearbyDrivers(Number(lat), Number(lng), Number(radius));
   res.json({ success: true, data: drivers });
 });
 
 // === TRACKING ENDPOINTS ===
-app.post('/api/tracking/update-location', async (req, res) => {
+app.post('/api/tracking/update-location', async (req: Request, res: Response) => {
   const { userId, tripId, lat, lng, heading } = req.body;
   const result = await TrackingService.updateLocation(userId, tripId, lat, lng, heading);
   res.json(result);
 });
 
-app.post('/api/trips/start', async (req, res) => {
+app.post('/api/trips/start', async (req: Request, res: Response) => {
   const { tripId } = req.body;
   const result = await TrackingService.startTrip(tripId);
   res.json(result);
 });
 
-app.post('/api/trips/complete', async (req, res) => {
+app.post('/api/trips/complete', async (req: Request, res: Response) => {
   const { tripId, finalLat, finalLng } = req.body;
   const result = await TrackingService.completeTrip(tripId, finalLat, finalLng);
   res.json(result);
 });
 
 // === AI ENDPOINTS ===
-app.post('/api/ai/optimize-route', async (req, res) => {
+app.post('/api/ai/optimize-route', async (req: Request, res: Response) => {
   const { pickup, dropoff } = req.body;
   const result = await AIService.optimizeRoute(pickup, dropoff);
   res.json({ success: true, data: result });
 });
 
-app.post('/api/ai/dynamic-pricing', async (req, res) => {
+app.post('/api/ai/dynamic-pricing', async (req: Request, res: Response) => {
   const { distance, demand } = req.body;
   const result = await AIService.calculateDynamicPricing(distance, demand);
   res.json({ success: true, data: result });
 });
 
-app.post('/api/ai/suggest-locations', async (req, res) => {
+app.post('/api/ai/suggest-locations', async (req: Request, res: Response) => {
   const { query, userLat, userLng } = req.body;
   const suggestions = await AIService.suggestLocations(query, userLat, userLng);
   res.json({ success: true, data: suggestions });
 });
 
 // === ADMIN ENDPOINTS ===
-app.get('/api/admin/dashboard', async (req, res) => {
+app.get('/api/admin/dashboard', async (req: Request, res: Response) => {
   const stats = await AdminService.getDashboardStats();
   res.json({ success: true, data: stats });
 });
 
-app.post('/api/admin/manage-user', async (req, res) => {
+app.post('/api/admin/manage-user', async (req: Request, res: Response) => {
   const { userId, action, reason } = req.body;
   const result = await AdminService.manageUser(userId, action, reason);
   res.json(result);
 });
 
-app.get('/api/admin/live-trips', async (req, res) => {
+app.get('/api/admin/live-trips', async (req: Request, res: Response) => {
   const trips = await AdminService.getLiveTrips();
   res.json({ success: true, data: trips });
 });
 
 // === NOTIFICATION ENDPOINTS ===
-app.post('/api/notifications/sms', async (req, res) => {
+app.post('/api/notifications/sms', async (req: Request, res: Response) => {
   const { phone, message } = req.body;
   const result = await NotificationService.sendSMS(phone, message);
   res.json(result);
 });
 
-app.post('/api/notifications/bulk', async (req, res) => {
+app.post('/api/notifications/bulk', async (req: Request, res: Response) => {
   const { userIds, title, message } = req.body;
   const result = await NotificationService.sendBulkNotification(userIds, title, message);
   res.json(result);
 });
 
 // === EMERGENCY ENDPOINTS ===
-app.post('/api/emergency/sos', async (req, res) => {
+app.post('/api/emergency/sos', async (req: Request, res: Response) => {
   const { userId, tripId, location, type } = req.body;
   const result = await EmergencyService.triggerSOS(userId, tripId, location, type);
   io.to(`trip-${tripId}`).emit('emergency-alert', { tripId, location, type });
   res.json(result);
 });
 
-app.post('/api/emergency/share-trip', async (req, res) => {
+app.post('/api/emergency/share-trip', async (req: Request, res: Response) => {
   const { tripId, shareWithPhone } = req.body;
   const result = await EmergencyService.shareTrip(tripId, shareWithPhone);
   res.json(result);
 });
 
 // === ANALYTICS ENDPOINTS ===
-app.post('/api/analytics/track', async (req, res) => {
+app.post('/api/analytics/track', async (req: Request, res: Response) => {
   const { userId, event, properties } = req.body;
   await AnalyticsService.trackEvent(userId, event, properties);
   res.json({ success: true });
 });
 
-app.get('/api/analytics/driver/:driverId', async (req, res) => {
+app.get('/api/analytics/driver/:driverId', async (req: Request, res: Response) => {
   const { driverId } = req.params;
   const { days } = req.query;
   const performance = await AnalyticsService.getDriverPerformance(driverId, Number(days) || 30);
@@ -151,7 +151,7 @@ app.get('/api/analytics/driver/:driverId', async (req, res) => {
 });
 
 // === SCHEDULED TRIPS ===
-app.post('/api/trips/schedule', async (req, res) => {
+app.post('/api/trips/schedule', async (req: Request, res: Response) => {
   const { tripData, scheduledFor } = req.body;
   const result = await ScheduledJobsService.scheduleTrip(tripData, scheduledFor);
   res.json(result);
@@ -172,7 +172,7 @@ io.on('connection', (socket) => {
 });
 
 // Health Check
-app.get('/api/health', (req, res) => {
+app.get('/api/health', (req: Request, res: Response) => {
   res.json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
