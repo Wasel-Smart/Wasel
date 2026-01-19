@@ -7,7 +7,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import cors from 'cors';
-import { supabase } from '../services/api';
+import { supabase } from './supabase';
 
 // Extend Express Request interface
 interface AuthenticatedRequest extends Request {

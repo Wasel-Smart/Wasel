@@ -1,4 +1,4 @@
-import { supabase } from '../../services/api';
+import { supabase } from '../supabase';
 import { NotificationService } from './NotificationService';
 
 export class EmergencyService {

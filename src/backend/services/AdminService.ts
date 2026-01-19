@@ -1,4 +1,4 @@
-import { supabase } from '../../services/api';
+import { supabase } from '../supabase';
 
 export class AdminService {
   static async getDashboardStats() {

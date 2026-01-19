@@ -1,4 +1,4 @@
-import { supabase } from '../../services/api';
+import { supabase } from '../supabase';
 
 export class AIService {
   static async optimizeRoute(pickup: [number, number], dropoff: [number, number]) {

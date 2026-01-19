@@ -1,4 +1,4 @@
-import { supabase } from '../../services/api';
+import { supabase } from '../supabase';
 
 export class AnalyticsService {
   static async trackEvent(userId: string, event: string, properties: any = {}) {
