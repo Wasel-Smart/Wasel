@@ -1,32 +1,56 @@
-import { projectId, publicAnonKey } from '../utils/supabase/info';
-import { supabase as supabaseClient } from '../utils/supabase/client';
+import { supabase } from './api';
+import { validateInput, rateLimit } from '../middleware/authSecurity';
+import { globalErrorHandler, ErrorSeverity } from '../utils/errorHandler';
 
 const API_URL = `https://${projectId}.supabase.co/functions/v1/make-server-0b1f4071`;
 
-// Ensure client exists (it should given info.tsx has constants)
+// Ensure client exists with proper error handling
 if (!supabaseClient) {
+  globalErrorHandler.handleError(
+    new Error('Supabase client not initialized'),
+    ErrorSeverity.CRITICAL,
+    { component: 'api', action: 'initialization' }
+  );
   throw new Error('Supabase client not initialized');
 }
 
 export const supabase = supabaseClient;
 
-// Helper to get current user ID and session token
+// Helper to get current user ID and session token with validation
 async function getAuthDetails() {
   try {
+    if (!supabase) {
+      throw new Error('Supabase client not available');
+    }
+    
     const { data: { session }, error } = await supabase.auth.getSession();
     if (error) {
-      console.error('Authentication error:', error);
+      globalErrorHandler.handleError(error, ErrorSeverity.HIGH, {
+        component: 'api',
+        action: 'getAuthDetails'
+      });
       throw new Error('Authentication failed. Please sign in again.');
     }
+    
     if (!session) {
       throw new Error('No active session. Please sign in.');
     }
+    
+    // Validate session expiry
+    if (new Date(session.expires_at!) < new Date()) {
+      await supabase.auth.signOut();
+      throw new Error('Session expired. Please sign in again.');
+    }
+    
     return { 
       token: session.access_token,
       userId: session.user.id
     };
   } catch (error) {
-    console.error('Failed to get auth details:', error);
+    globalErrorHandler.handleError(error as Error, ErrorSeverity.HIGH, {
+      component: 'api',
+      action: 'getAuthDetails'
+    });
     throw error;
   }
 }
@@ -37,9 +61,25 @@ export const authAPI = {
   async signUp(email: string, password: string, firstName: string, lastName: string, phone: string) {
     try {
       // Input validation
-      if (!email || !password || !firstName) {
-        throw new Error('Email, password, and first name are required');
+      if (!validateInput.email(email)) {
+        throw new Error('Invalid email format');
       }
+      if (!validateInput.password(password)) {
+        throw new Error('Password must be 8+ characters with uppercase, lowercase, and number');
+      }
+      if (!firstName?.trim()) {
+        throw new Error('First name is required');
+      }
+      
+      // Rate limiting
+      if (!rateLimit(`signup_${email}`, 3, 3600000)) {
+        throw new Error('Too many signup attempts. Try again in 1 hour.');
+      }
+      
+      // Sanitize inputs
+      const sanitizedFirstName = validateInput.sanitize(firstName);
+      const sanitizedLastName = validateInput.sanitize(lastName || '');
+      const sanitizedPhone = validateInput.sanitize(phone || '');
       
       const response = await fetch(`${API_URL}/auth/signup`, {
         method: 'POST',
@@ -47,7 +87,11 @@ export const authAPI = {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${publicAnonKey}`
         },
-        body: JSON.stringify({ email, password, fullName: `${firstName} ${lastName}` })
+        body: JSON.stringify({ 
+          email: email.toLowerCase().trim(), 
+          password, 
+          fullName: `${sanitizedFirstName} ${sanitizedLastName}`.trim()
+        })
       });
 
       if (!response.ok) {
@@ -57,19 +101,52 @@ export const authAPI = {
 
       return await response.json();
     } catch (error) {
-      console.error('Signup error:', error);
+      globalErrorHandler.handleError(error as Error, ErrorSeverity.HIGH, {
+        component: 'api',
+        action: 'signUp',
+        metadata: { email }
+      });
       throw error;
     }
   },
 
   async signIn(email: string, password: string) {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
+    try {
+      // Input validation
+      if (!validateInput.email(email)) {
+        throw new Error('Invalid email format');
+      }
+      if (!password?.trim()) {
+        throw new Error('Password is required');
+      }
+      
+      // Rate limiting
+      if (!rateLimit(`signin_${email}`, 5, 900000)) {
+        throw new Error('Too many login attempts. Try again in 15 minutes.');
+      }
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.toLowerCase().trim(),
+        password
+      });
 
-    if (error) throw error;
-    return data;
+      if (error) {
+        globalErrorHandler.handleError(error, ErrorSeverity.MEDIUM, {
+          component: 'api',
+          action: 'signIn',
+          metadata: { email }
+        });
+        throw error;
+      }
+      
+      return data;
+    } catch (error) {
+      globalErrorHandler.handleError(error as Error, ErrorSeverity.MEDIUM, {
+        component: 'api',
+        action: 'signIn'
+      });
+      throw error;
+    }
   },
 
   async signOut() {
@@ -127,23 +204,53 @@ export const authAPI = {
 
 export const tripsAPI = {
   async createTrip(tripData: any) {
-    const { token } = await getAuthDetails();
+    try {
+      const { token } = await getAuthDetails();
+      
+      // Validate required fields
+      if (!tripData.from_location || !tripData.to_location) {
+        throw new Error('Origin and destination are required');
+      }
+      if (!tripData.departure_date || !tripData.departure_time) {
+        throw new Error('Departure date and time are required');
+      }
+      if (!tripData.total_seats || tripData.total_seats < 1 || tripData.total_seats > 8) {
+        throw new Error('Total seats must be between 1 and 8');
+      }
+      if (!tripData.fare || tripData.fare < 0) {
+        throw new Error('Valid fare is required');
+      }
+      
+      // Sanitize string inputs
+      const sanitizedData = {
+        ...tripData,
+        from_location: validateInput.sanitize(tripData.from_location),
+        to_location: validateInput.sanitize(tripData.to_location),
+        notes: tripData.notes ? validateInput.sanitize(tripData.notes) : null
+      };
 
-    const response = await fetch(`${API_URL}/trips`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(tripData)
-    });
+      const response = await fetch(`${API_URL}/trips`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(sanitizedData)
+      });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to create trip');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create trip');
+      }
+
+      return await response.json();
+    } catch (error) {
+      globalErrorHandler.handleError(error as Error, ErrorSeverity.HIGH, {
+        component: 'api',
+        action: 'createTrip'
+      });
+      throw error;
     }
-
-    return await response.json();
   },
 
   async searchTrips(from?: string, to?: string, date?: string, seats?: number) {

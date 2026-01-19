@@ -1,5 +1,7 @@
+import { paymentSecurity } from './paymentSecurity';
+import { globalErrorHandler, ErrorSeverity } from '../utils/errorHandler';
+import { validateInput, rateLimit } from '../middleware/authSecurity';
 import { supabase } from '../utils/supabase/client';
-import { paymentService as stripeService } from './integrations';
 
 export type TransactionType = 'credit' | 'debit' | 'escrow_hold' | 'escrow_release' | 'reward' | 'refund' | 'fee' | 'payout';
 export type PaymentMethod = 'wallet' | 'card' | 'apple_pay' | 'google_pay' | 'bank_transfer';
@@ -107,7 +109,7 @@ class PaymentService {
     }
 
     /**
-     * Create payment intent for Stripe
+     * Create payment intent for Stripe with validation
      */
     async createPaymentIntent(
         amount: number,
@@ -115,7 +117,24 @@ class PaymentService {
         metadata?: Record<string, string>
     ): Promise<PaymentIntent> {
         try {
-            const result = await stripeService.createPaymentIntent(amount, currency.toLowerCase(), metadata);
+            // Validate inputs
+            if (!paymentSecurity.validateAmount(amount)) {
+                throw new Error('Invalid amount (must be positive and <= 10000)');
+            }
+            if (!paymentSecurity.validateCurrency(currency)) {
+                throw new Error('Invalid currency');
+            }
+            
+            // Sanitize metadata
+            const sanitizedMetadata = paymentSecurity.sanitizeMetadata(metadata);
+            
+            // Rate limiting
+            const userId = (await supabase.auth.getUser()).data.user?.id;
+            if (userId && !rateLimit(`payment_intent_${userId}`, 10, 300000)) {
+                throw new Error('Too many payment attempts. Try again in 5 minutes.');
+            }
+            
+            const result = await stripeService.createPaymentIntent(amount, currency.toLowerCase(), sanitizedMetadata);
             return {
                 id: result.id,
                 amount: result.amount,
@@ -124,7 +143,11 @@ class PaymentService {
                 client_secret: result.clientSecret,
             };
         } catch (error) {
-            console.error('Failed to create payment intent:', error);
+            globalErrorHandler.handleError(error as Error, ErrorSeverity.HIGH, {
+                component: 'payment',
+                action: 'createPaymentIntent',
+                metadata: { amount, currency }
+            });
             throw new Error('Payment initialization failed');
         }
     }

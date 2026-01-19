@@ -402,9 +402,57 @@ app.post('/api/notifications/push', authenticateUser, async (req, res) => {
   }
 });
 
-// Health Check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'healthy', timestamp: new Date().toISOString() });
+// Health Check with detailed status
+app.get('/api/health', async (req, res) => {
+  try {
+    const startTime = Date.now();
+    
+    // Check database connection
+    const { error: dbError } = await supabase.from('profiles').select('id').limit(1);
+    const dbHealthy = !dbError;
+    
+    const responseTime = Date.now() - startTime;
+    
+    const health = {
+      status: dbHealthy ? 'healthy' : 'degraded',
+      timestamp: new Date().toISOString(),
+      version: '1.0.0',
+      services: {
+        database: dbHealthy ? 'up' : 'down',
+        websocket: io.engine.clientsCount >= 0 ? 'up' : 'down',
+        api: 'up'
+      },
+      metrics: {
+        responseTime,
+        connectedClients: io.engine.clientsCount,
+        uptime: process.uptime()
+      }
+    };
+    
+    res.status(dbHealthy ? 200 : 503).json(health);
+  } catch (error) {
+    console.error('Health check error:', error);
+    res.status(503).json({
+      status: 'unhealthy',
+      timestamp: new Date().toISOString(),
+      error: 'Health check failed'
+    });
+  }
 });
 
-server.listen(3001, () => console.log('🚀 Wasel Backend ready on port 3001'));
+// Error handling middleware
+app.use((error: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('Unhandled error:', error);
+  res.status(500).json({ error: 'Internal server error' });
+});
+
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({ error: 'Endpoint not found' });
+});
+
+const PORT = process.env.PORT || 3001;
+server.listen(PORT, () => {
+  console.log(`🚀 Wasel Backend ready on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+});
