@@ -48,7 +48,35 @@ export function FindRide() {
   });
 
   const handleSearch = () => {
-      searchTrips();
+    // Input validation
+    if (!searchFrom.trim()) {
+      toast.error('Please enter a starting location');
+      return;
+    }
+    if (!searchTo.trim()) {
+      toast.error('Please enter a destination');
+      return;
+    }
+    if (!searchDate) {
+      toast.error('Please select a date');
+      return;
+    }
+    if (parseInt(passengers) < 1 || parseInt(passengers) > 8) {
+      toast.error('Number of passengers must be between 1 and 8');
+      return;
+    }
+    
+    // Check if date is not in the past
+    const selectedDate = new Date(searchDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (selectedDate < today) {
+      toast.error('Please select a future date');
+      return;
+    }
+    
+    searchTrips();
   };
 
   const handleViewDetails = (ride: SearchTrip) => {
