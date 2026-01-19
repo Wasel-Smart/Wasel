@@ -6,10 +6,11 @@
  */
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { PackageCheck, Search, Users } from 'lucide-react';
+import { PackageCheck, Search, Users, Zap } from 'lucide-react';
 import { PackageDelivery } from './PackageDelivery';
 import { FindRide } from './FindRide';
 import { OfferRide } from './OfferRide';
+import { IntermodalPlanner } from './IntermodalPlanner';
 import { ReactNode } from 'react';
 
 interface ServiceTabsProps {
@@ -45,10 +46,14 @@ export function ServiceTabs({
   return (
     <div className="w-full">
       <Tabs defaultValue="main" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 mb-6 h-14">
+        <TabsList className="grid w-full grid-cols-5 mb-6 h-14">
           <TabsTrigger value="main" className="flex items-center gap-2 text-sm md:text-base">
             {mainServiceIcon}
             <span className="hidden sm:inline">{mainServiceTitle}</span>
+          </TabsTrigger>
+          <TabsTrigger value="smart" className="flex items-center gap-2 text-sm md:text-base">
+            <Zap className="w-4 h-4 text-teal-500" />
+            <span className="hidden sm:inline">Smart Route</span>
           </TabsTrigger>
           <TabsTrigger value="package" className="flex items-center gap-2 text-sm md:text-base">
             <PackageCheck className="w-4 h-4" />
@@ -66,6 +71,10 @@ export function ServiceTabs({
 
         <TabsContent value="main" className="mt-0">
           {mainService}
+        </TabsContent>
+
+        <TabsContent value="smart" className="mt-0">
+          <IntermodalPlanner />
         </TabsContent>
 
         <TabsContent value="package" className="mt-0">

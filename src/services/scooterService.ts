@@ -150,6 +150,20 @@ class ScooterService {
       })
       .eq('id', rental.scooter_id);
 
+    // Track rewards (Innovation: Green Mining)
+    try {
+      if (rental && rental.user_id) {
+        const { rewardsService } = await import('./rewardsService');
+        await rewardsService.processTripRewards(
+          rental.user_id,
+          'scooter',
+          (durationMinutes * 0.25) // Estimated distance (15km/h avg)
+        );
+      }
+    } catch (e) {
+      console.warn('Failed to process rewards:', e);
+    }
+
     return {
       rental: completionResponse.data,
       cost

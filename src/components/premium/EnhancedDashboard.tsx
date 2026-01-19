@@ -6,12 +6,12 @@
  */
 
 import { motion } from 'motion/react';
-import { 
-  Car, 
-  Package, 
-  Calendar, 
-  TrendingUp, 
-  MapPin, 
+import {
+  Car,
+  Package,
+  Calendar,
+  TrendingUp,
+  MapPin,
   Clock,
   DollarSign,
   Star,
@@ -152,17 +152,17 @@ export function EnhancedDashboard({ onNavigate }: EnhancedDashboardProps) {
             transition={{ delay: 0.3 }}
             className="flex flex-wrap gap-3"
           >
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="bg-white text-[#008080] hover:bg-white/90 font-bold border-0 shadow-lg"
               onClick={() => onNavigate('find-ride')}
             >
               <Car className="w-5 h-5 mr-2" />
               Book Ride
             </Button>
-            <Button 
-              size="lg" 
-              variant="outline" 
+            <Button
+              size="lg"
+              variant="outline"
               className="border-white/30 bg-white/10 backdrop-blur-xl text-white hover:bg-white/20 font-medium"
               onClick={() => onNavigate('scheduled-trips')}
             >
@@ -170,6 +170,37 @@ export function EnhancedDashboard({ onNavigate }: EnhancedDashboardProps) {
               Schedule
             </Button>
           </motion.div>
+        </div>
+      </motion.div>
+
+      {/* Innovation: Green Rewards Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.35 }}
+        className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-200 dark:border-emerald-800 p-6 flex flex-col md:flex-row items-center justify-between gap-6"
+      >
+        <div className="flex items-center gap-5">
+          <div className="w-16 h-16 rounded-full bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+            <Zap className="w-8 h-8 text-white animate-pulse" />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-emerald-800 dark:text-emerald-400">Green Mining Rewards</h3>
+            <p className="text-emerald-700/80 dark:text-emerald-400/60 font-medium">You've earned 450 credits from eco-trips!</p>
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="text-center px-4 py-2 bg-white/50 dark:bg-slate-900/50 rounded-xl border border-emerald-100 dark:border-emerald-800">
+            <span className="block text-2xl font-black text-emerald-600">450</span>
+            <span className="text-[10px] uppercase tracking-wider font-bold text-emerald-700/60">Credits</span>
+          </div>
+          <div className="text-center px-4 py-2 bg-emerald-600 rounded-xl shadow-lg shadow-emerald-600/20">
+            <span className="block text-2xl font-black text-white">24.5</span>
+            <span className="text-[10px] uppercase tracking-wider font-bold text-white/80">kg CO₂ saved</span>
+          </div>
+          <Button variant="ghost" size="icon" className="h-14 w-14 rounded-xl hover:bg-emerald-500/20 text-emerald-600">
+            <TrendingUp className="w-6 h-6" />
+          </Button>
         </div>
       </motion.div>
 
@@ -211,7 +242,7 @@ export function EnhancedDashboard({ onNavigate }: EnhancedDashboardProps) {
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Services</h2>
           <Button variant="ghost" className="text-[#008080]">View All</Button>
         </div>
-        
+
         <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-4">
           {services.map((service, index) => (
             <motion.div
@@ -266,7 +297,7 @@ export function EnhancedDashboard({ onNavigate }: EnhancedDashboardProps) {
                       <div className="w-12 h-12 bg-gradient-to-br from-[#008080] to-[#607D4B] rounded-2xl flex items-center justify-center text-white shadow-md">
                         <MapPin className="w-6 h-6" />
                       </div>
-                      
+
                       <div>
                         <div className="flex items-center gap-2 mb-1">
                           <span className="font-semibold text-gray-800 dark:text-white">{trip.from}</span>

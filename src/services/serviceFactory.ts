@@ -125,6 +125,9 @@ export class ServiceFactory {
     if (filters.date) {
       query = query.eq('departure_date', filters.date);
     }
+    if (filters.isFemaleOnly !== undefined) {
+      query = query.eq('is_female_only', filters.isFemaleOnly);
+    }
 
     const { data, error } = await query;
     if (error) throw error;
