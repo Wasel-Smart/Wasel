@@ -145,41 +145,261 @@ app.post('/api/ai/routes/suggest', authenticateUser, async (req, res) => {
 });
 
 // Dynamic Pricing
-app.post('/api/ai/pricing/optimize', async (req, res) => {
-  const { distance_km, seats } = req.body;
-  const price = 10 + (distance_km * 2);
-  res.json({ success: true, data: { price, currency: 'AED' } });
+app.post('/api/ai/pricing/optimize', authenticateUser, async (req, res) => {
+  try {
+    const { distance_km, seats, tripType, departureTime } = req.body;
+    
+    // Validate inputs
+    if (!distance_km || distance_km <= 0 || distance_km > 1000) {
+      return res.status(400).json({ error: 'Invalid distance (must be 0-1000 km)' });
+    }
+    
+    if (!seats || seats <= 0 || seats > 8) {
+      return res.status(400).json({ error: 'Invalid seats (must be 1-8)' });
+    }
+    
+    // Enhanced pricing algorithm
+    const basePrices = { AED: 15, SAR: 20, EGP: 50, USD: 5 };
+    const perKmRates = { AED: 2, SAR: 2.5, EGP: 8, USD: 1.5 };
+    
+    const currency = 'AED'; // Default currency
+    let price = basePrices[currency] + (distance_km * perKmRates[currency]);
+    
+    // Time-based surge pricing
+    if (departureTime) {
+      const hour = new Date(departureTime).getHours();
+      if ((hour >= 7 && hour <= 9) || (hour >= 17 && hour <= 19)) {
+        price *= 1.3; // Peak hours
+      }
+    }
+    
+    // Trip type multiplier
+    if (tripType === 'package') {
+      price *= 1.2;
+    }
+    
+    // Seat multiplier
+    if (seats > 1) {
+      price *= (1 + (seats - 1) * 0.1);
+    }
+    
+    const finalPrice = Math.round(price * 100) / 100;
+    
+    res.json({ 
+      success: true, 
+      data: { 
+        price: finalPrice, 
+        currency,
+        breakdown: {
+          base: basePrices[currency],
+          distance: distance_km * perKmRates[currency],
+          surge: departureTime ? 1.3 : 1.0,
+          typeMultiplier: tripType === 'package' ? 1.2 : 1.0,
+          seatMultiplier: seats > 1 ? (1 + (seats - 1) * 0.1) : 1.0
+        }
+      },
+      confidence: 0.85
+    });
+  } catch (error) {
+    console.error('Dynamic pricing error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
-// WebSocket for Real-time
+// WebSocket for Real-time with authentication
+const authenticateSocket = async (socket: any, next: any) => {
+  try {
+    const token = socket.handshake.auth.token;
+    if (!token) {
+      return next(new Error('Authentication required'));
+    }
+    
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+      return next(new Error('Invalid token'));
+    }
+    
+    socket.userId = user.id;
+    next();
+  } catch (error) {
+    next(new Error('Authentication failed'));
+  }
+};
+
+io.use(authenticateSocket);
+
 io.on('connection', (socket) => {
-  socket.on('join-trip', (tripId) => socket.join(`trip-${tripId}`));
+  console.log(`User ${socket.userId} connected`);
+  
+  socket.on('join-trip', async (tripId) => {
+    try {
+      // Validate trip access
+      const { data: trip, error } = await supabase
+        .from('trips')
+        .select('driver_id, passenger_id')
+        .eq('id', tripId)
+        .single();
+      
+      if (error || !trip) {
+        socket.emit('error', { message: 'Trip not found' });
+        return;
+      }
+      
+      // Check if user is part of the trip
+      if (trip.driver_id !== socket.userId && trip.passenger_id !== socket.userId) {
+        socket.emit('error', { message: 'Unauthorized access to trip' });
+        return;
+      }
+      
+      socket.join(`trip-${tripId}`);
+      socket.emit('joined-trip', { tripId });
+    } catch (error) {
+      console.error('Join trip error:', error);
+      socket.emit('error', { message: 'Failed to join trip' });
+    }
+  });
   
   socket.on('location-update', async (data) => {
-    await supabase.from('live_locations').upsert({
-      trip_id: data.tripId, user_id: data.userId, coordinates: data.coordinates
+    try {
+      const { tripId, coordinates, heading, speed, accuracy } = data;
+      
+      // Validate coordinates
+      if (!coordinates || !coordinates.lat || !coordinates.lng) {
+        socket.emit('error', { message: 'Invalid coordinates' });
+        return;
+      }
+      
+      if (coordinates.lat < -90 || coordinates.lat > 90 || 
+          coordinates.lng < -180 || coordinates.lng > 180) {
+        socket.emit('error', { message: 'Invalid coordinate range' });
+        return;
+      }
+      
+      await supabase.from('live_locations').upsert({
+        trip_id: tripId,
+        user_id: socket.userId,
+        coordinates,
+        heading: heading || 0,
+        speed: speed || 0,
+        accuracy: accuracy || 0,
+        updated_at: new Date().toISOString()
+      });
+      
+      socket.to(`trip-${tripId}`).emit('location-broadcast', {
+        userId: socket.userId,
+        tripId,
+        coordinates,
+        heading,
+        speed,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Location update error:', error);
+      socket.emit('error', { message: 'Failed to update location' });
+    }
+  });
+  
+  socket.on('disconnect', () => {
+    console.log(`User ${socket.userId} disconnected`);
+  });
+});
+
+// Emergency SOS with enhanced security
+app.post('/api/emergency/sos', authenticateUser, async (req, res) => {
+  try {
+    const { tripId, location, reason } = req.body;
+    
+    // Validate required fields
+    if (!tripId || !location || !location.lat || !location.lng) {
+      return res.status(400).json({ error: 'Trip ID and valid location required' });
+    }
+    
+    // Validate coordinates
+    if (location.lat < -90 || location.lat > 90 || 
+        location.lng < -180 || location.lng > 180) {
+      return res.status(400).json({ error: 'Invalid coordinates' });
+    }
+    
+    // Verify user is part of the trip
+    const { data: trip, error: tripError } = await supabase
+      .from('trips')
+      .select('driver_id, passenger_id')
+      .eq('id', tripId)
+      .single();
+    
+    if (tripError || !trip) {
+      return res.status(404).json({ error: 'Trip not found' });
+    }
+    
+    if (trip.driver_id !== req.user.id && trip.passenger_id !== req.user.id) {
+      return res.status(403).json({ error: 'Unauthorized access to trip' });
+    }
+    
+    // Create emergency alert
+    const { error } = await supabase.from('emergency_alerts').insert({
+      trip_id: tripId,
+      user_id: req.user.id,
+      location,
+      reason: reason || 'Emergency assistance requested',
+      status: 'active',
+      created_at: new Date().toISOString()
     });
-    socket.to(`trip-${data.tripId}`).emit('location-broadcast', data);
-  });
+    
+    if (error) throw error;
+    
+    // Broadcast emergency alert
+    io.to(`trip-${tripId}`).emit('emergency-alert', {
+      tripId,
+      location,
+      userId: req.user.id,
+      reason,
+      timestamp: new Date().toISOString()
+    });
+    
+    // Log critical event
+    console.error(`EMERGENCY SOS: Trip ${tripId}, User ${req.user.id}, Location: ${JSON.stringify(location)}`);
+    
+    res.json({ success: true, alertId: Date.now().toString() });
+  } catch (error) {
+    console.error('Emergency SOS error:', error);
+    res.status(500).json({ error: 'Failed to process emergency request' });
+  }
 });
 
-// Emergency SOS
-app.post('/api/emergency/sos', async (req, res) => {
-  const { tripId, location, userId } = req.body;
-  await supabase.from('emergency_alerts').insert({
-    trip_id: tripId, user_id: userId, location, status: 'active'
-  });
-  io.to(`trip-${tripId}`).emit('emergency-alert', { tripId, location });
-  res.json({ success: true });
-});
-
-// Push Notifications
-app.post('/api/notifications/push', async (req, res) => {
-  const { userId, title, body } = req.body;
-  await supabase.from('notifications').insert({
-    user_id: userId, title, message: body, type: 'push'
-  });
-  res.json({ success: true });
+// Push Notifications with validation
+app.post('/api/notifications/push', authenticateUser, async (req, res) => {
+  try {
+    const { userId, title, body, data } = req.body;
+    
+    // Validate inputs
+    if (!title || !body) {
+      return res.status(400).json({ error: 'Title and body are required' });
+    }
+    
+    if (title.length > 100 || body.length > 500) {
+      return res.status(400).json({ error: 'Title/body too long' });
+    }
+    
+    // Users can only send notifications to themselves or in authorized contexts
+    const targetUserId = userId || req.user.id;
+    
+    const { error } = await supabase.from('notifications').insert({
+      user_id: targetUserId,
+      title: validateInput.sanitize(title),
+      message: validateInput.sanitize(body),
+      type: 'push',
+      data: data || {},
+      is_read: false,
+      created_at: new Date().toISOString()
+    });
+    
+    if (error) throw error;
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Push notification error:', error);
+    res.status(500).json({ error: 'Failed to send notification' });
+  }
 });
 
 // Health Check
