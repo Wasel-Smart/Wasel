@@ -31,7 +31,8 @@ export class AnalyticsService {
 
     const completedTrips = trips.data?.filter(t => t.status === 'completed') || [];
     const totalEarnings = earnings.data?.reduce((sum, p) => sum + (p.amount * 0.8), 0) || 0;
-    const avgRating = ratings.data?.reduce((sum, r) => sum + r.rating, 0) / (ratings.data?.length || 1);
+    const ratingsData = ratings.data || [];
+    const avgRating = ratingsData.reduce((sum, r) => sum + r.rating, 0) / (ratingsData.length || 1);
 
     return {
       total_trips: completedTrips.length,
@@ -76,7 +77,8 @@ export class AnalyticsService {
     ]);
 
     const totalSpent = payments.data?.reduce((sum, p) => sum + p.amount, 0) || 0;
-    const avgRating = ratings.data?.reduce((sum, r) => sum + r.rating, 0) / (ratings.data?.length || 1);
+    const ratingsData2 = ratings.data || [];
+    const avgRating = ratingsData2.reduce((sum, r) => sum + r.rating, 0) / (ratingsData2.length || 1);
     const favoritePickup = this.getMostFrequentLocation(trips.data?.map(t => t.pickup_address) || []);
 
     return {
@@ -95,7 +97,7 @@ export class AnalyticsService {
       .eq('status', 'completed')
       .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
 
-    const heatmapPoints = [];
+    const heatmapPoints: { lat: number; lng: number; weight: number }[] = [];
     trips?.forEach(trip => {
       heatmapPoints.push({ lat: trip.pickup_lat, lng: trip.pickup_lng, weight: 1 });
       heatmapPoints.push({ lat: trip.dropoff_lat, lng: trip.dropoff_lng, weight: 1 });

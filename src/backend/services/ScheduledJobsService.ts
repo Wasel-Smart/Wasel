@@ -84,6 +84,8 @@ export class ScheduledJobsService {
       .eq('id', tripId)
       .single();
 
+    if (!trip) throw new Error('Trip not found');
+
     const hoursUntilTrip = (new Date(trip.scheduled_for).getTime() - Date.now()) / (1000 * 60 * 60);
     const cancellationFee = hoursUntilTrip < 1 ? 5 : 0; // AED 5 fee if less than 1 hour
 

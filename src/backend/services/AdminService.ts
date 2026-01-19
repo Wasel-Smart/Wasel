@@ -62,12 +62,14 @@ export class AdminService {
         .eq('id', disputeId)
         .single();
 
-      await supabase.from('refunds').insert({
-        trip_id: dispute.trip_id,
-        amount: refundAmount,
-        reason: 'dispute_resolution',
-        status: 'pending'
-      });
+      if (dispute) {
+        await supabase.from('refunds').insert({
+          trip_id: dispute.trip_id,
+          amount: refundAmount,
+          reason: 'dispute_resolution',
+          status: 'pending'
+        });
+      }
     }
 
     return { success: true, disputeId, resolution };

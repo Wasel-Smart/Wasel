@@ -7,8 +7,11 @@ export class PaymentService {
   static async processPayment(tripId: string, amount: number, currency = 'aed') {
     try {
       const { data: trip } = await supabase.from('trips').select('passenger_id').eq('id', tripId).single();
+      if (!trip) throw new Error('Trip not found');
+
       const { data: user } = await supabase.from('users').select('stripe_customer_id').eq('id', trip.passenger_id).single();
-      
+      if (!user) throw new Error('User not found');
+
       const paymentIntent = await stripe.paymentIntents.create({
         amount: Math.round(amount * 100),
         currency,
@@ -26,7 +29,7 @@ export class PaymentService {
 
       return { success: true, client_secret: paymentIntent.client_secret };
     } catch (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }
 

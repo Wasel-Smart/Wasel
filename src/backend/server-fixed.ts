@@ -209,7 +209,7 @@ app.post('/api/ai/pricing/optimize', authenticateUser, async (req: Authenticated
 });
 
 // WebSocket authentication
-const authenticateSocket = async (socket: AuthenticatedSocket, next: (err?: Error) => void) => {
+const authenticateSocket = async (socket: any, next: any) => {
   try {
     const token = socket.handshake.auth.token;
     if (!token) {
@@ -230,7 +230,7 @@ const authenticateSocket = async (socket: AuthenticatedSocket, next: (err?: Erro
 
 io.use(authenticateSocket);
 
-io.on('connection', (socket: AuthenticatedSocket) => {
+io.on('connection', (socket: any) => {
   console.log(`User connected: ${socket.userId}`);
   
   socket.on('join-trip', async (tripId: string) => {

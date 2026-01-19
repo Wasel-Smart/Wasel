@@ -7,8 +7,8 @@ export class TripMatchingService {
       user_lng: lng,
       radius_km: radius
     });
-    
-    return drivers?.filter(d => d.status === 'available') || [];
+
+    return drivers?.filter((d: any) => d.status === 'available') || [];
   }
 
   static async matchDriver(tripId: string) {
@@ -16,8 +16,10 @@ export class TripMatchingService {
       .select('pickup_lat, pickup_lng, vehicle_type')
       .eq('id', tripId).single();
 
+    if (!trip) throw new Error('Trip not found');
+
     const drivers = await this.findNearbyDrivers(trip.pickup_lat, trip.pickup_lng);
-    const matchedDriver = drivers.find(d => d.vehicle_type === trip.vehicle_type) || drivers[0];
+    const matchedDriver = drivers.find((d: any) => d.vehicle_type === trip.vehicle_type) || drivers[0];
 
     if (matchedDriver) {
       await supabase.from('trips')

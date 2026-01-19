@@ -106,8 +106,10 @@ export class EmergencyService {
       .eq('id', tripId)
       .single();
 
+    if (!trip) throw new Error('Trip not found');
+
     const shareLink = `https://wasel.com/track/${tripId}`;
-    const message = `${trip.users.name} is sharing their trip with you. Track here: ${shareLink}. Driver: ${trip.drivers?.name}, Plate: ${trip.drivers?.vehicle_plate}`;
+    const message = `${trip.users[0]?.name} is sharing their trip with you. Track here: ${shareLink}. Driver: ${trip.drivers?.[0]?.name}, Plate: ${trip.drivers?.[0]?.vehicle_plate}`;
 
     await NotificationService.sendSMS(shareWithPhone, message);
     

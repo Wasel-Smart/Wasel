@@ -53,6 +53,8 @@ export class TrackingService {
       .select('pickup_lat, pickup_lng, base_fare')
       .eq('id', tripId).single();
 
+    if (!trip) throw new Error('Trip not found');
+
     const distance = this.calculateDistance(trip.pickup_lat, trip.pickup_lng, finalLat, finalLng);
     const fare = trip.base_fare + (distance * 2); // AED 2 per km
 

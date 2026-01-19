@@ -13,7 +13,7 @@ export class NotificationService {
       });
       return { success: true };
     } catch (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }
 
@@ -22,11 +22,13 @@ export class NotificationService {
       .select('passenger_id, driver_id, users!trips_passenger_id_fkey(phone), drivers!trips_driver_id_fkey(phone)')
       .eq('id', tripId).single();
 
-    if (type === 'passenger' && trip.users?.phone) {
-      await this.sendSMS(trip.users.phone, message);
+    if (!trip) return;
+
+    if (type === 'passenger' && trip.users?.[0]?.phone) {
+      await this.sendSMS(trip.users[0].phone, message);
     }
-    if (type === 'driver' && trip.drivers?.phone) {
-      await this.sendSMS(trip.drivers.phone, message);
+    if (type === 'driver' && trip.drivers?.[0]?.phone) {
+      await this.sendSMS(trip.drivers[0].phone, message);
     }
 
     await supabase.from('notifications').insert({
