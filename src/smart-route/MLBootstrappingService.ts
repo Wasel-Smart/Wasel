@@ -9,7 +9,7 @@ import { supabase } from '../services/api';
 import { aiService } from '../services/aiService';
 import { smartRouteIntelligence } from './SmartRouteIntelligence';
 
-interface MLWorkflow {
+export interface MLWorkflow {
   id: string;
   type: 'demand_forecasting' | 'rider_matching' | 'supply_positioning' | 'route_optimization' | 'comfort_optimization';
   status: 'pending' | 'running' | 'completed' | 'failed';
@@ -20,7 +20,7 @@ interface MLWorkflow {
   completed_at?: string;
 }
 
-interface FeatureSet {
+export interface FeatureSet {
   demand_features: {
     historical_demand: number[];
     temporal_patterns: any;
@@ -389,7 +389,9 @@ class MLBootstrappingService {
   }
 
   private async retrainModel(modelType: string): Promise<void> {
-    console.log(`Retraining model: ${modelType}`);
+    // Sanitize modelType for logging
+    const sanitizedModelType = modelType.replace(/[^a-zA-Z0-9_]/g, '');
+    console.log(`Retraining model: ${sanitizedModelType}`);
     
     // Collect fresh training data
     const trainingData = await this.collectTrainingData(modelType);
@@ -551,27 +553,27 @@ class MLBootstrappingService {
     return {};
   }
 
-  private async collectTrainingData(modelType: string): Promise<any> {
+  private async collectTrainingData(_modelType: string): Promise<any> {
     return {};
   }
 
-  private async triggerRetrainingWorkflow(modelType: string, data: any): Promise<void> {
+  private async triggerRetrainingWorkflow(_modelType: string, _data: any): Promise<void> {
     // Trigger retraining
   }
 
-  private async validateModelPerformance(modelType: string): Promise<void> {
+  private async validateModelPerformance(_modelType: string): Promise<void> {
     // Validate performance
   }
 
-  private async deployModelIfImproved(modelType: string): Promise<void> {
+  private async deployModelIfImproved(_modelType: string): Promise<void> {
     // Deploy if improved
   }
 
-  private async updateModelMetrics(feedback: any): Promise<void> {
+  private async updateModelMetrics(_feedback: any): Promise<void> {
     // Update metrics
   }
 
-  private shouldTriggerRetraining(feedback: any): boolean {
+  private shouldTriggerRetraining(_feedback: any): boolean {
     return false;
   }
 }

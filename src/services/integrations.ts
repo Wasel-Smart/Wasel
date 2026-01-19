@@ -5,57 +5,63 @@
  * Ready for production - just add API keys to environment variables.
  */
 
+/// <reference types="vite/client" />
+
 // ============ CONFIGURATION ============
+
+const getEnvVar = (key: keyof ImportMetaEnv): string => {
+  return import.meta.env[key] || '';
+};
 
 export const INTEGRATION_CONFIG = {
   // Google Maps
   googleMaps: {
-    apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
-    enabled: !!import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+    apiKey: getEnvVar('VITE_GOOGLE_MAPS_API_KEY'),
+    enabled: !!getEnvVar('VITE_GOOGLE_MAPS_API_KEY'),
   },
   
   // Stripe Payments
   stripe: {
-    publishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '',
-    enabled: !!import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY,
+    publishableKey: getEnvVar('VITE_STRIPE_PUBLISHABLE_KEY'),
+    enabled: !!getEnvVar('VITE_STRIPE_PUBLISHABLE_KEY'),
   },
   
   // Twilio (SMS/Voice)
   twilio: {
-    accountSid: import.meta.env.VITE_TWILIO_ACCOUNT_SID || '',
-    enabled: !!import.meta.env.VITE_TWILIO_ACCOUNT_SID,
+    accountSid: getEnvVar('VITE_TWILIO_ACCOUNT_SID'),
+    enabled: !!getEnvVar('VITE_TWILIO_ACCOUNT_SID'),
   },
   
   // SendGrid (Email)
   sendgrid: {
-    apiKey: import.meta.env.VITE_SENDGRID_API_KEY || '',
-    enabled: !!import.meta.env.VITE_SENDGRID_API_KEY,
+    apiKey: getEnvVar('VITE_SENDGRID_API_KEY'),
+    enabled: !!getEnvVar('VITE_SENDGRID_API_KEY'),
   },
   
   // Firebase (Push Notifications)
   firebase: {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
-    enabled: !!import.meta.env.VITE_FIREBASE_API_KEY,
+    apiKey: getEnvVar('VITE_FIREBASE_API_KEY'),
+    projectId: getEnvVar('VITE_FIREBASE_PROJECT_ID'),
+    enabled: !!getEnvVar('VITE_FIREBASE_API_KEY'),
   },
   
   // Identity Verification (Jumio)
   jumio: {
-    apiKey: import.meta.env.VITE_JUMIO_API_KEY || '',
-    apiSecret: import.meta.env.VITE_JUMIO_API_SECRET || '',
-    enabled: !!import.meta.env.VITE_JUMIO_API_KEY,
+    apiKey: getEnvVar('VITE_JUMIO_API_KEY'),
+    apiSecret: getEnvVar('VITE_JUMIO_API_SECRET'),
+    enabled: !!getEnvVar('VITE_JUMIO_API_KEY'),
   },
   
   // Analytics
   mixpanel: {
-    token: import.meta.env.VITE_MIXPANEL_TOKEN || '',
-    enabled: !!import.meta.env.VITE_MIXPANEL_TOKEN,
+    token: getEnvVar('VITE_MIXPANEL_TOKEN'),
+    enabled: !!getEnvVar('VITE_MIXPANEL_TOKEN'),
   },
   
   // Error Tracking
   sentry: {
-    dsn: import.meta.env.VITE_SENTRY_DSN || '',
-    enabled: !!import.meta.env.VITE_SENTRY_DSN,
+    dsn: getEnvVar('VITE_SENTRY_DSN'),
+    enabled: !!getEnvVar('VITE_SENTRY_DSN'),
   },
 };
 

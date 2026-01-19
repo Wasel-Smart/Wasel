@@ -9,11 +9,8 @@
  */
 
 import { supabase } from '../services/api';
-import { aiService } from '../services/aiService';
-import { realTimeTrackingService } from '../services/realTimeTracking';
-import { matchingService } from '../services/matchingService';
 
-interface SmartRouteEvent {
+export interface SmartRouteEvent {
   id: string;
   type: 'user_action' | 'rider_action' | 'system_event' | 'ml_prediction';
   source: string;
@@ -25,14 +22,14 @@ interface SmartRouteEvent {
   metadata?: any;
 }
 
-interface MLFeatures {
+export interface MLFeatures {
   user_features: Record<string, any>;
   rider_features: Record<string, any>;
   trip_features: Record<string, any>;
   contextual_features: Record<string, any>;
 }
 
-interface AutonomousDecision {
+export interface AutonomousDecision {
   id: string;
   type: 'demand_prediction' | 'dynamic_pricing' | 'smart_matching' | 'fraud_detection' | 'route_optimization';
   confidence: number;
@@ -46,7 +43,6 @@ class SmartRouteIntelligence {
   private eventBuffer: SmartRouteEvent[] = [];
   private mlFeatureStore: Map<string, MLFeatures> = new Map();
   private autonomousDecisions: AutonomousDecision[] = [];
-  private isProcessing = false;
 
   // ============ DATA CAPTURE & NORMALIZATION ============
 
@@ -496,7 +492,7 @@ class SmartRouteIntelligence {
     return cancelled / trips.length;
   }
 
-  private calculatePriceSensitivity(trips: any[]): number {
+  private calculatePriceSensitivity(_trips: any[]): number {
     // Analyze price vs booking behavior
     return 0.5; // Placeholder
   }
@@ -506,7 +502,7 @@ class SmartRouteIntelligence {
     return trips.reduce((sum, trip) => sum + (trip.fare || 0), 0);
   }
 
-  private async predictChurnProbability(userId: string): Promise<number> {
+  private async predictChurnProbability(_userId: string): Promise<number> {
     // Use AI service for churn prediction
     return 0.15; // Placeholder
   }
@@ -518,64 +514,64 @@ class SmartRouteIntelligence {
   }
 
   // Additional helper methods would be implemented here...
-  private calculateExperienceMonths(createdAt?: string): number { return 12; }
-  private calculateAverageRating(trips: any[]): number { return 4.5; }
-  private calculateCompletionRate(trips: any[]): number { return 0.95; }
-  private calculateAcceptanceRate(userId: string): number { return 0.85; }
-  private calculateDriverCancellationRate(trips: any[]): number { return 0.05; }
-  private calculatePunctualityScore(trips: any[]): number { return 0.9; }
-  private extractActiveHours(trips: any[]): number[] { return [8, 9, 17, 18]; }
-  private extractPreferredRoutes(trips: any[]): string[] { return []; }
-  private calculateEarningsPattern(trips: any[]): any { return {}; }
-  private calculateReliabilityScore(trips: any[]): number { return 0.9; }
-  private calculateEfficiencyRating(trips: any[]): number { return 0.85; }
-  private async calculateDemandMatchScore(userId: string): Promise<number> { return 0.8; }
-  private calculateRouteComplexity(trip: any): number { return 0.5; }
-  private async getTrafficLevel(from: any, to: any): Promise<number> { return 0.3; }
-  private getSeason(date: Date): string { return 'winter'; }
-  private async getWeatherConditions(location: any): Promise<any> { return {}; }
-  private async calculateSupplyRatio(location: string, time: string): Promise<number> { return 1.2; }
-  private async getCompetitionLevel(location: string): Promise<number> { return 0.6; }
-  private calculateProfitabilityScore(trip: any): number { return 0.7; }
-  private async predictCompletionProbability(trip: any): Promise<number> { return 0.9; }
-  private async predictSatisfaction(trip: any): Promise<number> { return 4.2; }
-  private async calculateSupplyDensity(location: any): Promise<number> { return 0.8; }
-  private async calculateDemandDensity(location: any): Promise<number> { return 0.6; }
-  private async getCompetitorPricing(location: any): Promise<any> { return {}; }
-  private async getNearbyEvents(location: any): Promise<any[]> { return []; }
+  private calculateExperienceMonths(_createdAt?: string): number { return 12; }
+  private calculateAverageRating(_trips: any[]): number { return 4.5; }
+  private calculateCompletionRate(_trips: any[]): number { return 0.95; }
+  private calculateAcceptanceRate(_userId: string): number { return 0.85; }
+  private calculateDriverCancellationRate(_trips: any[]): number { return 0.05; }
+  private calculatePunctualityScore(_trips: any[]): number { return 0.9; }
+  private extractActiveHours(_trips: any[]): number[] { return [8, 9, 17, 18]; }
+  private extractPreferredRoutes(_trips: any[]): string[] { return []; }
+  private calculateEarningsPattern(_trips: any[]): any { return {}; }
+  private calculateReliabilityScore(_trips: any[]): number { return 0.9; }
+  private calculateEfficiencyRating(_trips: any[]): number { return 0.85; }
+  private async calculateDemandMatchScore(_userId: string): Promise<number> { return 0.8; }
+  private calculateRouteComplexity(_trip: any): number { return 0.5; }
+  private async getTrafficLevel(_from: any, _to: any): Promise<number> { return 0.3; }
+  private getSeason(_date: Date): string { return 'winter'; }
+  private async getWeatherConditions(_location: any): Promise<any> { return {}; }
+  private async calculateSupplyRatio(_location: string, _time: string): Promise<number> { return 1.2; }
+  private async getCompetitionLevel(_location: string): Promise<number> { return 0.6; }
+  private calculateProfitabilityScore(_trip: any): number { return 0.7; }
+  private async predictCompletionProbability(_trip: any): Promise<number> { return 0.9; }
+  private async predictSatisfaction(_trip: any): Promise<number> { return 4.2; }
+  private async calculateSupplyDensity(_location: any): Promise<number> { return 0.8; }
+  private async calculateDemandDensity(_location: any): Promise<number> { return 0.6; }
+  private async getCompetitorPricing(_location: any): Promise<any> { return {}; }
+  private async getNearbyEvents(_location: any): Promise<any[]> { return []; }
   private async getFuelPrices(): Promise<number> { return 2.5; }
   private getSeasonality(): any { return {}; }
-  private async getTrends(location: any): Promise<any> { return {}; }
-  private async getCyclicalPatterns(location: any): Promise<any> { return {}; }
-  private async calculateMarketOpportunity(location: any): Promise<number> { return 0.7; }
-  private async calculateOptimalPricing(location: any): Promise<any> { return { current: 25, optimal: 28, trend: 'up', savings: 0 }; }
-  private async calculateCapacityNeeds(location: any): Promise<number> { return 1.2; }
-  private async predictDemand(context: any): Promise<any> { return {}; }
-  private async optimizePricing(context: any): Promise<any> { return {}; }
-  private async optimizeMatching(context: any): Promise<any> { return {}; }
-  private async detectFraud(context: any): Promise<any> { return {}; }
-  private async optimizeRoute(context: any): Promise<any> { return {}; }
-  private async executeDemandPrediction(recommendation: any): Promise<void> {}
-  private async executePricingUpdate(recommendation: any): Promise<void> {}
-  private async executeMatching(recommendation: any): Promise<void> {}
-  private async executeFraudPrevention(recommendation: any): Promise<void> {}
-  private async executeRouteOptimization(recommendation: any): Promise<void> {}
-  private async logDecisionExecution(decision: AutonomousDecision): Promise<void> {}
-  private async logDecisionFailure(decision: AutonomousDecision, error: any): Promise<void> {}
-  private async getOptimalTiming(location: any): Promise<any> { return { optimal: '09:00', peaks: ['08:00-10:00'], offPeaks: ['14:00-16:00'], waitTime: 5 }; }
+  private async getTrends(_location: any): Promise<any> { return {}; }
+  private async getCyclicalPatterns(_location: any): Promise<any> { return {}; }
+  private async calculateMarketOpportunity(_location: any): Promise<number> { return 0.7; }
+  private async calculateOptimalPricing(_location: any): Promise<any> { return { current: 25, optimal: 28, trend: 'up', savings: 0 }; }
+  private async calculateCapacityNeeds(_location: any): Promise<number> { return 1.2; }
+  private async predictDemand(_context: any): Promise<any> { return {}; }
+  private async optimizePricing(_context: any): Promise<any> { return {}; }
+  private async optimizeMatching(_context: any): Promise<any> { return {}; }
+  private async detectFraud(_context: any): Promise<any> { return {}; }
+  private async optimizeRoute(_context: any): Promise<any> { return {}; }
+  private async executeDemandPrediction(_recommendation: any): Promise<void> {}
+  private async executePricingUpdate(_recommendation: any): Promise<void> {}
+  private async executeMatching(_recommendation: any): Promise<void> {}
+  private async executeFraudPrevention(_recommendation: any): Promise<void> {}
+  private async executeRouteOptimization(_recommendation: any): Promise<void> {}
+  private async logDecisionExecution(_decision: AutonomousDecision): Promise<void> {}
+  private async logDecisionFailure(_decision: AutonomousDecision, _error: any): Promise<void> {}
+  private async getOptimalTiming(_location: any): Promise<any> { return { optimal: '09:00', peaks: ['08:00-10:00'], offPeaks: ['14:00-16:00'], waitTime: 5 }; }
   private calculateMarketTemperature(supply: number, demand: number): string { return supply > demand ? 'cold' : 'hot'; }
-  private generateDemandTips(supply: number, demand: number): string[] { return ['Book during off-peak hours for better prices']; }
-  private generateCostTips(pricing: any): string[] { return ['Consider flexible timing for savings']; }
-  private generateTimingTips(timing: any): string[] { return ['Best time to book is 9 AM']; }
-  private calculateOverallHealth(healths: any[]): string { return 'healthy'; }
-  private generateHealthRecommendations(health: string): string[] { return ['System operating normally']; }
+  private generateDemandTips(_supply: number, _demand: number): string[] { return ['Book during off-peak hours for better prices']; }
+  private generateCostTips(_pricing: any): string[] { return ['Consider flexible timing for savings']; }
+  private generateTimingTips(_timing: any): string[] { return ['Best time to book is 9 AM']; }
+  private calculateOverallHealth(_healths: any[]): string { return 'healthy'; }
+  private generateHealthRecommendations(_health: string): string[] { return ['System operating normally']; }
 
   // Event handlers
   private async handleTripRequest(event: SmartRouteEvent): Promise<void> {
     await this.makeAutonomousDecision('smart_matching', event.data);
   }
 
-  private async handleEmergency(event: SmartRouteEvent): Promise<void> {
+  private async handleEmergency(_event: SmartRouteEvent): Promise<void> {
     // Immediate emergency response
   }
 
@@ -583,11 +579,11 @@ class SmartRouteIntelligence {
     await this.makeAutonomousDecision('fraud_detection', event.data);
   }
 
-  private async handleFraudDetection(event: SmartRouteEvent): Promise<void> {
+  private async handleFraudDetection(_event: SmartRouteEvent): Promise<void> {
     // Immediate fraud prevention
   }
 
-  private async triggerMLWorkflows(features: MLFeatures, event: SmartRouteEvent): Promise<void> {
+  private async triggerMLWorkflows(_features: MLFeatures, _event: SmartRouteEvent): Promise<void> {
     // Trigger appropriate ML workflows based on event type
   }
 }

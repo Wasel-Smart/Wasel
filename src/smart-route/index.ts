@@ -173,7 +173,9 @@ export async function checkSmartRouteHealth(): Promise<{
 // Enable Smart Route for a user
 export async function enableSmartRouteForUser(userId: string): Promise<void> {
   try {
-    console.log(`[Smart Route] Enabling autonomous intelligence for user: ${userId}`);
+    // Sanitize userId for logging
+    const sanitizedUserId = userId.replace(/[\r\n\t]/g, '');
+    console.log(`[Smart Route] Enabling autonomous intelligence for user: ${sanitizedUserId}`);
 
     // Enable predictive matching
     await autonomousExecutionEngine.enablePredictiveMatching(userId);
@@ -189,10 +191,11 @@ export async function enableSmartRouteForUser(userId: string): Promise<void> {
       userId
     });
 
-    console.log(`[Smart Route] Autonomous intelligence enabled for user: ${userId}`);
+    console.log(`[Smart Route] Autonomous intelligence enabled for user: ${sanitizedUserId}`);
 
   } catch (error) {
-    console.error(`[Smart Route] Failed to enable for user ${userId}:`, error);
+    const sanitizedUserId = userId.replace(/[\r\n\t]/g, '');
+    console.error(`[Smart Route] Failed to enable for user ${sanitizedUserId}:`, error);
     throw error;
   }
 }
@@ -200,7 +203,9 @@ export async function enableSmartRouteForUser(userId: string): Promise<void> {
 // Enable Smart Route for a trip
 export async function enableSmartRouteForTrip(tripId: string): Promise<void> {
   try {
-    console.log(`[Smart Route] Enabling real-time adaptation for trip: ${tripId}`);
+    // Sanitize tripId for logging
+    const sanitizedTripId = tripId.replace(/[\r\n\t]/g, '');
+    console.log(`[Smart Route] Enabling real-time adaptation for trip: ${sanitizedTripId}`);
 
     // Enable real-time adaptation
     await autonomousExecutionEngine.enableRealTimeAdaptation(tripId);
@@ -213,10 +218,11 @@ export async function enableSmartRouteForTrip(tripId: string): Promise<void> {
       tripId
     });
 
-    console.log(`[Smart Route] Real-time adaptation enabled for trip: ${tripId}`);
+    console.log(`[Smart Route] Real-time adaptation enabled for trip: ${sanitizedTripId}`);
 
   } catch (error) {
-    console.error(`[Smart Route] Failed to enable for trip ${tripId}:`, error);
+    const sanitizedTripId = tripId.replace(/[\r\n\t]/g, '');
+    console.error(`[Smart Route] Failed to enable for trip ${sanitizedTripId}:`, error);
     throw error;
   }
 }
@@ -251,28 +257,29 @@ export async function getSmartRouteInsights(userId: string): Promise<any> {
     return insights;
 
   } catch (error) {
-    console.error(`[Smart Route] Failed to get insights for user ${userId}:`, error);
+    const sanitizedUserId = userId.replace(/[\r\n\t]/g, '');
+    console.error(`[Smart Route] Failed to get insights for user ${sanitizedUserId}:`, error);
     throw error;
   }
 }
 
 // Helper functions
-async function calculateTimeSaved(userId: string): Promise<number> {
+async function calculateTimeSaved(_userId: string): Promise<number> {
   // Calculate time saved through Smart Route optimizations
   return 12.5; // minutes per trip on average
 }
 
-async function calculateCostSaved(userId: string): Promise<number> {
+async function calculateCostSaved(_userId: string): Promise<number> {
   // Calculate cost saved through Smart Route optimizations
   return 3.2; // AED per trip on average
 }
 
-async function calculateComfortImprovement(userId: string): Promise<number> {
+async function calculateComfortImprovement(_userId: string): Promise<number> {
   // Calculate comfort improvement score
   return 0.23; // 23% improvement in comfort ratings
 }
 
-async function generateLearningInsights(userId: string): Promise<string[]> {
+async function generateLearningInsights(_userId: string): Promise<string[]> {
   // Generate personalized learning insights
   return [
     'Your optimal booking time is 9:00 AM for best prices',
