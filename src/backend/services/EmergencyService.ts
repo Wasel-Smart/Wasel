@@ -63,6 +63,8 @@ export class EmergencyService {
       .eq('id', tripId)
       .single();
 
+    if (!trip) return;
+
     const otherUserId = trip.passenger_id === alertUserId ? trip.driver_id : trip.passenger_id;
     
     await NotificationService.sendTripNotification(
