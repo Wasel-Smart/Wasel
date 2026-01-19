@@ -23,6 +23,10 @@ export default defineConfig({
         },
         testTimeout: 10000,
         hookTimeout: 10000,
+        // Force re-run tests
+        cache: false,
+        // Enable watch mode debugging
+        reporter: ['verbose'],
     },
     resolve: {
         alias: {

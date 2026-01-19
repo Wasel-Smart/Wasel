@@ -1,0 +1,160 @@
+{
+  "wasel_service_fingerprint": {
+    "timestamp": "2026-01-02T00:00:00Z",
+    "version": "1.0.0",
+    "total_services": 47,
+    "core_services": {
+      "api": {
+        "type": "core",
+        "endpoints": 8,
+        "auth_required": true,
+        "rls_enabled": true,
+        "inputs": ["email", "password", "trip_data", "booking_data", "message_data"],
+        "outputs": ["user_session", "trip_results", "booking_confirmation", "message_thread"],
+        "data_schemas": ["User", "Trip", "Booking", "Message", "Wallet", "Notification"],
+        "async_events": ["trip_created", "booking_confirmed", "message_sent"],
+        "dependencies": ["supabase", "auth"]
+      },
+      "ai_service": {
+        "type": "intelligence",
+        "features": 8,
+        "ml_models": ["gpt-4-turbo", "xgboost-v2", "random-forest-v3", "bert-multilingual"],
+        "inputs": ["route_query", "trip_data", "user_behavior", "location_data"],
+        "outputs": ["route_suggestions", "dynamic_pricing", "risk_score", "recommendations"],
+        "data_schemas": ["AIRequest", "AIResponse", "AILog", "AIConfig"],
+        "async_events": ["ai_prediction", "risk_detected", "recommendation_generated"],
+        "dependencies": ["api", "supabase"],
+        "fallback_enabled": true
+      },
+      "real_time_tracking": {
+        "type": "operational",
+        "channels": ["location", "trip_status", "emergency"],
+        "inputs": ["gps_coordinates", "trip_id", "user_id"],
+        "outputs": ["location_updates", "eta_calculations", "geofence_alerts"],
+        "data_schemas": ["LocationUpdate", "TripStatus"],
+        "async_events": ["location_broadcast", "sos_triggered", "geofence_entered"],
+        "dependencies": ["supabase_realtime", "geolocation_api"]
+      },
+      "payment_service": {
+        "type": "financial",
+        "processors": ["stripe", "wallet"],
+        "inputs": ["payment_intent", "amount", "currency", "user_id"],
+        "outputs": ["payment_confirmation", "transaction_record", "refund_status"],
+        "data_schemas": ["Transaction", "WalletBalance", "PaymentCard"],
+        "async_events": ["payment_processed", "refund_issued", "wallet_updated"],
+        "dependencies": ["stripe_api", "supabase"]
+      },
+      "matching_service": {
+        "type": "algorithmic",
+        "algorithms": ["compatibility_scoring", "route_optimization", "preference_matching"],
+        "inputs": ["user_preferences", "route_data", "trip_criteria"],
+        "outputs": ["match_scores", "compatibility_reasons", "ranked_matches"],
+        "data_schemas": ["TripMatch", "UserPreferences", "RoutePoint"],
+        "async_events": ["match_found", "compatibility_calculated"],
+        "dependencies": ["ai_service", "api"]
+      }
+    },
+    "specialized_services": {
+      "hero_service": {
+        "type": "community",
+        "scope": "task_delivery",
+        "inputs": ["task_description", "location", "reward"],
+        "outputs": ["task_matches", "completion_status"],
+        "dependencies": ["matching_service", "payment_service"]
+      },
+      "package_service": {
+        "type": "logistics",
+        "scope": "delivery",
+        "inputs": ["package_details", "pickup_location", "delivery_location"],
+        "outputs": ["captain_matches", "tracking_code", "delivery_status"],
+        "dependencies": ["matching_service", "real_time_tracking"]
+      },
+      "scooter_service": {
+        "type": "mobility",
+        "scope": "micro_mobility",
+        "inputs": ["location", "battery_requirement", "duration"],
+        "outputs": ["available_scooters", "rental_session", "usage_analytics"],
+        "dependencies": ["real_time_tracking", "payment_service"]
+      },
+      "school_transport": {
+        "type": "specialized_mobility",
+        "scope": "education",
+        "inputs": ["route_data", "student_list", "schedule"],
+        "outputs": ["route_optimization", "parent_notifications", "safety_reports"],
+        "dependencies": ["real_time_tracking", "notification_service"]
+      }
+    },
+    "integration_services": {
+      "google_maps": {
+        "type": "external",
+        "apis": ["geocoding", "directions", "places", "distance_matrix"],
+        "rate_limits": "1000_requests_per_day",
+        "fallback": "openstreetmap"
+      },
+      "stripe": {
+        "type": "external",
+        "apis": ["payment_intents", "customers", "refunds"],
+        "webhooks": ["payment_succeeded", "payment_failed"],
+        "fallback": "wallet_system"
+      },
+      "twilio": {
+        "type": "external",
+        "apis": ["sms", "voice", "verify"],
+        "use_cases": ["otp", "emergency", "notifications"],
+        "fallback": "email_service"
+      },
+      "firebase": {
+        "type": "external",
+        "apis": ["push_notifications", "cloud_messaging"],
+        "platforms": ["web", "ios", "android"],
+        "fallback": "in_app_notifications"
+      }
+    },
+    "data_flow_patterns": {
+      "user_journey": [
+        "authentication",
+        "service_discovery",
+        "request_creation",
+        "matching",
+        "confirmation",
+        "execution",
+        "completion",
+        "rating"
+      ],
+      "real_time_flows": [
+        "location_tracking",
+        "status_updates",
+        "messaging",
+        "notifications"
+      ],
+      "ml_pipelines": [
+        "data_ingestion",
+        "feature_extraction",
+        "model_inference",
+        "feedback_loop"
+      ]
+    },
+    "autonomous_capabilities": {
+      "demand_prediction": {
+        "inputs": ["historical_trips", "weather", "events", "time_patterns"],
+        "models": ["time_series_lstm", "demand_forecasting"],
+        "outputs": ["demand_heatmaps", "supply_recommendations"]
+      },
+      "dynamic_pricing": {
+        "inputs": ["demand", "supply", "competition", "user_behavior"],
+        "models": ["xgboost_pricing", "reinforcement_learning"],
+        "outputs": ["optimal_prices", "price_elasticity"]
+      },
+      "smart_matching": {
+        "inputs": ["user_preferences", "driver_profiles", "route_compatibility"],
+        "models": ["graph_neural_network", "collaborative_filtering"],
+        "outputs": ["match_scores", "compatibility_reasons"]
+      },
+      "fraud_detection": {
+        "inputs": ["user_behavior", "transaction_patterns", "device_fingerprints"],
+        "models": ["anomaly_detection", "random_forest"],
+        "outputs": ["risk_scores", "fraud_alerts"]
+      }
+    }
+  }
+}

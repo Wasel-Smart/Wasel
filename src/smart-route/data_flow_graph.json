@@ -1,0 +1,172 @@
+{
+  "wasel_data_flow_graph": {
+    "timestamp": "2026-01-02T00:00:00Z",
+    "version": "1.0.0",
+    "data_sources": {
+      "user_interactions": {
+        "events": ["search", "filter", "submit", "cancel", "rate", "message"],
+        "frequency": "real_time",
+        "volume": "high",
+        "retention": "permanent",
+        "ml_features": ["intent", "preferences", "behavior_patterns", "satisfaction"]
+      },
+      "rider_actions": {
+        "events": ["availability_toggle", "trip_accept", "trip_reject", "location_update"],
+        "frequency": "real_time", 
+        "volume": "medium",
+        "retention": "permanent",
+        "ml_features": ["reliability_score", "acceptance_rate", "location_patterns"]
+      },
+      "route_telemetry": {
+        "events": ["gps_update", "speed_change", "route_deviation", "eta_update"],
+        "frequency": "5_seconds",
+        "volume": "very_high",
+        "retention": "30_days",
+        "ml_features": ["efficiency_score", "deviation_patterns", "traffic_insights"]
+      },
+      "transaction_data": {
+        "events": ["payment_attempt", "payment_success", "payment_failure", "refund"],
+        "frequency": "per_transaction",
+        "volume": "medium",
+        "retention": "7_years",
+        "ml_features": ["fraud_indicators", "payment_patterns", "risk_factors"]
+      },
+      "system_metrics": {
+        "events": ["api_calls", "response_times", "error_rates", "resource_usage"],
+        "frequency": "1_minute",
+        "volume": "high",
+        "retention": "90_days",
+        "ml_features": ["performance_trends", "anomaly_detection", "capacity_planning"]
+      }
+    },
+    "data_pipelines": {
+      "real_time_stream": {
+        "sources": ["user_interactions", "rider_actions", "route_telemetry"],
+        "processing": "stream_processing",
+        "destinations": ["ml_inference", "real_time_dashboard", "notification_triggers"],
+        "latency": "<1_second",
+        "transformations": ["normalization", "feature_extraction", "anomaly_detection"]
+      },
+      "batch_processing": {
+        "sources": ["transaction_data", "system_metrics", "historical_trips"],
+        "processing": "daily_batch",
+        "destinations": ["ml_training", "analytics_warehouse", "reporting"],
+        "latency": "24_hours",
+        "transformations": ["aggregation", "feature_engineering", "data_quality_checks"]
+      },
+      "ml_training_pipeline": {
+        "sources": ["all_data_sources"],
+        "processing": "weekly_retrain",
+        "destinations": ["model_registry", "a_b_testing", "production_deployment"],
+        "latency": "weekly",
+        "transformations": ["feature_selection", "model_training", "validation", "deployment"]
+      }
+    },
+    "ml_feature_store": {
+      "user_features": {
+        "demographic": ["age_group", "location", "language", "device_type"],
+        "behavioral": ["trip_frequency", "preferred_times", "cancellation_rate", "rating_given"],
+        "preferences": ["vehicle_type", "price_sensitivity", "comfort_preferences"],
+        "derived": ["lifetime_value", "churn_probability", "satisfaction_score"]
+      },
+      "rider_features": {
+        "profile": ["experience_months", "vehicle_type", "rating_received", "completion_rate"],
+        "performance": ["acceptance_rate", "cancellation_rate", "punctuality_score"],
+        "behavioral": ["active_hours", "preferred_routes", "earnings_pattern"],
+        "derived": ["reliability_score", "efficiency_rating", "demand_match_score"]
+      },
+      "trip_features": {
+        "route": ["distance", "duration", "complexity", "traffic_level"],
+        "temporal": ["time_of_day", "day_of_week", "season", "weather"],
+        "demand": ["supply_ratio", "surge_multiplier", "competition_level"],
+        "derived": ["profitability_score", "completion_probability", "satisfaction_prediction"]
+      },
+      "contextual_features": {
+        "market": ["supply_density", "demand_density", "competitor_pricing"],
+        "external": ["weather", "events", "traffic", "fuel_prices"],
+        "temporal": ["seasonality", "trends", "cyclical_patterns"],
+        "derived": ["market_opportunity", "optimal_pricing", "capacity_needs"]
+      }
+    },
+    "autonomous_decision_flows": {
+      "demand_prediction": {
+        "trigger": "every_15_minutes",
+        "inputs": ["historical_demand", "weather", "events", "time_patterns"],
+        "processing": "lstm_forecasting",
+        "outputs": ["demand_heatmap", "supply_recommendations", "pricing_adjustments"],
+        "actions": ["notify_drivers", "adjust_incentives", "pre_position_supply"]
+      },
+      "dynamic_pricing": {
+        "trigger": "demand_change_detected",
+        "inputs": ["current_demand", "supply_availability", "competitor_prices"],
+        "processing": "reinforcement_learning",
+        "outputs": ["optimal_price", "price_elasticity", "revenue_impact"],
+        "actions": ["update_pricing", "notify_users", "track_conversion"]
+      },
+      "smart_matching": {
+        "trigger": "trip_request_received",
+        "inputs": ["user_preferences", "available_drivers", "route_compatibility"],
+        "processing": "graph_neural_network",
+        "outputs": ["match_scores", "compatibility_reasons", "eta_predictions"],
+        "actions": ["auto_assign", "send_notifications", "track_acceptance"]
+      },
+      "fraud_detection": {
+        "trigger": "transaction_initiated",
+        "inputs": ["user_behavior", "device_fingerprint", "transaction_pattern"],
+        "processing": "anomaly_detection",
+        "outputs": ["risk_score", "fraud_probability", "recommended_action"],
+        "actions": ["block_transaction", "require_verification", "flag_for_review"]
+      },
+      "route_optimization": {
+        "trigger": "trip_started",
+        "inputs": ["current_location", "destination", "traffic_data", "user_preferences"],
+        "processing": "pathfinding_algorithm",
+        "outputs": ["optimal_route", "eta_update", "alternative_routes"],
+        "actions": ["update_navigation", "notify_passenger", "adjust_pricing"]
+      }
+    },
+    "feedback_loops": {
+      "user_satisfaction": {
+        "input": "trip_ratings",
+        "processing": "sentiment_analysis",
+        "output": "satisfaction_trends",
+        "action": "service_improvements"
+      },
+      "pricing_optimization": {
+        "input": "conversion_rates",
+        "processing": "price_elasticity_analysis",
+        "output": "optimal_pricing_strategy",
+        "action": "pricing_model_updates"
+      },
+      "matching_accuracy": {
+        "input": "match_success_rates",
+        "processing": "model_performance_analysis",
+        "output": "matching_improvements",
+        "action": "algorithm_refinements"
+      },
+      "fraud_prevention": {
+        "input": "fraud_detection_results",
+        "processing": "false_positive_analysis",
+        "output": "model_calibration",
+        "action": "threshold_adjustments"
+      }
+    },
+    "data_quality_monitoring": {
+      "completeness": {
+        "metrics": ["missing_values", "null_rates", "data_coverage"],
+        "thresholds": {"missing_values": "<5%", "null_rates": "<2%"},
+        "actions": ["data_imputation", "source_investigation", "alert_generation"]
+      },
+      "accuracy": {
+        "metrics": ["data_validation", "consistency_checks", "outlier_detection"],
+        "thresholds": {"validation_pass_rate": ">95%", "outliers": "<1%"},
+        "actions": ["data_correction", "source_validation", "quality_reports"]
+      },
+      "timeliness": {
+        "metrics": ["data_freshness", "processing_delays", "update_frequency"],
+        "thresholds": {"freshness": "<5_minutes", "delays": "<30_seconds"},
+        "actions": ["pipeline_optimization", "alert_generation", "fallback_activation"]
+      }
+    }
+  }
+}
