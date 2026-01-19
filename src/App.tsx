@@ -1,9 +1,11 @@
-import { Suspense, lazy, useState, memo, useCallback } from 'react';
+import { Suspense, lazy, useState, memo, useCallback, useEffect } from 'react';
 import { InstallPWA } from './components/InstallPWA';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { AIProvider } from './contexts/AIContext';
 import { Toaster } from './components/ui/sonner';
+import { setupGlobalErrorHandling } from './utils/errorHandler';
+import { systemMonitor } from './utils/systemMonitor';
 
 // Core components (loaded immediately for critical path)
 import { Sidebar } from './components/Sidebar';
@@ -319,6 +321,18 @@ function AppContent() {
 const MemoizedAppContent = memo(AppContent);
 
 export default function App() {
+  // Initialize system monitoring and error handling
+  useEffect(() => {
+    setupGlobalErrorHandling();
+    
+    // Start health monitoring
+    const healthInterval = setInterval(() => {
+      systemMonitor.performHealthCheck().catch(console.error);
+    }, 60000); // Every minute
+    
+    return () => clearInterval(healthInterval);
+  }, []);
+
   return (
     <LanguageProvider>
       <AuthProvider>
