@@ -2,7 +2,7 @@
  * System Health Monitor - Production Ready
  */
 
-import { supabase } from '../utils/supabase/client';
+import { supabase } from '../services/api';
 import { dbOptimizer } from './dbOptimizer';
 import { checkIntegrationStatus } from '../services/integrations';
 
