@@ -22,7 +22,8 @@ import {
   Gift,
   CircleX,
   Bus,
-  Users
+  Users,
+  TrendingUp
 } from 'lucide-react';
 import { Logo } from './Logo';
 import { Separator } from './ui/separator';
@@ -53,6 +54,7 @@ const specialServicesItems = [
 
 const accountMenuItems = [
   { id: 'profile', icon: UserCog },
+  { id: 'growth-analytics', icon: TrendingUp, label: 'Growth Analytics' },
   { id: 'analytics', icon: BarChart3 },
   { id: 'payments', icon: CreditCard },
   { id: 'notifications', icon: BellDot },
@@ -186,7 +188,7 @@ export function Sidebar({ currentPage, onNavigate, isOpen, onClose }: SidebarPro
                     `}
                   >
                     <Icon className="size-5 flex-shrink-0" />
-                    <span>{t(`sidebar.${item.id.replace('-', '')}`)}</span>
+                    <span>{(item as any).label || t(`sidebar.${item.id.replace('-', '')}`)}</span>
                   </button>
                 );
               })}

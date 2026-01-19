@@ -78,6 +78,9 @@ const FloatingActionButton = lazy(() => import('./components/premium/FloatingAct
 const VoiceAssistant = lazy(() => import('./components/advanced/VoiceAssistant').then(m => ({ default: m.VoiceAssistant })));
 const RideSocial = lazy(() => import('./components/social/RideSocial').then(m => ({ default: m.RideSocial })));
 
+// Analytics & Growth
+const Analytics = lazy(() => import('./components/Analytics').then(m => ({ default: m.Analytics })));
+
 // Loading spinner component for Suspense fallback
 const LoadingSpinner = memo(() => (
   <div className="flex h-full min-h-[200px] items-center justify-center">
@@ -173,6 +176,8 @@ const PageRenderer = memo(({ currentPage, onNavigate }: { currentPage: string; o
       return <PrivacyPolicy />;
     case 'ride-social':
       return <RideSocial />;
+    case 'growth-analytics':
+      return <Analytics />;
     default:
       return <EnhancedDashboard onNavigate={onNavigate} />;
   }
