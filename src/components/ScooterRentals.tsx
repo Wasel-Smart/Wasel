@@ -71,18 +71,18 @@ export function ScooterRentals() {
       toast.error('Please sign in to rent a scooter');
       return;
     }
-    
+
     setIsUnlocking(true);
-    
+
     try {
       const rental = await scooterService.unlockScooter(selectedScooter.id);
-      
+
       setActiveRide({
         rental,
         startTime: Date.now(),
         scooter: selectedScooter
       });
-      
+
       toast.success('Scooter unlocked! Enjoy your ride.');
       setSelectedScooter(null);
       loadNearbyScooters(); // Refresh list
@@ -95,13 +95,13 @@ export function ScooterRentals() {
 
   const handleEndRide = async () => {
     if (!activeRide) return;
-    
+
     try {
       const { cost } = await scooterService.endRide(
         activeRide.rental.id,
         { lat: 25.2048, lng: 55.2708 } // In production, get from GPS
       );
-      
+
       toast.success(`Ride ended. Total: AED ${cost.toFixed(2)}. Payment processed.`);
       setActiveRide(null);
       setRideDuration(0);
@@ -119,60 +119,46 @@ export function ScooterRentals() {
 
   const mainServiceContent = (
     <div className="h-[calc(100vh-80px)] flex flex-col relative bg-gray-50 dark:bg-gray-900">
-      
+
       {/* Map Layer */}
       <div className="flex-1 relative z-0">
-        <MapComponent className="w-full h-full" />
-        
-        {/* Scooter Markers */}
-        <div className="absolute inset-0 pointer-events-none">
-          {scooters.map((scooter) => (
-             // Simple positioning simulation for demo purposes
-             // In a real app, these would be rendered by the MapComponent based on coords
-            <div 
-              key={scooter.id}
-              className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer pointer-events-auto transition-transform hover:scale-110"
-              style={{ 
-                top: `${50 + (scooter.lat - 25.2048) * 1000}%`, 
-                left: `${50 + (scooter.lng - 55.2708) * 1000}%` 
-              }}
-              onClick={() => setSelectedScooter(scooter)}
-            >
-              <div className={`
-                w-10 h-10 rounded-full flex items-center justify-center shadow-lg border-2 border-white
-                ${scooter.status === 'low-battery' ? 'bg-red-500' : 'bg-green-500'}
-              `}>
-                <Bike className="w-5 h-5 text-white" />
-              </div>
-            </div>
-          ))}
-        </div>
+        <MapComponent
+          className="w-full h-full"
+          locations={scooters.map(s => ({
+            lat: s.lat,
+            lng: s.lng,
+            label: s.code,
+            type: 'scooter',
+            data: s
+          }))}
+          onLocationClick={(loc) => setSelectedScooter(loc.data as Scooter)}
+        />
       </div>
 
       {/* UI Overlays */}
       <div className="absolute top-4 left-4 right-4 z-10 flex justify-between pointer-events-none">
         <Card className="pointer-events-auto bg-white/90 backdrop-blur-md shadow-lg border-0">
           <CardContent className="p-4 flex items-center gap-3">
-             <div className="p-2 bg-green-100 rounded-lg">
-                <Bike className="w-5 h-5 text-green-600" />
-             </div>
-             <div>
-               <p className="font-bold text-sm">Nearby Scooters</p>
-               <p className="text-xs text-muted-foreground">{MOCK_SCOOTERS.filter(s => s.status === 'available').length} available</p>
-             </div>
+            <div className="p-2 bg-green-100 rounded-lg">
+              <Bike className="w-5 h-5 text-green-600" />
+            </div>
+            <div>
+              <p className="font-bold text-sm">Nearby Scooters</p>
+              <p className="text-xs text-muted-foreground">{scooters.filter(s => s.status === 'available').length} available</p>
+            </div>
           </CardContent>
         </Card>
-        
+
         {activeRide && (
           <Card className="pointer-events-auto bg-green-600 text-white shadow-lg border-0 animate-pulse">
             <CardContent className="p-4 flex items-center gap-4">
-               <div>
-                 <p className="text-xs text-green-100 uppercase font-bold">Ride Time</p>
-                 <p className="font-mono text-2xl font-bold">{formatTime(rideDuration)}</p>
-               </div>
-               <Button variant="secondary" size="sm" onClick={handleEndRide} className="bg-white text-green-700 hover:bg-green-50">
-                 End Ride
-               </Button>
+              <div>
+                <p className="text-xs text-green-100 uppercase font-bold">Ride Time</p>
+                <p className="font-mono text-2xl font-bold">{formatTime(rideDuration)}</p>
+              </div>
+              <Button variant="secondary" size="sm" onClick={handleEndRide} className="bg-white text-green-700 hover:bg-green-50">
+                End Ride
+              </Button>
             </CardContent>
           </Card>
         )}
@@ -214,7 +200,7 @@ export function ScooterRentals() {
                 </div>
 
                 <div className="flex gap-3">
-                  <Button 
+                  <Button
                     className="flex-1 h-12 text-lg bg-green-600 hover:bg-green-700"
                     onClick={handleUnlock}
                     disabled={isUnlocking || selectedScooter.status === 'low-battery'}
@@ -228,8 +214,8 @@ export function ScooterRentals() {
                       </>
                     )}
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="h-12 aspect-square"
                     onClick={() => setSelectedScooter(null)}
                   >
@@ -245,8 +231,8 @@ export function ScooterRentals() {
       {/* Floating Scan Button (when nothing selected) */}
       {!selectedScooter && !activeRide && (
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
-          <Button 
-            size="lg" 
+          <Button
+            size="lg"
             className="h-16 rounded-full px-8 shadow-2xl bg-gradient-to-r from-green-500 to-emerald-600 hover:scale-105 transition-transform"
             onClick={() => toast.info('Point camera at scooter QR code')}
           >

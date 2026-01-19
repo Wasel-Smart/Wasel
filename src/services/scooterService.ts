@@ -42,12 +42,36 @@ class ScooterService {
       minBattery: 20
     });
 
-    if (!response.success || !response.data) {
+    if (!response.success || !response.data || response.data.length === 0) {
       // Return mock data for now (until database is populated)
       return this.getMockScooters(lat, lng);
     }
 
-    return response.data;
+    // Map database fields to interface
+    return response.data.map((item: any) => ({
+      id: item.id,
+      code: item.code,
+      battery: item.battery,
+      range: item.range_km || item.range || 0,
+      lat: item.lat || (item.location ? this.extractLat(item.location) : 0),
+      lng: item.lng || (item.location ? this.extractLng(item.location) : 0),
+      pricePerMin: item.price_per_min || item.pricePerMin || 1.0,
+      status: item.status
+    }));
+  }
+
+  private extractLat(location: any): number {
+    if (typeof location === 'string' && location.startsWith('POINT')) {
+      return parseFloat(location.split('(')[1].split(')')[0].split(' ')[1]);
+    }
+    return 0;
+  }
+
+  private extractLng(location: any): number {
+    if (typeof location === 'string' && location.startsWith('POINT')) {
+      return parseFloat(location.split('(')[1].split(')')[0].split(' ')[0]);
+    }
+    return 0;
   }
 
   /**

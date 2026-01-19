@@ -57,7 +57,7 @@ async function getUserId() {
  * Provides consistent API for all Wasel services
  */
 export class ServiceFactory {
-  
+
   // ==================== STAGE 1: DISCOVER ====================
   /**
    * Discover available service providers/options
@@ -65,7 +65,7 @@ export class ServiceFactory {
   static async discover(type: ServiceType, filters: any = {}): Promise<ServiceResponse> {
     try {
       const token = await getAuthToken();
-      
+
       switch (type) {
         case 'scooter':
           return await this.discoverScooters(filters);
@@ -84,13 +84,25 @@ export class ServiceFactory {
   }
 
   private static async discoverScooters(filters: any) {
-    const { data, error } = await supabase
-      .from('scooters')
-      .select('*')
-      .eq('status', 'available')
-      .gte('battery', filters.minBattery || 20);
+    const { data, error } = await supabase.rpc('get_nearby_scooters', {
+      user_lat: filters.lat || 25.2048,
+      user_lng: filters.lng || 55.2708,
+      radius_km: filters.radius || 2
+    });
 
-    if (error) throw error;
+    if (error) {
+      console.warn('RPC get_nearby_scooters failed, falling back to basic query:', error);
+      // Fallback to basic query if RPC is not available
+      const { data: fallbackData, error: fallbackError } = await supabase
+        .from('scooters')
+        .select('*')
+        .eq('status', 'available')
+        .gte('battery', filters.minBattery || 20);
+
+      if (fallbackError) throw fallbackError;
+      return { success: true, data: fallbackData };
+    }
+
     return { success: true, data };
   }
 
@@ -152,7 +164,7 @@ export class ServiceFactory {
   static async request(serviceRequest: ServiceRequest): Promise<ServiceResponse> {
     try {
       const userId = await getUserId();
-      
+
       switch (serviceRequest.type) {
         case 'scooter':
           return await this.requestScooter(userId, serviceRequest.details);
@@ -265,7 +277,7 @@ export class ServiceFactory {
     const pricePerMin = details.pricePerMin || 1.0;
     const basePrice = 5; // Unlock fee
     const total = basePrice + (durationMinutes * pricePerMin);
-    
+
     return {
       success: true,
       data: {
@@ -279,17 +291,17 @@ export class ServiceFactory {
 
   private static calculatePackagePrice(details: any) {
     const { packageSize, distanceKm } = details;
-    
+
     const sizePricing: Record<string, number> = {
       small: 15,
       medium: 35,
       large: 60
     };
-    
+
     const basePrice = sizePricing[packageSize] || 35;
     const distancePrice = (distanceKm || 10) * 2; // AED 2 per km
     const total = basePrice + distancePrice;
-    
+
     return {
       success: true,
       data: {
@@ -310,7 +322,7 @@ export class ServiceFactory {
     const basePrice = 10;
     const total = basePrice + (distanceKm * pricePerKm);
     const pricePerSeat = total / (seats || 1);
-    
+
     return {
       success: true,
       data: {
@@ -326,7 +338,7 @@ export class ServiceFactory {
     const { students, days } = details;
     const pricePerStudentPerDay = 25;
     const monthlyTotal = students * days.length * pricePerStudentPerDay * 4; // 4 weeks
-    
+
     return {
       success: true,
       data: {
@@ -424,11 +436,13 @@ export class ServiceFactory {
   static async start(type: ServiceType, id: string): Promise<ServiceResponse> {
     try {
       const tableName = this.getTableName(type);
+      const timeColumn = type === 'scooter' ? 'start_time' : 'started_at';
+
       const { data, error } = await supabase
         .from(tableName)
         .update({
           status: 'active',
-          started_at: new Date().toISOString()
+          [timeColumn]: new Date().toISOString()
         })
         .eq('id', id)
         .select()
@@ -445,11 +459,13 @@ export class ServiceFactory {
   static async complete(type: ServiceType, id: string, completionDetails?: any): Promise<ServiceResponse> {
     try {
       const tableName = this.getTableName(type);
+      const timeColumn = type === 'scooter' ? 'end_time' : 'completed_at';
+
       const { data, error } = await supabase
         .from(tableName)
         .update({
           status: 'completed',
-          completed_at: new Date().toISOString(),
+          [timeColumn]: new Date().toISOString(),
           ...completionDetails
         })
         .eq('id', id)
