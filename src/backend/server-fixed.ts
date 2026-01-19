@@ -441,7 +441,7 @@ app.use('*', (req: Request, res: Response) => {
   res.status(404).json({ error: 'Endpoint not found' });
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 server.listen(PORT, () => {
   console.log(`🚀 Wasel Backend ready on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
