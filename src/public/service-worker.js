@@ -178,8 +178,16 @@ async function syncTrips() {
     // Get pending trips from IndexedDB
     const pendingTrips = await getPendingTrips();
     
+    if (!pendingTrips || pendingTrips.length === 0) {
+      return;
+    }
+    
     // Get CSRF token from storage or generate one
     const csrfToken = await getCSRFToken();
+    
+    if (!csrfToken) {
+      throw new Error('CSRF token not available');
+    }
     
     // Send each trip to server with proper security headers
     for (const trip of pendingTrips) {
@@ -189,16 +197,31 @@ async function syncTrips() {
         continue;
       }
       
-      await fetch('/api/trips', {
+      // Validate URL is same-origin
+      const apiUrl = new URL('/api/trips', self.location.origin);
+      
+      const response = await fetch(apiUrl.href, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRF-Token': csrfToken,
           'X-Requested-With': 'XMLHttpRequest',
+          'Origin': self.location.origin,
         },
         credentials: 'same-origin',
+        mode: 'same-origin',
         body: JSON.stringify(trip),
       });
+      
+      // Validate response
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      // Verify response is from expected origin
+      if (response.url && !response.url.startsWith(self.location.origin)) {
+        throw new Error('Response from unexpected origin');
+      }
     }
     
     // Clear pending trips
@@ -274,18 +297,34 @@ self.addEventListener('periodicsync', (event) => {
 
 async function updateTrips() {
   try {
+    // Validate URL is same-origin
+    const updatesUrl = new URL('/api/trips/updates', self.location.origin);
+    
     // Fetch latest trip updates with proper security headers
-    const response = await fetch('/api/trips/updates', {
+    const response = await fetch(updatesUrl.href, {
       method: 'GET',
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
+        'Origin': self.location.origin,
       },
       credentials: 'same-origin',
+      mode: 'same-origin',
     });
     
     // Validate response
-    if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) {
-      throw new Error('Invalid response from server');
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    // Verify response is from expected origin
+    if (response.url && !response.url.startsWith(self.location.origin)) {
+      throw new Error('Updates response from unexpected origin');
+    }
+    
+    // Validate content type
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Invalid content type for updates response');
     }
     
     const updates = await response.json();
@@ -302,10 +341,13 @@ async function updateTrips() {
     // Notify clients of updates
     const clients = await self.clients.matchAll();
     clients.forEach(client => {
-      client.postMessage({
-        type: 'TRIPS_UPDATED',
-        data: updates,
-      });
+      // Validate client origin before sending message
+      if (client.url && client.url.startsWith(self.location.origin)) {
+        client.postMessage({
+          type: 'TRIPS_UPDATED',
+          data: updates,
+        });
+      }
     });
   } catch (error) {
     console.error('Update failed:', error);
@@ -343,11 +385,40 @@ self.addEventListener('message', (event) => {
 // Security helper functions
 async function getCSRFToken() {
   try {
-    const response = await fetch('/api/csrf-token', {
+    // Validate URL is same-origin
+    const tokenUrl = new URL('/api/csrf-token', self.location.origin);
+    
+    const response = await fetch(tokenUrl.href, {
       method: 'GET',
       credentials: 'same-origin',
+      mode: 'same-origin',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      },
     });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    // Verify response is from expected origin
+    if (response.url && !response.url.startsWith(self.location.origin)) {
+      throw new Error('CSRF token response from unexpected origin');
+    }
+    
+    // Validate content type
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Invalid content type for CSRF token response');
+    }
+    
     const data = await response.json();
+    
+    // Validate token format
+    if (!data.token || typeof data.token !== 'string' || data.token.length < 16) {
+      throw new Error('Invalid CSRF token format');
+    }
+    
     return data.token;
   } catch (error) {
     console.error('Failed to get CSRF token:', error);
