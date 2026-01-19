@@ -142,10 +142,10 @@ export function EnhancedDashboard({ onNavigate }: EnhancedDashboardProps) {
               <Award className="w-4 h-4 mr-2" />
               Premium Member
             </Badge>
-            <h1 className="text-4xl md:text-5xl font-bold mb-3 tracking-tight">
+            <h1 className="text-3xl md:text-5xl font-bold mb-3 tracking-tight">
               Welcome back! 👋
             </h1>
-            <p className="text-xl text-white/90 mb-6 font-light">
+            <p className="text-lg md:text-xl text-white/90 mb-8 font-light">
               Where would you like to go today?
             </p>
           </motion.div>
@@ -154,11 +154,11 @@ export function EnhancedDashboard({ onNavigate }: EnhancedDashboardProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="flex flex-wrap gap-3"
+            className="flex flex-col sm:flex-row gap-4"
           >
             <Button
               size="lg"
-              className="bg-white text-[#008080] hover:bg-white/90 font-bold border-0 shadow-lg"
+              className="bg-white text-[#008080] hover:bg-white/90 font-bold border-0 shadow-lg h-12 md:h-14"
               onClick={() => onNavigate('find-ride')}
             >
               <Car className="w-5 h-5 mr-2" />
@@ -167,7 +167,7 @@ export function EnhancedDashboard({ onNavigate }: EnhancedDashboardProps) {
             <Button
               size="lg"
               variant="outline"
-              className="border-white/30 bg-white/10 backdrop-blur-xl text-white hover:bg-white/20 font-medium"
+              className="border-white/30 bg-white/10 backdrop-blur-xl text-white hover:bg-white/20 font-medium h-12 md:h-14"
               onClick={() => onNavigate('scheduled-trips')}
             >
               <Calendar className="w-5 h-5 mr-2" />
@@ -182,28 +182,28 @@ export function EnhancedDashboard({ onNavigate }: EnhancedDashboardProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.35 }}
-        className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-200 dark:border-emerald-800 p-6 flex flex-col md:flex-row items-center justify-between gap-6"
+        className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-200 dark:border-emerald-800 p-5 md:p-6 flex flex-col md:flex-row items-center justify-between gap-6"
       >
-        <div className="flex items-center gap-5">
-          <div className="w-16 h-16 rounded-full bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
-            <Zap className="w-8 h-8 text-white animate-pulse" />
+        <div className="flex items-center gap-4 md:gap-5">
+          <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/30 flex-shrink-0">
+            <Zap className="w-7 h-7 md:w-8 md:h-8 text-white animate-pulse" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-emerald-800 dark:text-emerald-400">Green Mining Rewards</h3>
-            <p className="text-emerald-700/80 dark:text-emerald-400/60 font-medium">You've earned 450 credits from eco-trips!</p>
+            <h3 className="text-lg md:text-xl font-bold text-emerald-800 dark:text-emerald-400">Green Mining Rewards</h3>
+            <p className="text-xs md:text-sm text-emerald-700/80 dark:text-emerald-400/60 font-medium">You've earned 450 credits from eco-trips!</p>
           </div>
         </div>
-        <div className="flex gap-4">
-          <div className="text-center px-4 py-2 bg-white/50 dark:bg-slate-900/50 rounded-xl border border-emerald-100 dark:border-emerald-800">
-            <span className="block text-2xl font-black text-emerald-600">450</span>
+        <div className="flex flex-wrap justify-center gap-3 md:gap-4 w-full md:w-auto">
+          <div className="flex-1 md:flex-none text-center px-4 py-2 bg-white/50 dark:bg-slate-900/50 rounded-xl border border-emerald-100 dark:border-emerald-800">
+            <span className="block text-xl md:text-2xl font-black text-emerald-600">450</span>
             <span className="text-[10px] uppercase tracking-wider font-bold text-emerald-700/60">Credits</span>
           </div>
-          <div className="text-center px-4 py-2 bg-emerald-600 rounded-xl shadow-lg shadow-emerald-600/20">
-            <span className="block text-2xl font-black text-white">24.5</span>
-            <span className="text-[10px] uppercase tracking-wider font-bold text-white/80">kg CO₂ saved</span>
+          <div className="flex-1 md:flex-none text-center px-4 py-2 bg-emerald-600 rounded-xl shadow-lg shadow-emerald-600/20">
+            <span className="block text-xl md:text-2xl font-black text-white">24.5</span>
+            <span className="text-[10px] uppercase tracking-wider font-bold text-white/80">kg saved</span>
           </div>
-          <Button variant="ghost" size="icon" className="h-14 w-14 rounded-xl hover:bg-emerald-500/20 text-emerald-600">
-            <TrendingUp className="w-6 h-6" />
+          <Button variant="ghost" size="icon" className="h-10 w-10 md:h-14 md:w-14 rounded-xl hover:bg-emerald-500/20 text-emerald-600">
+            <TrendingUp className="w-5 h-5 md:w-6 md:h-6" />
           </Button>
         </div>
       </motion.div>
@@ -218,18 +218,18 @@ export function EnhancedDashboard({ onNavigate }: EnhancedDashboardProps) {
             transition={{ delay: index * 0.1 }}
           >
             <PremiumCard className="h-full border-0 shadow-lg bg-white/80 backdrop-blur-md dark:bg-slate-800/80" hover>
-              <PremiumCardContent className="p-6">
+              <PremiumCardContent className="p-4 md:p-6">
                 <div className="flex items-start justify-between mb-4">
-                  <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-md`}>
-                    <stat.icon className="w-6 h-6 text-white" />
+                  <div className={`w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-md`}>
+                    <stat.icon className="w-5 h-5 md:w-6 md:h-6 text-white" />
                   </div>
-                  <Badge variant="outline" className="bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300">
+                  <Badge variant="outline" className="bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 text-[10px]">
                     <TrendingUp className="w-3 h-3 mr-1" />
                     {stat.change}
                   </Badge>
                 </div>
-                <h3 className="text-3xl font-bold mb-1 text-gray-800 dark:text-white">{stat.value}</h3>
-                <p className="text-sm text-muted-foreground font-medium">{stat.label}</p>
+                <h3 className="text-xl md:text-3xl font-bold mb-1 text-gray-800 dark:text-white">{stat.value}</h3>
+                <p className="text-[10px] md:text-sm text-muted-foreground font-medium">{stat.label}</p>
               </PremiumCardContent>
             </PremiumCard>
           </motion.div>
@@ -282,17 +282,17 @@ export function EnhancedDashboard({ onNavigate }: EnhancedDashboardProps) {
         onClick={() => onNavigate('wasel-hero')}
       >
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="space-y-3">
-            <Badge className="bg-white/20 text-white border-0 w-fit">Community Hero</Badge>
-            <h3 className="text-2xl font-black flex items-center gap-3">
+          <div className="space-y-3 text-center md:text-left">
+            <Badge className="bg-white/20 text-white border-0 w-fit mx-auto md:mx-0">Community Hero</Badge>
+            <h3 className="text-2xl font-black flex items-center justify-center md:justify-start gap-3">
               <Heart className="w-8 h-8 fill-white" />
               Become a Wasel Hero
             </h3>
-            <p className="text-rose-50 opacity-90 max-w-lg font-medium">
+            <p className="text-rose-50 opacity-90 max-w-lg font-medium text-sm md:text-base">
               Help your community by delivering packages on your existing route. Earn double credits and exclusive status rewards!
             </p>
           </div>
-          <Button variant="secondary" className="bg-white text-rose-600 hover:bg-rose-50 font-bold px-8 py-6 h-auto text-lg rounded-2xl">
+          <Button variant="secondary" className="bg-white text-rose-600 hover:bg-rose-50 font-bold px-8 py-6 h-auto text-lg rounded-2xl w-full md:w-auto">
             Join the Heros
             <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
@@ -326,17 +326,17 @@ export function EnhancedDashboard({ onNavigate }: EnhancedDashboardProps) {
             >
               <PremiumCard hover onClick={() => onNavigate('my-trips')} className="border-0 shadow-md bg-white/90 backdrop-blur-sm dark:bg-slate-800/90">
                 <PremiumCardContent className="p-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-[#008080] to-[#607D4B] rounded-2xl flex items-center justify-center text-white shadow-md">
+                      <div className="w-12 h-12 bg-gradient-to-br from-[#008080] to-[#607D4B] rounded-2xl flex items-center justify-center text-white shadow-md flex-shrink-0">
                         <MapPin className="w-6 h-6" />
                       </div>
 
                       <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="font-semibold text-gray-800 dark:text-white">{trip.from}</span>
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                          <span className="font-semibold text-gray-800 dark:text-white truncate max-w-[120px]">{trip.from}</span>
                           <span className="text-muted-foreground">→</span>
-                          <span className="font-semibold text-gray-800 dark:text-white">{trip.to}</span>
+                          <span className="font-semibold text-gray-800 dark:text-white truncate max-w-[120px]">{trip.to}</span>
                         </div>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <Clock className="w-4 h-4" />
@@ -345,7 +345,7 @@ export function EnhancedDashboard({ onNavigate }: EnhancedDashboardProps) {
                       </div>
                     </div>
 
-                    <div className="text-right">
+                    <div className="flex items-center justify-between sm:flex-col sm:items-end gap-2">
                       <p className="text-xl font-bold text-[#008080]">AED {trip.fare.toFixed(2)}</p>
                       <Badge variant="outline" className="bg-green-50 dark:bg-green-950 text-green-700">
                         Completed

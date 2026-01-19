@@ -1,18 +1,14 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import {
-    ShieldAlert,
     Package,
     MapPin,
-    CheckCircle2,
     Medal,
     Users,
-    ArrowRight,
-    TrendingUp,
     Gift,
     Heart
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { HeroTask, heroService } from '../services/heroService';
@@ -21,7 +17,6 @@ import { toast } from 'sonner';
 export function WaselHero() {
     const [tasks, setTasks] = useState<HeroTask[]>([]);
     const [loading, setLoading] = useState(true);
-    const [activeTask, setActiveTask] = useState<HeroTask | null>(null);
 
     useEffect(() => {
         fetchTasks();
@@ -38,7 +33,6 @@ export function WaselHero() {
         const success = await heroService.acceptTask(task.id, 'current-user-id'); // In real app use auth context
         if (success) {
             toast.success('You are now a Wasel Hero! Complete the delivery to earn credits.');
-            setActiveTask(task);
             fetchTasks();
         }
     };
@@ -46,31 +40,31 @@ export function WaselHero() {
     return (
         <div className="space-y-8 pb-20">
             {/* Hero Header */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-teal-600 to-emerald-700 p-8 text-white shadow-xl">
-                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                    <div className="space-y-4">
-                        <Badge className="bg-white/20 hover:bg-white/30 text-white border-0">Community Service</Badge>
-                        <h1 className="text-4xl font-black">Wasel Hero (بطل واصل)</h1>
-                        <p className="text-teal-50 max-w-md opacity-90">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-teal-600 to-emerald-700 p-6 md:p-8 text-white shadow-xl">
+                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
+                    <div className="space-y-4 text-center md:text-left">
+                        <Badge className="bg-white/20 hover:bg-white/30 text-white border-0 mx-auto md:mx-0 w-fit">Community Service</Badge>
+                        <h1 className="text-3xl md:text-4xl font-black leading-tight">Wasel Hero (بطل واصل)</h1>
+                        <p className="text-teal-50 max-w-md opacity-90 text-sm md:text-base">
                             Deliver packages or help neighbors during your existing journey and earn up to 5x more credits. Help your community while moving!
                         </p>
-                        <div className="flex gap-4 pt-2">
-                            <div className="flex items-center gap-2 text-sm bg-white/10 px-3 py-1.5 rounded-full">
-                                <Users className="w-4 h-4" />
+                        <div className="flex flex-wrap justify-center md:justify-start gap-3 md:gap-4 pt-2">
+                            <div className="flex items-center gap-2 text-xs md:text-sm bg-white/10 px-3 py-1.5 rounded-full">
+                                <Users className="w-3.5 h-3.5" />
                                 <span>2.4k Heros Active</span>
                             </div>
-                            <div className="flex items-center gap-2 text-sm bg-white/10 px-3 py-1.5 rounded-full">
-                                <Medal className="w-4 h-4" />
+                            <div className="flex items-center gap-2 text-xs md:text-sm bg-white/10 px-3 py-1.5 rounded-full">
+                                <Medal className="w-3.5 h-3.5" />
                                 <span>Level 4 Hero</span>
                             </div>
                         </div>
                     </div>
-                    <div className="hidden lg:block">
+                    <div className="hidden lg:block flex-shrink-0">
                         <motion.div
                             animate={{ y: [0, -10, 0] }}
                             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                         >
-                            <Heart className="w-32 h-32 text-white/20 fill-white/10" />
+                            <Heart className="w-24 h-24 md:w-32 md:h-32 text-white/20 fill-white/10" />
                         </motion.div>
                     </div>
                 </div>
@@ -102,36 +96,36 @@ export function WaselHero() {
                                     layoutId={task.id}
                                     className="group relative overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 hover:shadow-lg transition-all"
                                 >
-                                    <div className="flex flex-col md:flex-row justify-between gap-6">
+                                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6">
                                         <div className="flex items-start gap-4">
-                                            <div className="w-14 h-14 rounded-xl bg-teal-50 dark:bg-teal-950 flex items-center justify-center text-teal-600">
-                                                <Package className="w-8 h-8" />
+                                            <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-teal-50 dark:bg-teal-950 flex items-center justify-center text-teal-600 flex-shrink-0">
+                                                <Package className="w-6 h-6 md:w-8 md:h-8" />
                                             </div>
                                             <div className="space-y-1">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="font-bold text-lg capitalize">{task.package_size} Delivery</span>
-                                                    <Badge className="bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 border-emerald-200">
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                    <span className="font-bold text-base md:text-lg capitalize">{task.package_size} Delivery</span>
+                                                    <Badge className="bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 border-emerald-200 text-[10px]">
                                                         Express
                                                     </Badge>
                                                 </div>
-                                                <div className="flex items-center gap-2 text-sm text-slate-500">
-                                                    <MapPin className="w-3.5 h-3.5" />
-                                                    {task.from_location.split(',')[0]} → {task.to_location.split(',')[0]}
+                                                <div className="flex items-start gap-2 text-[10px] md:text-xs text-slate-500 leading-tight">
+                                                    <MapPin className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                                                    <span>{task.from_location.split(',')[0]} → {task.to_location.split(',')[0]}</span>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center justify-between md:flex-col md:items-end gap-2">
-                                            <div className="text-right">
-                                                <div className="text-2xl font-black text-teal-600">+{task.reward_credits}</div>
-                                                <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Hero Credits</div>
+                                        <div className="flex items-center justify-between w-full md:w-auto md:flex-col md:items-end gap-4">
+                                            <div className="text-left md:text-right">
+                                                <div className="text-xl md:text-2xl font-black text-teal-600">+{task.reward_credits}</div>
+                                                <div className="text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-slate-400">Hero Credits</div>
                                             </div>
                                             <Button
                                                 size="sm"
-                                                className="rounded-xl bg-teal-600 hover:bg-teal-700 h-10 px-6 font-bold"
+                                                className="rounded-xl bg-teal-600 hover:bg-teal-700 h-9 md:h-10 px-4 md:px-6 font-bold text-sm"
                                                 onClick={() => handleAccept(task)}
                                             >
-                                                Accept Task
+                                                Accept
                                             </Button>
                                         </div>
                                     </div>

@@ -1,19 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
     Bike,
     Car,
     UserPlus,
     ThermometerSun,
-    Clock,
-    MapPin,
-    MoveRight,
     ChevronRight,
     ShieldCheck,
     Zap,
     Leaf,
-    Navigation,
-    ArrowRight
+    Navigation
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Button } from './ui/button';
@@ -21,7 +17,7 @@ import { Badge } from './ui/badge';
 import { Switch } from './ui/switch';
 import { Label } from './ui/label';
 import { Progress } from './ui/progress';
-import { intermodalService, IntermodalJourney, RouteSegment } from '../services/intermodalService';
+import { intermodalService, IntermodalJourney } from '../services/intermodalService';
 import { MapComponent } from './MapComponent';
 
 export function IntermodalPlanner() {
@@ -65,22 +61,22 @@ export function IntermodalPlanner() {
             <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-md dark:bg-slate-900/80">
                 <CardHeader>
                     <div className="flex items-center justify-between">
-                        <div>
-                            <CardTitle className="text-2xl font-black text-teal-700 dark:text-teal-400">Intermodal Journey Planner</CardTitle>
-                            <CardDescription>Multi-leg routes designed for the Middle East climate & culture</CardDescription>
+                        <div className="flex-1">
+                            <CardTitle className="text-xl md:text-2xl font-black text-teal-700 dark:text-teal-400">Intermodal Journey Planner</CardTitle>
+                            <CardDescription className="text-xs md:text-sm">Multi-leg routes designed for the Middle East climate & culture</CardDescription>
                         </div>
-                        <Zap className="w-8 h-8 text-teal-500 animate-pulse" />
+                        <Zap className="w-6 h-6 md:w-8 md:h-8 text-teal-500 animate-pulse flex-shrink-0" />
                     </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    <div className="grid md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                         <div className="flex items-center justify-between p-4 rounded-2xl bg-teal-50 dark:bg-teal-950/20 border border-teal-100 dark:border-teal-900">
                             <div className="space-y-0.5">
-                                <Label className="flex items-center gap-2">
+                                <Label className="flex items-center gap-2 text-sm md:text-base">
                                     <UserPlus className="w-4 h-4 text-pink-500" />
                                     Gender Privacy
                                 </Label>
-                                <p className="text-xs text-muted-foreground">Female-only carpool matches</p>
+                                <p className="text-[10px] md:text-xs text-muted-foreground">Female-only carpool matches</p>
                             </div>
                             <Switch
                                 checked={prefs.femaleOnly}
@@ -90,11 +86,11 @@ export function IntermodalPlanner() {
 
                         <div className="flex items-center justify-between p-4 rounded-2xl bg-orange-50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900">
                             <div className="space-y-0.5">
-                                <Label className="flex items-center gap-2">
+                                <Label className="flex items-center gap-2 text-sm md:text-base">
                                     <ThermometerSun className="w-4 h-4 text-orange-500" />
                                     Beat the Heat
                                 </Label>
-                                <p className="text-xs text-muted-foreground">Minimize walking in peak sun</p>
+                                <p className="text-[10px] md:text-xs text-muted-foreground">Minimize walking in peak sun</p>
                             </div>
                             <Switch
                                 checked={prefs.comfortFirst}
@@ -102,7 +98,7 @@ export function IntermodalPlanner() {
                             />
                         </div>
 
-                        <Button size="lg" className="h-full rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-bold" onClick={handleSearch} disabled={loading}>
+                        <Button size="lg" className="rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-bold h-12 md:h-full" onClick={handleSearch} disabled={loading}>
                             {loading ? 'Analyzing Routes...' : 'Plan Smart Journey'}
                         </Button>
                     </div>
@@ -127,20 +123,20 @@ export function IntermodalPlanner() {
                                 onClick={() => setSelectedJourney(journey)}
                                 className={`cursor-pointer group relative overflow-hidden rounded-2xl border-2 transition-all p-5 ${selectedJourney?.id === journey.id ? 'border-teal-500 bg-teal-50/50 dark:bg-teal-950/30' : 'border-slate-100 hover:border-teal-300 dark:border-slate-800'}`}
                             >
-                                <div className="flex items-start justify-between mb-4">
-                                    <div className="flex items-center gap-3">
+                                <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-4 gap-4">
+                                    <div className="flex flex-wrap items-center gap-2 md:gap-3">
                                         {journey.segments.map((seg, sIdx) => (
                                             <div key={sIdx} className="flex items-center gap-2">
-                                                <div className={`p-2 rounded-lg ${seg.type === 'scooter' ? 'bg-green-100 text-green-700' : seg.type === 'carpool' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}`}>
+                                                <div className={`p-1.5 md:p-2 rounded-lg ${seg.type === 'scooter' ? 'bg-green-100 text-green-700' : seg.type === 'carpool' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}`}>
                                                     {getSegmentIcon(seg.type)}
                                                 </div>
-                                                {sIdx < journey.segments.length - 1 && <ChevronRight className="w-4 h-4 text-slate-300" />}
+                                                {sIdx < journey.segments.length - 1 && <ChevronRight className="w-3 h-3 md:w-4 md:h-4 text-slate-300" />}
                                             </div>
                                         ))}
                                     </div>
-                                    <div className="text-right">
-                                        <div className="text-2xl font-black text-teal-600">AED {journey.totalPrice}</div>
-                                        <div className="text-xs text-muted-foreground">{journey.totalDurationMinutes} mins • {journey.totalDistanceKm.toFixed(1)} km</div>
+                                    <div className="text-left sm:text-right">
+                                        <div className="text-xl md:text-2xl font-black text-teal-600">AED {journey.totalPrice}</div>
+                                        <div className="text-[10px] md:text-xs text-muted-foreground">{journey.totalDurationMinutes} mins • {journey.totalDistanceKm.toFixed(1)} km</div>
                                     </div>
                                 </div>
 
@@ -170,7 +166,7 @@ export function IntermodalPlanner() {
                                 <MapComponent
                                     height="300px"
                                     className="rounded-b-none"
-                                    locations={selectedJourney.segments.flatMap((s, idx) => [
+                                    locations={selectedJourney.segments.flatMap((s) => [
                                         { lat: s.from.lat, lng: s.from.lng, label: `${s.type} start`, type: s.type as any },
                                         { lat: s.to.lat, lng: s.to.lng, label: `${s.type} end`, type: s.type as any }
                                     ])}
