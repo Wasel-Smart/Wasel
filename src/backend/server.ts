@@ -11,6 +11,12 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { supabase } from '../services/api';
 import { validateInput } from '../middleware/authSecurity';
+import './types.d.ts';
+
+type Request = express.Request;
+type Response = express.Response;
+type NextFunction = express.NextFunction;
+type Socket = any;
 
 const app = express();
 const server = createServer(app);
@@ -38,14 +44,58 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 // Input validation middleware
-const validateRequest = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+const validateRequest = (req: Request, res: Response, next: NextFunction) => {
   try {
-    if (req.body) {
-      for (const [key, value] of Object.entries(req.body)) {
-        if (typeof value === 'string') {
-          req.body[key] = validateInput.sanitize(value);
+    if (req.body && typeof req.body === 'object' && !Array.isArray(req.body)) {
+      // Create a prototype-less object to prevent pollution
+      const sanitizedBody = Object.create(null);
+      const allowedKeys = ['type', 'source', 'data', 'userId', 'tripId', 'location', 'query', 'distance_km', 'seats', 'tripType', 'departureTime', 'title', 'body', 'reason'];
+      
+      for (const key of Object.keys(req.body)) {
+        // Strict key validation to prevent prototype pollution
+        if (typeof key === 'string' && 
+            allowedKeys.includes(key) && 
+            !key.includes('__proto__') && 
+            !key.includes('constructor') && 
+            !key.includes('prototype') &&
+            key.length < 50) {
+          
+          const value = req.body[key];
+          if (typeof value === 'string' && value.length < 1000) {
+            Object.defineProperty(sanitizedBody, key, {
+              value: validateInput.sanitize(value),
+              writable: false,
+              enumerable: true,
+              configurable: false
+            });
+          } else if (typeof value === 'number' && isFinite(value)) {
+            Object.defineProperty(sanitizedBody, key, {
+              value: value,
+              writable: false,
+              enumerable: true,
+              configurable: false
+            });
+          } else if (typeof value === 'boolean') {
+            Object.defineProperty(sanitizedBody, key, {
+              value: value,
+              writable: false,
+              enumerable: true,
+              configurable: false
+            });
+          } else if (value && typeof value === 'object' && !Array.isArray(value)) {
+            // Only allow simple objects for location coordinates
+            if (key === 'location' && value.lat && value.lng) {
+              Object.defineProperty(sanitizedBody, key, {
+                value: { lat: Number(value.lat), lng: Number(value.lng) },
+                writable: false,
+                enumerable: true,
+                configurable: false
+              });
+            }
+          }
         }
       }
+      req.body = sanitizedBody;
     }
     next();
   } catch (error) {
@@ -56,7 +106,7 @@ const validateRequest = (req: express.Request, res: express.Response, next: expr
 app.use(validateRequest);
 
 // Authentication middleware
-const authenticateUser = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+const authenticateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
     if (!token) {
@@ -76,7 +126,7 @@ const authenticateUser = async (req: express.Request, res: express.Response, nex
 };
 
 // Smart Route Events
-app.post('/api/smart-route/events', authenticateUser, async (req, res) => {
+app.post('/api/smart-route/events', authenticateUser, async (req: Request, res: Response) => {
   try {
     const { type, source, data, userId, tripId, location } = req.body;
     
@@ -98,15 +148,16 @@ app.post('/api/smart-route/events', authenticateUser, async (req, res) => {
     if (error) throw error;
     res.json({ success: true });
   } catch (error) {
-    console.error('Smart route events error:', error);
+    const sanitizedError = String(error).replace(/[\r\n\t]/g, '');
+    console.error('Smart route events error:', sanitizedError);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 // AI Route Suggestions
-app.post('/api/ai/routes/suggest', authenticateUser, async (req, res) => {
+app.post('/api/ai/routes/suggest', authenticateUser, async (req: Request, res: Response) => {
   try {
-    const { query, userLocation } = req.body;
+    const { query } = req.body;
     
     if (!query || typeof query !== 'string' || query.length < 2) {
       return res.status(400).json({ error: 'Valid query required (min 2 characters)' });
@@ -139,13 +190,14 @@ app.post('/api/ai/routes/suggest', authenticateUser, async (req, res) => {
       confidence: suggestions.length > 0 ? 0.85 : 0.3
     });
   } catch (error) {
-    console.error('AI route suggestions error:', error);
+    const sanitizedError = String(error).replace(/[\r\n\t]/g, '');
+    console.error('AI route suggestions error:', sanitizedError);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 // Dynamic Pricing
-app.post('/api/ai/pricing/optimize', authenticateUser, async (req, res) => {
+app.post('/api/ai/pricing/optimize', authenticateUser, async (req: Request, res: Response) => {
   try {
     const { distance_km, seats, tripType, departureTime } = req.body;
     
@@ -201,7 +253,8 @@ app.post('/api/ai/pricing/optimize', authenticateUser, async (req, res) => {
       confidence: 0.85
     });
   } catch (error) {
-    console.error('Dynamic pricing error:', error);
+    const sanitizedError = String(error).replace(/[\r\n\t]/g, '');
+    console.error('Dynamic pricing error:', sanitizedError);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -228,10 +281,11 @@ const authenticateSocket = async (socket: any, next: any) => {
 
 io.use(authenticateSocket);
 
-io.on('connection', (socket) => {
-  console.log(`User ${socket.userId} connected`);
+io.on('connection', (socket: Socket) => {
+  const sanitizedUserId = socket.userId?.replace(/[\r\n\t]/g, '') || 'unknown';
+  console.log(`User ${sanitizedUserId} connected`);
   
-  socket.on('join-trip', async (tripId) => {
+  socket.on('join-trip', async (tripId: any) => {
     try {
       // Validate trip access
       const { data: trip, error } = await supabase
@@ -254,12 +308,13 @@ io.on('connection', (socket) => {
       socket.join(`trip-${tripId}`);
       socket.emit('joined-trip', { tripId });
     } catch (error) {
-      console.error('Join trip error:', error);
+      const sanitizedError = String(error).replace(/[\r\n\t]/g, '');
+      console.error('Join trip error:', sanitizedError);
       socket.emit('error', { message: 'Failed to join trip' });
     }
   });
   
-  socket.on('location-update', async (data) => {
+  socket.on('location-update', async (data: any) => {
     try {
       const { tripId, coordinates, heading, speed, accuracy } = data;
       
@@ -294,18 +349,20 @@ io.on('connection', (socket) => {
         timestamp: new Date().toISOString()
       });
     } catch (error) {
-      console.error('Location update error:', error);
+      const sanitizedError = String(error).replace(/[\r\n\t]/g, '');
+      console.error('Location update error:', sanitizedError);
       socket.emit('error', { message: 'Failed to update location' });
     }
   });
   
   socket.on('disconnect', () => {
-    console.log(`User ${socket.userId} disconnected`);
+    const sanitizedUserId = socket.userId?.replace(/[\r\n\t]/g, '') || 'unknown';
+    console.log(`User ${sanitizedUserId} disconnected`);
   });
 });
 
 // Emergency SOS with enhanced security
-app.post('/api/emergency/sos', authenticateUser, async (req, res) => {
+app.post('/api/emergency/sos', authenticateUser, async (req: Request, res: Response) => {
   try {
     const { tripId, location, reason } = req.body;
     
@@ -356,18 +413,21 @@ app.post('/api/emergency/sos', authenticateUser, async (req, res) => {
       timestamp: new Date().toISOString()
     });
     
-    // Log critical event
-    console.error(`EMERGENCY SOS: Trip ${tripId}, User ${req.user.id}, Location: ${JSON.stringify(location)}`);
+    // Log critical event with sanitization
+    const sanitizedTripId = String(tripId).replace(/[\r\n\t]/g, '');
+    const sanitizedUserId = String(req.user.id).replace(/[\r\n\t]/g, '');
+    console.error(`EMERGENCY SOS: Trip ${sanitizedTripId}, User ${sanitizedUserId}, Location: ${JSON.stringify(location)}`);
     
     res.json({ success: true, alertId: Date.now().toString() });
   } catch (error) {
-    console.error('Emergency SOS error:', error);
+    const sanitizedError = String(error).replace(/[\r\n\t]/g, '');
+    console.error('Emergency SOS error:', sanitizedError);
     res.status(500).json({ error: 'Failed to process emergency request' });
   }
 });
 
 // Push Notifications with validation
-app.post('/api/notifications/push', authenticateUser, async (req, res) => {
+app.post('/api/notifications/push', authenticateUser, async (req: Request, res: Response) => {
   try {
     const { userId, title, body, data } = req.body;
     
@@ -397,13 +457,14 @@ app.post('/api/notifications/push', authenticateUser, async (req, res) => {
     
     res.json({ success: true });
   } catch (error) {
-    console.error('Push notification error:', error);
+    const sanitizedError = String(error).replace(/[\r\n\t]/g, '');
+    console.error('Push notification error:', sanitizedError);
     res.status(500).json({ error: 'Failed to send notification' });
   }
 });
 
 // Health Check with detailed status
-app.get('/api/health', async (req, res) => {
+app.get('/api/health', async (_req: Request, res: Response) => {
   try {
     const startTime = Date.now();
     
@@ -431,7 +492,8 @@ app.get('/api/health', async (req, res) => {
     
     res.status(dbHealthy ? 200 : 503).json(health);
   } catch (error) {
-    console.error('Health check error:', error);
+    const sanitizedError = String(error).replace(/[\r\n\t]/g, '');
+    console.error('Health check error:', sanitizedError);
     res.status(503).json({
       status: 'unhealthy',
       timestamp: new Date().toISOString(),
@@ -441,13 +503,14 @@ app.get('/api/health', async (req, res) => {
 });
 
 // Error handling middleware
-app.use((error: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('Unhandled error:', error);
+app.use((error: any, _req: Request, res: Response, _next: NextFunction) => {
+  const sanitizedError = String(error).replace(/[\r\n\t]/g, '');
+  console.error('Unhandled error:', sanitizedError);
   res.status(500).json({ error: 'Internal server error' });
 });
 
 // 404 handler
-app.use('*', (req, res) => {
+app.use('*', (_req: Request, res: Response) => {
   res.status(404).json({ error: 'Endpoint not found' });
 });
 
