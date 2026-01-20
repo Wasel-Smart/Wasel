@@ -14,7 +14,7 @@ import { useEffect, useRef, useState } from 'react';
 import { MapPin, Navigation, Layers, Maximize2, Minimize2, ZoomIn, ZoomOut, Crosshair } from 'lucide-react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { cn } from '@/lib/utils';
+import { cn } from '../lib/utils';
 
 export interface MapLocation {
   lat: number;
