@@ -3,53 +3,61 @@ import type { Database } from './database.types';
 import { projectId, publicAnonKey } from './info';
 
 // Build Supabase URL from project ID
-const supabaseUrl = `https://${projectId}.supabase.co`;
+const supabaseUrl = projectId ? `https://${projectId}.supabase.co` : '';
 const supabaseAnonKey = publicAnonKey;
 
 // Check if Supabase is configured
-export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
+export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey && supabaseUrl.length > 10);
 
-// Create Supabase client with TypeScript support (or null if not configured)
+// Create Supabase client with error handling
 const getSupabaseClient = () => {
-  // Use a symbol to prevent collisions and ensure singleton across HMR/module reloads
-  const CLIENT_KEY = Symbol.for('supabase.client.instance');
-  const globalAny = typeof window !== 'undefined' ? window : globalThis;
-
-  if ((globalAny as any)[CLIENT_KEY]) {
-    return (globalAny as any)[CLIENT_KEY];
+  if (!isSupabaseConfigured) {
+    console.warn('⚠️ Supabase not configured - running in demo mode');
+    return null;
   }
 
-  // Fallback check for previous string-based key
-  if (typeof window !== 'undefined' && (window as any)._supabaseClient) {
-    return (window as any)._supabaseClient;
-  }
+  try {
+    const CLIENT_KEY = Symbol.for('supabase.client.instance');
+    const globalAny = typeof window !== 'undefined' ? window : globalThis;
 
-  const client = createClient<Database>(supabaseUrl, supabaseAnonKey, {
-    auth: {
-      storageKey: 'wassel-auth-token',
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: true,
-      storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-      flowType: 'pkce',
-    },
-    realtime: {
-      params: {
-        eventsPerSecond: 10,
+    if ((globalAny as any)[CLIENT_KEY]) {
+      return (globalAny as any)[CLIENT_KEY];
+    }
+
+    if (typeof window !== 'undefined' && (window as any)._supabaseClient) {
+      return (window as any)._supabaseClient;
+    }
+
+    const client = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        storageKey: 'wassel-auth-token',
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true,
+        storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+        flowType: 'pkce',
       },
-    },
-  });
+      realtime: {
+        params: {
+          eventsPerSecond: 10,
+        },
+      },
+    });
 
-  if (typeof window !== 'undefined') {
-    (window as any)._supabaseClient = client;
+    if (typeof window !== 'undefined') {
+      (window as any)._supabaseClient = client;
+    }
+    
+    (globalAny as any)[CLIENT_KEY] = client;
+
+    return client;
+  } catch (error) {
+    console.error('❌ Error creating Supabase client:', error);
+    return null;
   }
-  
-  (globalAny as any)[CLIENT_KEY] = client;
-
-  return client;
 };
 
-export const supabase = isSupabaseConfigured ? getSupabaseClient() : null;
+export const supabase = getSupabaseClient();
 
 // Helper function to handle Supabase errors
 export function handleSupabaseError(error: any): string {
@@ -72,31 +80,39 @@ export function handleSupabaseError(error: any): string {
 // Helper to check if user is authenticated
 export async function isAuthenticated(): Promise<boolean> {
   if (!supabase) return false;
-  const { data: { session } } = await supabase.auth.getSession();
-  return !!session;
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    return !!session;
+  } catch (error) {
+    console.warn('Could not check authentication:', error);
+    return false;
+  }
 }
 
 // Helper to get current user
 export async function getCurrentUser() {
   if (!supabase) return null;
-  const { data: { user } } = await supabase.auth.getUser();
-  return user;
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    return user;
+  } catch (error) {
+    console.warn('Could not get current user:', error);
+    return null;
+  }
 }
 
 // Helper to get user profile from server
 export async function getUserProfile(userId?: string) {
   if (!supabase) return null;
-  const uid = userId || (await getCurrentUser())?.id;
-  if (!uid) return null;
-  
   try {
-    // Get current session for auth token
+    const uid = userId || (await getCurrentUser())?.id;
+    if (!uid) return null;
+
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return null;
 
-    // Fetch profile from server
     const response = await fetch(
-      `https://${supabaseUrl.split('//')[1]}/functions/v1/make-server-0b1f4071/profile/${uid}`,
+      `${supabaseUrl}/functions/v1/make-server-0b1f4071/profile/${uid}`,
       {
         headers: {
           'Authorization': `Bearer ${session.access_token}`,

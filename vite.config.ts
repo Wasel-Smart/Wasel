@@ -105,7 +105,11 @@ export default defineConfig({
       'class-variance-authority',
       'lucide-react',
     ],
-    exclude: ['@testing-library/react'],
+    exclude: [
+      '@testing-library/react',
+      'next-themes',
+      '@supabase/supabase-js',
+    ],
   },
   // Enable JSON handling
   json: {

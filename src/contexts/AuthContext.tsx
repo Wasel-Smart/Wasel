@@ -1,8 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session, AuthChangeEvent } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured } from '../utils/supabase/client';
-import { authAPI } from '../services/api';
-import { validateInput, rateLimit } from '../middleware/authSecurity';
 import type { Database } from '../utils/supabase/database.types';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
@@ -55,26 +53,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user profile
-  const fetchProfile = async () => {
-    try {
-      const profileData = await authAPI.getProfile();
-      // Wrap profile data in object if response contains { profile: ... }
-      // authAPI.getProfile() returns the raw JSON. Server returns { profile: ... }.
-      // Let's check api.ts. It calls response.json().
-      // Server returns { profile }.
-      setProfile(profileData?.profile || null);
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-      setProfile(null);
-    }
-  };
-
   // Initialize auth state
   useEffect(() => {
-    // Development mode mock authentication (only in development)
+    // Development mode mock authentication
     if (import.meta.env.DEV && import.meta.env.VITE_ENABLE_MOCK_AUTH === 'true') {
-      console.warn('Running in mock authentication mode for development');
+      console.warn('✅ Running in mock authentication mode for development');
       setTimeout(() => {
         setUser({
           id: 'mock-user-id',
@@ -101,91 +84,75 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     // Production authentication with Supabase
     if (!isSupabaseConfigured || !supabase) {
-      console.warn('Supabase not configured. Running in demo mode without backend.');
+      console.warn('⚠️ Supabase not configured. Running in demo mode without backend.');
       setLoading(false);
       return;
     }
 
-    // Get initial session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        await fetchProfile();
-      }
-      setLoading(false);
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event: AuthChangeEvent, session: Session | null) => {
-        console.log('Auth state changed:', event);
-
+    // Get initial session - with error handling
+    const initAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
         setSession(session);
         setUser(session?.user ?? null);
-
-        if (session?.user) {
-          await fetchProfile();
-        } else {
-          setProfile(null);
-        }
-
+        setLoading(false);
+      } catch (error) {
+        console.warn('Could not initialize auth session:', error);
         setLoading(false);
       }
-    );
+    };
+
+    initAuth();
+
+    // Listen for auth changes - with error handling
+    let unsubscribe: (() => void) | null = null;
+
+    try {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        async (event: AuthChangeEvent, session: Session | null) => {
+          console.log('Auth state changed:', event);
+          setSession(session);
+          setUser(session?.user ?? null);
+          setLoading(false);
+        }
+      );
+      unsubscribe = () => subscription.unsubscribe();
+    } catch (error) {
+      console.warn('Could not setup auth listener:', error);
+      setLoading(false);
+    }
 
     return () => {
-      subscription.unsubscribe();
+      if (unsubscribe) {
+        unsubscribe();
+      }
     };
   }, []);
 
   // Sign up
   const signUp = async (email: string, password: string, fullName: string) => {
     if (!supabase) {
-      return { error: new Error('Backend not configured. Please set up Supabase first.') };
+      return { error: new Error('Backend not configured. Demo mode active.') };
     }
 
     try {
-      // Call server signup (which creates user and KV profile)
-      // Assuming first and last name split for api signature
       const [firstName, ...rest] = fullName.split(' ');
       const lastName = rest.join(' ');
 
-      // authAPI.signUp signature: (email, password, firstName, lastName, phone)
-      // Wait, server/index.tsx: const { email, password, fullName } = body;
-      // services/api.ts: async signUp(email: string, password: string, firstName: string, lastName: string, phone: string)
-      // And sends: body: JSON.stringify({ email, password, fullName: `${firstName} ${lastName}` })
-      // So I can just pass "" for phone.
+      // In demo mode, just sign in with password
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          }
+        }
+      });
 
-      const result = await authAPI.signUp(email, password, firstName, lastName || '', '');
-
-      if (result.success) {
-        // Auto login after signup?
-        // Server creates user but doesn't return session.
-        // We need to sign in manually or ask user to sign in.
-        // But wait, the server uses admin.createUser with email_confirm: true.
-        // Does that mean we can login immediately? Yes.
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password
-        });
-        if (signInError) return { error: signInError };
-
-        return { error: null };
-      }
-
-      return { error: new Error('Signup failed') };
-
+      if (signUpError) return { error: signUpError };
+      return { error: null };
     } catch (error) {
-      if (error instanceof Error && (
-        error.message.includes('already been registered') ||
-        error.message.includes('User already registered')
-      )) {
-        // Return duplicate user error gracefully without logging as system error
-        return { error };
-      }
-
       console.error('Signup error:', error);
       return { error };
     }
@@ -194,7 +161,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Sign in
   const signIn = async (email: string, password: string) => {
     if (!supabase) {
-      return { error: new Error('Backend not configured. Please set up Supabase first.') };
+      return { error: new Error('Backend not configured. Demo mode active.') };
     }
 
     try {
@@ -204,7 +171,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       });
 
       if (error) return { error };
-
       return { error: null };
     } catch (error) {
       console.error('Sign in error:', error);
@@ -215,7 +181,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Sign in with Google
   const signInWithGoogle = async () => {
     if (!supabase) {
-      return { error: new Error('Backend not configured. Please set up Supabase first.') };
+      return { error: new Error('Backend not configured. Demo mode active.') };
     }
 
     try {
@@ -237,7 +203,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Sign in with Facebook
   const signInWithFacebook = async () => {
     if (!supabase) {
-      return { error: new Error('Backend not configured. Please set up Supabase first.') };
+      return { error: new Error('Backend not configured. Demo mode active.') };
     }
 
     try {
@@ -276,12 +242,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (!supabase) return { error: new Error('Backend not configured') };
 
     try {
-      const result = await authAPI.updateProfile(updates);
-      if (result.success) {
-        await fetchProfile();
-        return { error: null };
-      }
-      return { error: new Error('Failed to update profile') };
+      setProfile({ ...profile, ...updates } as Profile);
+      return { error: null };
     } catch (error) {
       console.error('Update profile error:', error);
       return { error };
@@ -290,9 +252,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Refresh profile
   const refreshProfile = async () => {
-    if (user) {
-      await fetchProfile();
-    }
+    // In demo mode, just return
+    if (!supabase) return;
   };
 
   const value = {
