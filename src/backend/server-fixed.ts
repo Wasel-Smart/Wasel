@@ -15,6 +15,7 @@ interface AuthenticatedRequest extends Request {
     id: string;
     email?: string;
   };
+  body: any;
 }
 
 // Extend Socket interface
