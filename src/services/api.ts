@@ -48,8 +48,8 @@ const handleError = (error: Error, context?: string) => {
   console.error(`[${context || 'API'}] Error:`, error.message);
 };
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.SUPABASE_URL!;
+const supabaseKey = process.env.SUPABASE_ANON_KEY!;
 const projectId = supabaseUrl?.split('//')[1]?.split('.')[0] || 'default';
 
 const supabaseClient = createClient(supabaseUrl, supabaseKey);
@@ -120,13 +120,12 @@ export const authAPI = {
       // Sanitize inputs
       const sanitizedFirstName = validateInput.sanitize(firstName);
       const sanitizedLastName = validateInput.sanitize(lastName || '');
-      const sanitizedPhone = validateInput.sanitize(phone || '');
       
       const response = await fetch(`${API_URL}/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY || ''}`
+          'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY || ''}`
         },
         body: JSON.stringify({ 
           email: email.toLowerCase().trim(), 
@@ -310,7 +309,7 @@ export const tripsAPI = {
 
       const response = await fetch(`${API_URL}/trips/search?${params}`, {
         headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY || ''}`
+          'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY || ''}`
         }
       });
 
@@ -329,7 +328,7 @@ export const tripsAPI = {
     try {
       const response = await fetch(`${API_URL}/trips/${tripId}`, {
         headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY || ''}`
+          'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY || ''}`
         }
       });
 

@@ -5,7 +5,7 @@
 
 import express, { Request, Response } from 'express';
 import { createServer } from 'http';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import cors from 'cors';
 
 // Import all services
@@ -158,15 +158,15 @@ app.post('/api/trips/schedule', async (req: Request, res: Response) => {
 });
 
 // === WEBSOCKET EVENTS ===
-io.on('connection', (socket) => {
-  socket.on('join-trip', (tripId) => socket.join(`trip-${tripId}`));
-  
-  socket.on('location-update', async (data) => {
+io.on('connection', (socket: Socket) => {
+  socket.on('join-trip', (tripId: any) => socket.join(`trip-${tripId}`));
+
+  socket.on('location-update', async (data: any) => {
     await TrackingService.updateLocation(data.userId, data.tripId, data.lat, data.lng, data.heading);
     socket.to(`trip-${data.tripId}`).emit('location-broadcast', data);
   });
-  
-  socket.on('trip-status-update', (data) => {
+
+  socket.on('trip-status-update', (data: any) => {
     socket.to(`trip-${data.tripId}`).emit('status-change', data);
   });
 });

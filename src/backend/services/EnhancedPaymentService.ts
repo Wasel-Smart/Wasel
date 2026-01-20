@@ -30,7 +30,7 @@ export class EnhancedPaymentService {
         throw new Error('Stripe secret key not configured');
       }
       this.stripe = new Stripe(secretKey, {
-        apiVersion: '2024-11-20.acacia'
+        apiVersion: '2023-10-16'
       });
     }
   }
