@@ -76,7 +76,8 @@ class LaundryService {
   ): Promise<LaundryOrder> {
     const request = {
       type: 'laundry' as const,
-      from: { lat: 0, lng: 0, address: pickupLocation }, // Placeholder coordinates
+      customerId,
+      from: { lat: 0, lng: 0, address: pickupLocation },
       to: deliveryLocation ? { lat: 0, lng: 0, address: deliveryLocation } : undefined,
       details: {
         serviceType,
