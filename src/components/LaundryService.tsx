@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Locate, CalendarClock, Shirt, TruckIcon, Scale, Info, CircleDollarSign, Shield, WashingMachine } from 'lucide-react';
+import { Locate, CalendarClock, TrendingUp, DollarSign } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
@@ -8,18 +8,8 @@ import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Separator } from './ui/separator';
 import { Badge } from './ui/badge';
 import { toast } from 'sonner';
-import { MapComponent } from './MapComponent';
 import laundryService, { LaundryServiceType, LaundryPartner } from '../services/laundryService';
 import { useAuth } from '../contexts/AuthContext';
-
-interface LaundryOrderResult {
-  id: string;
-  partnerName: string;
-  partnerRating: number;
-  estimatedPickup: string;
-  totalPrice: number;
-  serviceType: LaundryServiceType;
-}
 
 export function LaundryService() {
   const { user } = useAuth();
@@ -127,7 +117,7 @@ export function LaundryService() {
       <Card className="w-full max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <WashingMachine className="h-6 w-6" />
+            <TrendingUp className="h-6 w-6" />
             Laundry Service
           </CardTitle>
           <CardDescription>
@@ -142,14 +132,14 @@ export function LaundryService() {
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="wasel" id="wasel" />
                 <Label htmlFor="wasel" className="flex items-center gap-2">
-                  <TruckIcon className="h-4 w-4" />
+                  <Locate className="h-4 w-4" />
                   Wasel (One-way pickup only)
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="raje3" id="raje3" />
                 <Label htmlFor="raje3" className="flex items-center gap-2">
-                  <TruckIcon className="h-4 w-4" />
+                  <Locate className="h-4 w-4" />
                   Raje3 (Pickup + Return delivery)
                 </Label>
               </div>
@@ -191,7 +181,7 @@ export function LaundryService() {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="weight" className="flex items-center gap-2">
-                <Scale className="h-4 w-4" />
+                <DollarSign className="h-4 w-4" />
                 Load Weight (kg)
               </Label>
               <Input
@@ -295,7 +285,7 @@ export function LaundryService() {
                           <Badge variant="outline">{partner.pricing_per_kg} AED/kg</Badge>
                         </div>
                       </div>
-                      <Shirt className="h-8 w-8 text-blue-500" />
+                      <DollarSign className="h-8 w-8 text-blue-500" />
                     </div>
                   </CardContent>
                 </Card>

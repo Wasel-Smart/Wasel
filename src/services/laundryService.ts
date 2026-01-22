@@ -162,12 +162,14 @@ class LaundryService {
 
     return response.data || [];
   }
-
   /**
    * Assign captain to order
    */
-  async assignCaptain(orderId: string, captainId: string): Promise<boolean> {
-    const response = await ServiceFactory.assign('laundry', orderId, captainId);
+  async assignCaptain(orderId: string): Promise<boolean> {
+    const order = await this.getOrder(orderId);
+    if (!order) return false;
+
+    const response = await ServiceFactory.assign('laundry', orderId);
     return response.success;
   }
 

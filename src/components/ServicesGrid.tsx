@@ -1,7 +1,6 @@
 import { motion } from 'motion/react';
-import { Package, Bike, Truck, Users, PawPrint, School, Stethoscope, Key, Bus, Crown, ArrowRight } from 'lucide-react';
+import { Zap, Bike, Truck, Users, Heart, DollarSign, ArrowRight } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import { Button } from './ui/button';
 
 interface Service {
   id: string;
@@ -60,6 +59,14 @@ const services: Service[] = [
     icon: School,
     image: 'https://images.unsplash.com/photo-1685645647479-a0232f3fec6d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5ZWxsb3clMjBzY2hvb2wlMjBidXMlMjBzdHVkZW50c3xlbnwxfHx8fDE3NjczMTkwMzJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     color: 'from-yellow-400 to-amber-600'
+  },
+  {
+    id: 'laundry',
+    name: 'Laundry',
+    description: 'Professional laundry service',
+    icon: Truck,
+    image: 'https://images.unsplash.com/photo-1582735689369-4fe89db0a2c7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsYXVuZHJ5JTIwc2VydmljZSUyMGRlbGl2ZXJ5fGVufDF8fHx8MTc2NzMxOTAzMnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    color: 'from-purple-500 to-pink-600'
   },
   {
     id: 'medical',
