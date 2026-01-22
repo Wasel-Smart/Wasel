@@ -183,7 +183,7 @@ export function DriverEarnings() {
         toast.success('Statement downloaded successfully');
       } else {
         // Fallback: Generate client-side PDF
-        const { jsPDF } = await import('jspdf');
+        const jsPDF = (await import('jspdf')).default;
         const doc = new jsPDF();
         
         doc.text('Wassel Earnings Statement', 20, 20);
