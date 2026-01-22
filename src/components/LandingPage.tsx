@@ -187,7 +187,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
                     </div>
                   ))}
                   <div className="w-10 h-10 rounded-full border-2 border-white bg-primary flex items-center justify-center text-white text-xs font-bold">
-                    +50k
+                    +{Math.floor(Math.random() * 30) + 30}k
                   </div>
                 </div>
                 <div className="flex flex-col">
@@ -198,7 +198,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
                     <Star className="w-4 h-4 fill-current" />
                     <Star className="w-4 h-4 fill-current" />
                   </div>
-                  <span className="text-sm text-gray-600 font-medium">Trusted by 50K+ Users</span>
+                  <span className="text-sm text-gray-600 font-medium">Trusted by {Math.floor(Math.random() * 20) + 40}K+ Users</span>
                 </div>
               </div>
             </motion.div>
@@ -230,7 +230,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">CO2 Saved</p>
-                      <p className="text-lg font-bold text-gray-900">2,450 kg</p>
+                      <p className="text-lg font-bold text-gray-900">{Math.floor(Math.random() * 3000) + 1500} kg</p>
                     </div>
                   </motion.div>
 
@@ -244,7 +244,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Active Trips</p>
-                      <p className="text-lg font-bold text-gray-900">124 Live</p>
+                      <p className="text-lg font-bold text-gray-900">{Math.floor(Math.random() * 200) + 50} Live</p>
                     </div>
                   </motion.div>
                 </div>

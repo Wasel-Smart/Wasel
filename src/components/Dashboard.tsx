@@ -120,12 +120,12 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             </div>
             <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 text-center">
               <Target className="size-6 text-white mx-auto mb-2" />
-              <p className="text-2xl font-bold">320 kg</p>
+              <p className="text-2xl font-bold">{Math.floor(Math.random() * 500) + 200} kg</p>
               <p className="text-sm text-white/80">CO₂ Saved</p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 text-center lg:hidden xl:block">
               <Zap className="size-6 text-white mx-auto mb-2" />
-              <p className="text-2xl font-bold">95%</p>
+              <p className="text-2xl font-bold">{Math.floor(Math.random() * 10) + 90}%</p>
               <p className="text-sm text-white/80">On-Time</p>
             </div>
           </div>
@@ -219,7 +219,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </CardHeader>
           <CardContent>
             <div className="space-y-1">
-              <div className="text-3xl">2</div>
+              <div className="text-3xl">{Math.floor(Math.random() * 5) + 1}</div>
               <p className="text-sm text-gray-500">Active bookings</p>
             </div>
           </CardContent>
@@ -234,7 +234,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </CardHeader>
           <CardContent>
             <div className="space-y-1">
-              <div className="text-3xl">1</div>
+              <div className="text-3xl">{Math.floor(Math.random() * 3) + 1}</div>
               <p className="text-sm text-gray-500">Unread messages</p>
             </div>
           </CardContent>
@@ -249,7 +249,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </CardHeader>
           <CardContent>
             <div className="space-y-1">
-              <div className="text-3xl">$250</div>
+              <div className="text-3xl">${Math.floor(Math.random() * 500) + 100}</div>
               <p className="text-sm text-gray-500">Available funds</p>
             </div>
           </CardContent>

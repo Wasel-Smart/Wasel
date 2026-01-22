@@ -15,15 +15,13 @@ const YELLOW = '\x1b[33m';
 const BLUE = '\x1b[34m';
 const RESET = '\x1b[0m';
 
-// COMPROMISED KEYS - These must NEVER be used
-const COMPROMISED_KEYS = [
-  'WlYJmK-OUKlNyp3ktcb2ShILFN1vgCumAL4tOATziTQ',
-  '7_fGWjK9c8iGk36iHMqH37nBJEAdosg4G8aZSaYdWeQ',
-  'AIzaSyBWqXeMJ-oPSDpqeR548hw3QUU0EaxE85s',
-  'pk_test_51SZmpKENhKSYxMCXJ2TgwgNMNjUjHk5',
-  'sk_test_51SZmpKENhKSYxMCX03sEOKEiljDGWYTX0ZKTVmq',
-  '5005d351cb6bee711cb5127a7d192728',
-  'LCnyYDzwgp4n9qqg7hx2nf0HRvOLnRQU',
+// Patterns to detect insecure keys
+const INSECURE_PATTERNS = [
+  /test_/i,
+  /example/i,
+  /placeholder/i,
+  /your-/i,
+  /^.{1,10}$/  // Too short
 ];
 
 const REQUIRED_VARS = {
@@ -62,10 +60,10 @@ function validateEnvFile(filePath, requiredVars) {
   const warnings = [];
   const criticalErrors = [];
 
-  // Check for compromised keys
+  // Check for insecure keys
   Object.entries(envVars).forEach(([key, value]) => {
-    if (COMPROMISED_KEYS.some(c => value && value.includes(c))) {
-      criticalErrors.push(`🚨 COMPROMISED: ${key} - ROTATE NOW!`);
+    if (value && INSECURE_PATTERNS.some(pattern => pattern.test(value))) {
+      criticalErrors.push(`🚨 INSECURE: ${key} - Use production credentials`);
       isValid = false;
     }
   });
