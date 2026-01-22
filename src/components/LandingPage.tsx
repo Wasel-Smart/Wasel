@@ -43,7 +43,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
       <div className="fixed inset-0 overflow-hidden -z-10 pointer-events-none">
         {/* Floating orbs with 3D effect */}
         <motion.div 
-          className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-gradient-to-br from-[#008080]/20 to-teal-500/10 rounded-full blur-[100px]"
+          className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-gradient-to-br from-primary/20 to-primary/10 rounded-full blur-[100px]"
           animate={{
             y: [0, 100, 0],
             x: [0, 50, 0],
@@ -57,7 +57,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
           }}
         />
         <motion.div 
-          className="absolute bottom-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-gradient-to-br from-[#607D4B]/20 to-green-500/10 rounded-full blur-[100px]"
+          className="absolute bottom-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-gradient-to-br from-secondary/20 to-secondary/10 rounded-full blur-[100px]"
           animate={{
             y: [0, -100, 0],
             x: [0, -50, 0],
@@ -71,7 +71,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
           }}
         />
         <motion.div 
-          className="absolute top-[40%] left-[30%] w-[30vw] h-[30vw] bg-gradient-to-br from-[#800020]/10 to-rose-500/5 rounded-full blur-[80px]"
+          className="absolute top-[40%] left-[30%] w-[30vw] h-[30vw] bg-gradient-to-br from-accent/10 to-accent/5 rounded-full blur-[80px]"
           animate={{
             y: [0, -50, 0],
             x: [0, 100, 0],
@@ -367,7 +367,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
       </section>
 
       {/* Testimonials */}
-      <section className="py-24 bg-[#008080] relative overflow-hidden">
+      <section className="py-24 bg-primary relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
