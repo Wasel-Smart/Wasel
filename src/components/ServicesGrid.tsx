@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Zap, Bike, Truck, Users, Heart, DollarSign, ArrowRight } from 'lucide-react';
+import { Box, Zap, Truck, Users, Heart, GraduationCap, Activity, KeyRound, Bus, Crown, ArrowRight } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 
 interface Service {
@@ -16,7 +16,7 @@ const services: Service[] = [
     id: 'delivery',
     name: 'Delivery',
     description: 'Fast & secure package delivery',
-    icon: Package,
+    icon: Box,
     image: 'https://images.unsplash.com/photo-1758523670564-d1d6a734dc0b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb3VyaWVyJTIwZGVsaXZlcnklMjBwYWNrYWdlJTIwc2VydmljZXxlbnwxfHx8fDE3NjczMTkwMzJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     color: 'from-blue-500 to-cyan-500'
   },
@@ -24,7 +24,7 @@ const services: Service[] = [
     id: 'scooters',
     name: 'Scooters',
     description: 'Eco-friendly last mile',
-    icon: Bike,
+    icon: Zap,
     image: 'https://images.unsplash.com/photo-1742078684003-b51f83ba6470?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxlbGVjdHJpYyUyMHNjb290ZXIlMjBjaXR5JTIwcmlkZXxlbnwxfHx8fDE3NjczMTkwMzJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     color: 'from-green-400 to-emerald-600'
   },
@@ -48,7 +48,7 @@ const services: Service[] = [
     id: 'pets',
     name: 'Pets',
     description: 'Pet-friendly transport',
-    icon: PawPrint,
+    icon: Heart,
     image: 'https://images.unsplash.com/photo-1761857125070-cd8072945784?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjdXRlJTIwZG9nJTIwaW4lMjBjYXIlMjB0cmF2ZWx8ZW58MXx8fHwxNzY3MzE5MDMyfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     color: 'from-orange-400 to-red-500'
   },
@@ -56,7 +56,7 @@ const services: Service[] = [
     id: 'school',
     name: 'School',
     description: 'Safe student commute',
-    icon: School,
+    icon: GraduationCap,
     image: 'https://images.unsplash.com/photo-1685645647479-a0232f3fec6d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5ZWxsb3clMjBzY2hvb2wlMjBidXMlMjBzdHVkZW50c3xlbnwxfHx8fDE3NjczMTkwMzJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     color: 'from-yellow-400 to-amber-600'
   },
@@ -72,7 +72,7 @@ const services: Service[] = [
     id: 'medical',
     name: 'Medical',
     description: 'Non-emergency transport',
-    icon: Stethoscope,
+    icon: Activity,
     image: 'https://images.unsplash.com/photo-1721411480070-fcb558776d54?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZWRpY2FsJTIwYW1idWxhbmNlJTIwdHJhbnNwb3J0fGVufDF8fHx8MTc2NzMxOTAzMnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     color: 'from-red-500 to-rose-700'
   },
@@ -80,7 +80,7 @@ const services: Service[] = [
     id: 'rentals',
     name: 'Rentals',
     description: 'Flexible car rentals',
-    icon: Key,
+    icon: KeyRound,
     image: 'https://images.unsplash.com/photo-1604445415362-2a9840bd5ff6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob2xkaW5nJTIwY2FyJTIwa2V5cyUyMHJlbnRhbHxlbnwxfHx8fDE3NjczMTkwMzJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     color: 'from-indigo-500 to-purple-600'
   },

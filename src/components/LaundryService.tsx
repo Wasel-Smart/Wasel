@@ -74,7 +74,7 @@ export function LaundryService() {
 
     try {
       setLoading(true);
-      const order = await laundryService.createOrder(
+      await laundryService.createOrder(
         user.id,
         serviceType,
         pickupLocation,
