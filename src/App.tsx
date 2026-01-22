@@ -13,6 +13,7 @@ import { Header } from './components/Header';
 // Lazy loaded components
 const Dashboard = lazy(() => import('./components/Dashboard').then(m => ({ default: m.Dashboard })));
 const LandingPage = lazy(() => import('./components/LandingPage').then(m => ({ default: m.LandingPage })));
+const LaundryService = lazy(() => import('./components/LaundryService').then(m => ({ default: m.LaundryService })));
 
 const LoadingSpinner = memo(() => (
   <div className="flex h-full min-h-[200px] items-center justify-center">
@@ -81,7 +82,10 @@ function AppContent() {
 
           <main className="flex-1 overflow-y-auto p-3 sm:p-6">
             <Suspense fallback={<LoadingSpinner />}>
-              <Dashboard onNavigate={handleNavigate} />
+              {currentPage === 'dashboard' && <Dashboard onNavigate={handleNavigate} />}
+              {currentPage === 'laundry' && <LaundryService />}
+              {/* Default to dashboard for other pages */}
+              {!['dashboard', 'laundry'].includes(currentPage) && <Dashboard onNavigate={handleNavigate} />}
             </Suspense>
           </main>
         </div>

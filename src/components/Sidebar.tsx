@@ -38,13 +38,14 @@ interface SidebarProps {
 }
 
 const mainMenuItems = [
-  { id: 'dashboard', icon: LayoutDashboard },
-  { id: 'find-ride', icon: Navigation2 },
+  { id: 'dashboard', icon: Home },
+  { id: 'find-ride', icon: Search },
   { id: 'offer-ride', icon: Route },
-  { id: 'package-delivery', icon: PackageCheck },
-  { id: 'my-trips', icon: CalendarDays },
+  { id: 'laundry', icon: Truck },
+  { id: 'package-delivery', icon: Package },
+  { id: 'my-trips', icon: Calendar },
   { id: 'recurring', icon: Repeat },
-  { id: 'messages', icon: MessagesSquare },
+  { id: 'messages', icon: MessageSquare },
   { id: 'favorites', icon: Heart },
 ];
 
@@ -58,8 +59,8 @@ const accountMenuItems = [
   { id: 'growth-analytics', icon: TrendingUp, label: 'Growth Analytics' },
   { id: 'analytics', icon: BarChart3 },
   { id: 'payments', icon: CreditCard },
-  { id: 'notifications', icon: BellDot },
-  { id: 'verification', icon: BadgeCheck },
+  { id: 'notifications', icon: Bell },
+  { id: 'verification', icon: CheckCircle },
   { id: 'safety', icon: ShieldCheck },
   { id: 'referrals', icon: Gift },
   { id: 'business', icon: Building2 },
@@ -90,12 +91,12 @@ export function Sidebar({ currentPage, onNavigate, isOpen, onClose }: SidebarPro
           {/* Logo */}
           <div className="p-6 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
             <Logo size="sm" />
-            <button 
+            <button
               onClick={onClose}
               className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
               aria-label="Close sidebar"
             >
-              <CircleX className="size-5" />
+              <X className="size-5" />
             </button>
           </div>
 
