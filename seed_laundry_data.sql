@@ -1,4 +1,4 @@
--- Laundry Service Seed Data
+--+Laundry Service Seed Data
 -- Execute these SQL commands in your Supabase SQL editor after running the migrations
 
 -- Insert sample laundry partners
