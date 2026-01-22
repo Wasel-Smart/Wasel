@@ -7,7 +7,7 @@ import { supabase } from '../services/api';
 class DatabaseOptimizer {
   async healthCheck(): Promise<boolean> {
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('profiles')
         .select('id')
         .limit(1);
