@@ -2,20 +2,36 @@
 // Push Notifications & Cloud Messaging Setup
 // Status: Ready for Firebase Project Setup
 
-import { initializeApp } from 'firebase/app';
-import { getMessaging, onMessage, getToken } from 'firebase/messaging';
-import { getAnalytics } from 'firebase/analytics';
+import { initializeApp, type FirebaseApp } from 'firebase/app';
+import { getMessaging, onMessage, getToken, type Messaging } from 'firebase/messaging';
+import { getAnalytics, type Analytics } from 'firebase/analytics';
 
 /**
  * Firebase Configuration
  * These values come from your Firebase Console
  * Project Settings > General > Your Web Apps
  */
+const requiredEnvVars = [
+  'VITE_FIREBASE_API_KEY',
+  'VITE_FIREBASE_PROJECT_ID',
+  'VITE_FIREBASE_MESSAGING_SENDER_ID',
+  'VITE_FIREBASE_APP_ID'
+] as const;
+
+function validateFirebaseConfig() {
+  const missing = requiredEnvVars.filter(key => !import.meta.env[key]);
+  if (missing.length > 0) {
+    console.warn(`[Firebase] Missing required environment variables: ${missing.join(', ')}`);
+    return false;
+  }
+  return true;
+}
+
 export const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
-  authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`,
+  authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID || 'wasel-app'}.firebaseapp.com`,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || `${import.meta.env.VITE_FIREBASE_PROJECT_ID || 'wasel-app'}.appspot.com`,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
   appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
 };
@@ -23,29 +39,24 @@ export const firebaseConfig = {
 /**
  * Initialize Firebase App
  */
-let app: ReturnType<typeof initializeApp> | null = null;
+let app: FirebaseApp | null = null;
 
 try {
-  if (
-    firebaseConfig.apiKey &&
-    firebaseConfig.projectId &&
-    firebaseConfig.messagingSenderId
-  ) {
+  if (validateFirebaseConfig()) {
     app = initializeApp(firebaseConfig);
     console.log('[Firebase] App initialized successfully');
   } else {
-    console.warn(
-      '[Firebase] Missing configuration. Push notifications disabled.'
-    );
+    console.warn('[Firebase] Missing configuration. Push notifications disabled.');
   }
 } catch (error) {
   console.error('[Firebase] Initialization error:', error);
+  app = null;
 }
 
 /**
  * Get Firebase Messaging Instance
  */
-export function getFirebaseMessaging() {
+export function getFirebaseMessaging(): Messaging | null {
   if (!app) {
     console.warn('[Firebase] App not initialized');
     return null;
@@ -63,7 +74,7 @@ export function getFirebaseMessaging() {
  * Request Push Notification Permission
  * Shows browser permission dialog to user
  */
-export async function requestPushPermission() {
+export async function requestPushPermission(): Promise<boolean> {
   try {
     // Check if notifications are supported
     if (!('Notification' in window)) {
@@ -95,7 +106,7 @@ export async function requestPushPermission() {
  * Register Device for Push Notifications
  * Gets FCM token and stores it in Supabase
  */
-export async function registerForPushNotifications(userId: string) {
+export async function registerForPushNotifications(userId: string): Promise<string | null> {
   try {
     const messaging = getFirebaseMessaging();
     if (!messaging) {
@@ -111,11 +122,17 @@ export async function registerForPushNotifications(userId: string) {
 
     // Wait for service worker to be ready
     const serviceWorkerReady = await navigator.serviceWorker.ready;
+    const vapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY;
+    
+    if (!vapidKey) {
+      console.warn('[Firebase] VAPID key not configured');
+      return null;
+    }
 
     // Get FCM token
     const token = await getToken(messaging, {
       serviceWorkerRegistration: serviceWorkerReady,
-      vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY || '',
+      vapidKey,
     });
 
     if (token) {
@@ -147,16 +164,16 @@ export async function registerForPushNotifications(userId: string) {
  * When app is open and user receives notification
  */
 export function setupPushNotificationListener(
-  onNotification: (payload: any) => void
-) {
+  onNotification: (payload: FirebaseNotificationPayload) => void
+): (() => void) | null {
   try {
     const messaging = getFirebaseMessaging();
     if (!messaging) {
       console.warn('[Firebase] Messaging not available for listener');
-      return;
+      return null;
     }
 
-    onMessage(messaging, (payload) => {
+    const unsubscribe = onMessage(messaging, (payload) => {
       console.log('[Firebase] Message received:', payload);
 
       // Handle notification
@@ -164,7 +181,7 @@ export function setupPushNotificationListener(
         const { title, body, icon } = payload.notification;
 
         // Show notification to user (can also show in-app toast)
-        const notificationData = {
+        const notificationData: FirebaseNotificationPayload = {
           title: title || 'Wasel Notification',
           body: body || '',
           icon: icon || '/vite.svg',
@@ -188,8 +205,11 @@ export function setupPushNotificationListener(
         }
       }
     });
+
+    return unsubscribe;
   } catch (error) {
     console.error('[Firebase] Listener setup error:', error);
+    return null;
   }
 }
 
@@ -197,7 +217,7 @@ export function setupPushNotificationListener(
  * Get Firebase Analytics Instance
  * For event tracking and user insights
  */
-export function getFirebaseAnalytics() {
+export function getFirebaseAnalytics(): Analytics | null {
   if (!app) {
     console.warn('[Firebase] App not initialized for analytics');
     return null;
@@ -214,7 +234,7 @@ export function getFirebaseAnalytics() {
 /**
  * Track Event in Firebase Analytics
  */
-export function trackFirebaseEvent(eventName: string, eventData?: Record<string, any>) {
+export function trackFirebaseEvent(eventName: string, eventData?: Record<string, any>): void {
   try {
     const analytics = getFirebaseAnalytics();
     if (!analytics) return;
@@ -231,7 +251,7 @@ export function trackFirebaseEvent(eventName: string, eventData?: Record<string,
  * Initialize Firebase Services
  * Call this in your app initialization (e.g., in App.tsx useEffect)
  */
-export async function initializeFirebaseServices(userId: string) {
+export async function initializeFirebaseServices(userId: string): Promise<void> {
   try {
     console.log('[Firebase] Initializing services...');
 
@@ -250,10 +270,16 @@ export async function initializeFirebaseServices(userId: string) {
         console.log('[Firebase] Device registered for notifications');
 
         // Setup listener for incoming notifications
-        setupPushNotificationListener((notification) => {
+        const unsubscribe = setupPushNotificationListener((notification) => {
           console.log('[Firebase] Notification received in app:', notification);
           // Show toast or in-app notification here
         });
+
+        // Store unsubscribe function for cleanup
+        if (unsubscribe) {
+          // You can store this in a global state or context for cleanup
+          (window as any).__firebaseUnsubscribe = unsubscribe;
+        }
       }
     }
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Button } from '../ui/button';
 import { ImageWithFallback } from './ImageWithFallback';
+import { designTokens } from './FigmaDesignSystem';
 import wasselLogo from 'figma:asset/1ccf434105a811706fd618a3b652ae052ecf47e1.png';
 
 interface WasselHeroSectionProps {
@@ -33,7 +34,11 @@ export const WasselHeroSection: React.FC<WasselHeroSectionProps> = ({
 
           {/* RTL Language Toggle (Arabic) */}
           <div className="flex items-center gap-4">
-            <button className="px-4 py-2 text-gray-700 hover:text-primary transition-colors">
+            <button 
+              className="px-4 py-2 text-neutral-700 hover:text-primary transition-colors"
+              type="button"
+              aria-label="Switch to Arabic"
+            >
               أنا واصل، أنت؟
             </button>
             <Button
@@ -45,7 +50,7 @@ export const WasselHeroSection: React.FC<WasselHeroSectionProps> = ({
             </Button>
             <Button
               onClick={onGetStarted}
-              className="bg-[#00897B] hover:bg-[#00796B] text-white px-6 py-2 rounded-lg shadow-lg"
+              className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg shadow-lg"
             >
               Get Started
             </Button>
@@ -65,8 +70,8 @@ export const WasselHeroSection: React.FC<WasselHeroSectionProps> = ({
           >
             {/* Badge */}
             <div className="inline-block">
-              <div className="px-4 py-2 bg-[#B2DFDB] rounded-full">
-                <span className="text-[#00897B] font-medium text-sm">
+              <div className="px-4 py-2 bg-primary-100 rounded-full">
+                <span className="text-primary-700 font-medium text-sm">
                   Next-Generation Ride Sharing
                 </span>
               </div>
@@ -91,14 +96,14 @@ export const WasselHeroSection: React.FC<WasselHeroSectionProps> = ({
               <Button
                 size="lg"
                 onClick={onGetStarted}
-                className="bg-[#00897B] hover:bg-[#00796B] text-white px-8 py-4 text-lg rounded-xl shadow-xl hover:shadow-2xl transition-all"
+                className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-4 text-lg rounded-xl shadow-xl hover:shadow-2xl transition-all"
               >
                 Get Started Free
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="border-2 border-[#00897B] text-[#00897B] hover:bg-[#00897B]/5 px-8 py-4 text-lg rounded-xl"
+                className="border-2 border-primary-600 text-primary-600 hover:bg-primary-50 px-8 py-4 text-lg rounded-xl"
               >
                 Learn More
               </Button>
@@ -107,16 +112,16 @@ export const WasselHeroSection: React.FC<WasselHeroSectionProps> = ({
             {/* Stats */}
             <div className="flex gap-8 pt-8">
               <div>
-                <div className="text-3xl font-bold text-[#00897B]">10K+</div>
-                <div className="text-sm text-gray-600">Active Users</div>
+                <div className="text-3xl font-bold text-primary-600">10K+</div>
+                <div className="text-sm text-neutral-600">Active Users</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-[#00897B]">50K+</div>
-                <div className="text-sm text-gray-600">Rides Completed</div>
+                <div className="text-3xl font-bold text-primary-600">50K+</div>
+                <div className="text-sm text-neutral-600">Rides Completed</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-[#00897B]">4.8★</div>
-                <div className="text-sm text-gray-600">User Rating</div>
+                <div className="text-3xl font-bold text-primary-600">4.8★</div>
+                <div className="text-sm text-neutral-600">User Rating</div>
               </div>
             </div>
           </motion.div>
@@ -130,7 +135,7 @@ export const WasselHeroSection: React.FC<WasselHeroSectionProps> = ({
           >
             <div className="relative w-full aspect-square max-w-lg mx-auto">
               {/* Background Circle with Gradient */}
-              <div className="absolute inset-0 bg-gradient-to-br from-[#00897B] to-[#4DB6AC] rounded-3xl shadow-2xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-primary-600 to-primary-400 rounded-3xl shadow-2xl"></div>
 
               {/* Globe Illustration Container */}
               <div className="absolute inset-0 flex items-center justify-center p-12">
@@ -194,7 +199,7 @@ export const WasselHeroSection: React.FC<WasselHeroSectionProps> = ({
                 }}
                 className="absolute top-1/2 -right-5 bg-white p-4 rounded-xl shadow-lg"
               >
-                <div className="text-sm font-semibold text-[#00897B]">
+                <div className="text-sm font-semibold text-primary-600">
                   Save 60%
                 </div>
               </motion.div>
@@ -212,7 +217,7 @@ export const WasselHeroSection: React.FC<WasselHeroSectionProps> = ({
         >
           <path
             d="M0,0 C300,100 900,100 1200,0 L1200,120 L0,120 Z"
-            fill="#00897B"
+            fill={designTokens.colors.primary[600]}
             fillOpacity="0.1"
           />
         </svg>

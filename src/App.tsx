@@ -10,15 +10,47 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 
-// Lazy loaded components
-const Dashboard = lazy(() => import('./components/Dashboard').then(m => ({ default: m.Dashboard })));
-const LandingPage = lazy(() => import('./components/LandingPage').then(m => ({ default: m.LandingPage })));
-const LaundryService = lazy(() => import('./components/LaundryService').then(m => ({ default: m.LaundryService })));
-const FindRide = lazy(() => import('./components/FindRide').then(m => ({ default: m.FindRide })));
+// Lazy loaded components with proper error handling
+const Dashboard = lazy(() => 
+  import('./components/Dashboard')
+    .then(m => ({ default: m.Dashboard }))
+    .catch(error => {
+      console.error('Failed to load Dashboard:', error);
+      return { default: () => <div className="p-4 text-red-600">Failed to load Dashboard</div> };
+    })
+);
+
+const LandingPage = lazy(() => 
+  import('./components/LandingPage')
+    .then(m => ({ default: m.LandingPage }))
+    .catch(error => {
+      console.error('Failed to load LandingPage:', error);
+      return { default: () => <div className="p-4 text-red-600">Failed to load Landing Page</div> };
+    })
+);
+
+const LaundryService = lazy(() => 
+  import('./components/LaundryService')
+    .then(m => ({ default: m.LaundryService }))
+    .catch(error => {
+      console.error('Failed to load LaundryService:', error);
+      return { default: () => <div className="p-4 text-red-600">Failed to load Laundry Service</div> };
+    })
+);
+
+const FindRide = lazy(() => 
+  import('./components/FindRide')
+    .then(m => ({ default: m.FindRide }))
+    .catch(error => {
+      console.error('Failed to load FindRide:', error);
+      return { default: () => <div className="p-4 text-red-600">Failed to load Find Ride</div> };
+    })
+);
 
 const LoadingSpinner = memo(() => (
-  <div className="flex h-full min-h-[200px] items-center justify-center">
-    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+  <div className="flex h-full min-h-[200px] items-center justify-center" role="status" aria-label="Loading">
+    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" aria-hidden="true"></div>
+    <span className="sr-only">Loading...</span>
   </div>
 ));
 
@@ -27,20 +59,27 @@ LoadingSpinner.displayName = 'LoadingSpinner';
 function AppContent() {
   const { user, loading } = useAuth();
   const [currentPage, setCurrentPage] = useState('dashboard');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleNavigate = useCallback((page: string) => {
     setCurrentPage(page);
+    setSidebarOpen(false); // Close sidebar on navigation
   }, []);
 
   const handleMenuClick = useCallback(() => {
-    // Sidebar toggle logic
+    setSidebarOpen(prev => !prev);
+  }, []);
+
+  const handleSidebarClose = useCallback(() => {
+    setSidebarOpen(false);
   }, []);
 
   // Show loading state while checking authentication
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-gray-900" role="status" aria-label="Loading application">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" aria-hidden="true"></div>
+        <span className="sr-only">Loading application...</span>
       </div>
     );
   }
@@ -70,8 +109,8 @@ function AppContent() {
         <Sidebar
           currentPage={currentPage}
           onNavigate={handleNavigate}
-          isOpen={false}
-          onClose={() => {}}
+          isOpen={sidebarOpen}
+          onClose={handleSidebarClose}
         />
 
         {/* Main Content */}
@@ -81,14 +120,16 @@ function AppContent() {
             onNavigate={handleNavigate}
           />
 
-          <main className="flex-1 overflow-y-auto p-3 sm:p-6">
-            <Suspense fallback={<LoadingSpinner />}>
-              {currentPage === 'dashboard' && <Dashboard onNavigate={handleNavigate} />}
-              {currentPage === 'laundry' && <LaundryService />}
-              {currentPage === 'find-ride' && <FindRide />}
-              {/* Default to dashboard for other pages */}
-              {!['dashboard', 'laundry', 'find-ride'].includes(currentPage) && <Dashboard onNavigate={handleNavigate} />}
-            </Suspense>
+          <main className="flex-1 overflow-y-auto p-3 sm:p-6" role="main">
+            <ErrorBoundary>
+              <Suspense fallback={<LoadingSpinner />}>
+                {currentPage === 'dashboard' && <Dashboard onNavigate={handleNavigate} />}
+                {currentPage === 'laundry' && <LaundryService />}
+                {currentPage === 'find-ride' && <FindRide />}
+                {/* Default to dashboard for other pages */}
+                {!['dashboard', 'laundry', 'find-ride'].includes(currentPage) && <Dashboard onNavigate={handleNavigate} />}
+              </Suspense>
+            </ErrorBoundary>
           </main>
         </div>
       </div>

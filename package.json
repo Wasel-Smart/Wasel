@@ -90,6 +90,12 @@
         "test:ui": "vitest --ui",
         "test:coverage": "vitest run --coverage",
         "test:run": "vitest run",
-        "lint": "tsc --noEmit"
+        "lint": "tsc --noEmit",
+        "lint:fix": "tsc --noEmit && prettier --write src/**/*.{ts,tsx}",
+        "security:audit": "npm audit --audit-level moderate",
+        "security:fix": "npm audit fix",
+        "build:analyze": "vite build --mode analyze",
+        "clean": "rm -rf dist build node_modules/.vite",
+        "type-check": "tsc --noEmit --skipLibCheck"
     }
 }
