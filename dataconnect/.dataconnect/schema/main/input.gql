@@ -1,0 +1,2185 @@
+"""
+✨ `Location_KeyOutput` returns the primary key fields of table type `Location`.
+
+It has the same format as `Location_Key`, but is only used as mutation return value.
+"""
+scalar Location_KeyOutput
+"""
+✨ `PaymentMethod_KeyOutput` returns the primary key fields of table type `PaymentMethod`.
+
+It has the same format as `PaymentMethod_Key`, but is only used as mutation return value.
+"""
+scalar PaymentMethod_KeyOutput
+"""
+✨ `Ride_KeyOutput` returns the primary key fields of table type `Ride`.
+
+It has the same format as `Ride_Key`, but is only used as mutation return value.
+"""
+scalar Ride_KeyOutput
+"""
+✨ `User_KeyOutput` returns the primary key fields of table type `User`.
+
+It has the same format as `User_Key`, but is only used as mutation return value.
+"""
+scalar User_KeyOutput
+"""
+✨ `Vehicle_KeyOutput` returns the primary key fields of table type `Vehicle`.
+
+It has the same format as `Vehicle_Key`, but is only used as mutation return value.
+"""
+scalar Vehicle_KeyOutput
+"""
+✨ Generated data input type for table 'Location'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Location_Data {
+  """
+  ✨ Generated from Field `Location`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Location`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Location`.`userId` of type `UUID`
+  """
+  userId: UUID
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `Location`.`userId` of type `UUID`)
+  """
+  userId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Location`.`user` of type `User`
+  """
+  user: User_Key
+  """
+  ✨ Generated from Field `Location`.`address` of type `String!`
+  """
+  address: String
+  """
+  ✨ `_expr` server value variant of `address` (✨ Generated from Field `Location`.`address` of type `String!`)
+  """
+  address_expr: String_Expr
+  """
+  ✨ Generated from Field `Location`.`description` of type `String`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `Location`.`description` of type `String`)
+  """
+  description_expr: String_Expr
+  """
+  ✨ Generated from Field `Location`.`latitude` of type `Float!`
+  """
+  latitude: Float
+  """
+  ✨ `_expr` server value variant of `latitude` (✨ Generated from Field `Location`.`latitude` of type `Float!`)
+  """
+  latitude_expr: Float_Expr
+  """
+  ✨ `_update` server value variant of `latitude` (✨ Generated from Field `Location`.`latitude` of type `Float!`)
+  """
+  latitude_update: [Float_Update!]
+  """
+  ✨ Generated from Field `Location`.`longitude` of type `Float!`
+  """
+  longitude: Float
+  """
+  ✨ `_expr` server value variant of `longitude` (✨ Generated from Field `Location`.`longitude` of type `Float!`)
+  """
+  longitude_expr: Float_Expr
+  """
+  ✨ `_update` server value variant of `longitude` (✨ Generated from Field `Location`.`longitude` of type `Float!`)
+  """
+  longitude_update: [Float_Update!]
+  """
+  ✨ Generated from Field `Location`.`name` of type `String!`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `Location`.`name` of type `String!`)
+  """
+  name_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'Location'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Location_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Location_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Location_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Location_Filter!]
+  """
+  ✨ Generated from Field `Location`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Location`.`userId` of type `UUID`
+  """
+  userId: UUID_Filter
+  """
+  ✨ Generated from Field `Location`.`user` of type `User`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `Location`.`address` of type `String!`
+  """
+  address: String_Filter
+  """
+  ✨ Generated from Field `Location`.`description` of type `String`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `Location`.`latitude` of type `Float!`
+  """
+  latitude: Float_Filter
+  """
+  ✨ Generated from Field `Location`.`longitude` of type `Float!`
+  """
+  longitude: Float_Filter
+  """
+  ✨ Generated from Field `Location`.`name` of type `String!`
+  """
+  name: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'Location'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Location_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Location_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Location_Filter
+}
+"""
+✨ Generated having input type for table 'Location'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Location_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Location_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Location_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Location_Having!]
+  """
+  ✨ Generated from Field `Location`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Location`.`address_count` of type `Int!`
+  """
+  address_count: Int_Filter
+  """
+  ✨ Generated from Field `Location`.`description_count` of type `Int!`
+  """
+  description_count: Int_Filter
+  """
+  ✨ Generated from Field `Location`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Location`.`latitude_count` of type `Int!`
+  """
+  latitude_count: Int_Filter
+  """
+  ✨ Generated from Field `Location`.`longitude_count` of type `Int!`
+  """
+  longitude_count: Int_Filter
+  """
+  ✨ Generated from Field `Location`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
+  """
+  ✨ Generated from Field `Location`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
+  """
+  ✨ Generated from Field `Location`.`latitude_sum` of type `Float`
+  """
+  latitude_sum: Float_Filter
+  """
+  ✨ Generated from Field `Location`.`longitude_sum` of type `Float`
+  """
+  longitude_sum: Float_Filter
+  """
+  ✨ Generated from Field `Location`.`latitude_avg` of type `Float`
+  """
+  latitude_avg: Float_Filter
+  """
+  ✨ Generated from Field `Location`.`longitude_avg` of type `Float`
+  """
+  longitude_avg: Float_Filter
+  """
+  ✨ Generated from Field `Location`.`latitude_min` of type `Float`
+  """
+  latitude_min: Float_Filter
+  """
+  ✨ Generated from Field `Location`.`longitude_min` of type `Float`
+  """
+  longitude_min: Float_Filter
+  """
+  ✨ Generated from Field `Location`.`latitude_max` of type `Float`
+  """
+  latitude_max: Float_Filter
+  """
+  ✨ Generated from Field `Location`.`longitude_max` of type `Float`
+  """
+  longitude_max: Float_Filter
+}
+"""
+✨ Generated key input type for table 'Location'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Location_Key {
+  """
+  ✨ Generated from Field `Location`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Location`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Location'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Location_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Location_Filter
+}
+"""
+✨ Generated order input type for table 'Location'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Location_Order {
+  """
+  ✨ Generated from Field `Location`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`userId` of type `UUID`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`user` of type `User`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `Location`.`address` of type `String!`
+  """
+  address: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`description` of type `String`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`latitude` of type `Float!`
+  """
+  latitude: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`longitude` of type `Float!`
+  """
+  longitude: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`name` of type `String!`
+  """
+  name: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`address_count` of type `Int!`
+  """
+  address_count: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`description_count` of type `Int!`
+  """
+  description_count: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`latitude_count` of type `Int!`
+  """
+  latitude_count: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`longitude_count` of type `Int!`
+  """
+  longitude_count: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`latitude_sum` of type `Float`
+  """
+  latitude_sum: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`longitude_sum` of type `Float`
+  """
+  longitude_sum: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`latitude_avg` of type `Float`
+  """
+  latitude_avg: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`longitude_avg` of type `Float`
+  """
+  longitude_avg: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`latitude_min` of type `Float`
+  """
+  latitude_min: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`longitude_min` of type `Float`
+  """
+  longitude_min: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`latitude_max` of type `Float`
+  """
+  latitude_max: OrderDirection
+  """
+  ✨ Generated from Field `Location`.`longitude_max` of type `Float`
+  """
+  longitude_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'PaymentMethod'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input PaymentMethod_Data {
+  """
+  ✨ Generated from Field `PaymentMethod`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `PaymentMethod`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `PaymentMethod`.`userId` of type `UUID`
+  """
+  userId: UUID
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `PaymentMethod`.`userId` of type `UUID`)
+  """
+  userId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `PaymentMethod`.`user` of type `User`
+  """
+  user: User_Key
+  """
+  ✨ Generated from Field `PaymentMethod`.`cardHolderName` of type `String`
+  """
+  cardHolderName: String
+  """
+  ✨ `_expr` server value variant of `cardHolderName` (✨ Generated from Field `PaymentMethod`.`cardHolderName` of type `String`)
+  """
+  cardHolderName_expr: String_Expr
+  """
+  ✨ Generated from Field `PaymentMethod`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `PaymentMethod`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `PaymentMethod`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `PaymentMethod`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `PaymentMethod`.`expiryDate` of type `String`
+  """
+  expiryDate: String
+  """
+  ✨ `_expr` server value variant of `expiryDate` (✨ Generated from Field `PaymentMethod`.`expiryDate` of type `String`)
+  """
+  expiryDate_expr: String_Expr
+  """
+  ✨ Generated from Field `PaymentMethod`.`isDefault` of type `Boolean!`
+  """
+  isDefault: Boolean
+  """
+  ✨ `_expr` server value variant of `isDefault` (✨ Generated from Field `PaymentMethod`.`isDefault` of type `Boolean!`)
+  """
+  isDefault_expr: Boolean_Expr
+  """
+  ✨ Generated from Field `PaymentMethod`.`lastFourDigits` of type `String!`
+  """
+  lastFourDigits: String
+  """
+  ✨ `_expr` server value variant of `lastFourDigits` (✨ Generated from Field `PaymentMethod`.`lastFourDigits` of type `String!`)
+  """
+  lastFourDigits_expr: String_Expr
+  """
+  ✨ Generated from Field `PaymentMethod`.`type` of type `String!`
+  """
+  type: String
+  """
+  ✨ `_expr` server value variant of `type` (✨ Generated from Field `PaymentMethod`.`type` of type `String!`)
+  """
+  type_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'PaymentMethod'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input PaymentMethod_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [PaymentMethod_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: PaymentMethod_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [PaymentMethod_Filter!]
+  """
+  ✨ Generated from Field `PaymentMethod`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `PaymentMethod`.`userId` of type `UUID`
+  """
+  userId: UUID_Filter
+  """
+  ✨ Generated from Field `PaymentMethod`.`user` of type `User`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `PaymentMethod`.`cardHolderName` of type `String`
+  """
+  cardHolderName: String_Filter
+  """
+  ✨ Generated from Field `PaymentMethod`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `PaymentMethod`.`expiryDate` of type `String`
+  """
+  expiryDate: String_Filter
+  """
+  ✨ Generated from Field `PaymentMethod`.`isDefault` of type `Boolean!`
+  """
+  isDefault: Boolean_Filter
+  """
+  ✨ Generated from Field `PaymentMethod`.`lastFourDigits` of type `String!`
+  """
+  lastFourDigits: String_Filter
+  """
+  ✨ Generated from Field `PaymentMethod`.`type` of type `String!`
+  """
+  type: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'PaymentMethod'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input PaymentMethod_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [PaymentMethod_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: PaymentMethod_Filter
+}
+"""
+✨ Generated having input type for table 'PaymentMethod'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input PaymentMethod_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [PaymentMethod_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: PaymentMethod_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [PaymentMethod_Having!]
+  """
+  ✨ Generated from Field `PaymentMethod`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `PaymentMethod`.`cardHolderName_count` of type `Int!`
+  """
+  cardHolderName_count: Int_Filter
+  """
+  ✨ Generated from Field `PaymentMethod`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `PaymentMethod`.`expiryDate_count` of type `Int!`
+  """
+  expiryDate_count: Int_Filter
+  """
+  ✨ Generated from Field `PaymentMethod`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `PaymentMethod`.`isDefault_count` of type `Int!`
+  """
+  isDefault_count: Int_Filter
+  """
+  ✨ Generated from Field `PaymentMethod`.`lastFourDigits_count` of type `Int!`
+  """
+  lastFourDigits_count: Int_Filter
+  """
+  ✨ Generated from Field `PaymentMethod`.`type_count` of type `Int!`
+  """
+  type_count: Int_Filter
+  """
+  ✨ Generated from Field `PaymentMethod`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
+  """
+  ✨ Generated from Field `PaymentMethod`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `PaymentMethod`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'PaymentMethod'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input PaymentMethod_Key {
+  """
+  ✨ Generated from Field `PaymentMethod`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `PaymentMethod`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'PaymentMethod'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input PaymentMethod_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: PaymentMethod_Filter
+}
+"""
+✨ Generated order input type for table 'PaymentMethod'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input PaymentMethod_Order {
+  """
+  ✨ Generated from Field `PaymentMethod`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `PaymentMethod`.`userId` of type `UUID`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `PaymentMethod`.`user` of type `User`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `PaymentMethod`.`cardHolderName` of type `String`
+  """
+  cardHolderName: OrderDirection
+  """
+  ✨ Generated from Field `PaymentMethod`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `PaymentMethod`.`expiryDate` of type `String`
+  """
+  expiryDate: OrderDirection
+  """
+  ✨ Generated from Field `PaymentMethod`.`isDefault` of type `Boolean!`
+  """
+  isDefault: OrderDirection
+  """
+  ✨ Generated from Field `PaymentMethod`.`lastFourDigits` of type `String!`
+  """
+  lastFourDigits: OrderDirection
+  """
+  ✨ Generated from Field `PaymentMethod`.`type` of type `String!`
+  """
+  type: OrderDirection
+  """
+  ✨ Generated from Field `PaymentMethod`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `PaymentMethod`.`cardHolderName_count` of type `Int!`
+  """
+  cardHolderName_count: OrderDirection
+  """
+  ✨ Generated from Field `PaymentMethod`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `PaymentMethod`.`expiryDate_count` of type `Int!`
+  """
+  expiryDate_count: OrderDirection
+  """
+  ✨ Generated from Field `PaymentMethod`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `PaymentMethod`.`isDefault_count` of type `Int!`
+  """
+  isDefault_count: OrderDirection
+  """
+  ✨ Generated from Field `PaymentMethod`.`lastFourDigits_count` of type `Int!`
+  """
+  lastFourDigits_count: OrderDirection
+  """
+  ✨ Generated from Field `PaymentMethod`.`type_count` of type `Int!`
+  """
+  type_count: OrderDirection
+  """
+  ✨ Generated from Field `PaymentMethod`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
+  """
+  ✨ Generated from Field `PaymentMethod`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `PaymentMethod`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Ride'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Ride_Data {
+  """
+  ✨ Generated from Field `Ride`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Ride`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Ride`.`driverId` of type `UUID`
+  """
+  driverId: UUID
+  """
+  ✨ `_expr` server value variant of `driverId` (✨ Generated from Field `Ride`.`driverId` of type `UUID`)
+  """
+  driverId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Ride`.`riderId` of type `UUID`
+  """
+  riderId: UUID
+  """
+  ✨ `_expr` server value variant of `riderId` (✨ Generated from Field `Ride`.`riderId` of type `UUID`)
+  """
+  riderId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Ride`.`vehicleId` of type `UUID`
+  """
+  vehicleId: UUID
+  """
+  ✨ `_expr` server value variant of `vehicleId` (✨ Generated from Field `Ride`.`vehicleId` of type `UUID`)
+  """
+  vehicleId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Ride`.`driver` of type `User`
+  """
+  driver: User_Key
+  """
+  ✨ Generated from Field `Ride`.`rider` of type `User`
+  """
+  rider: User_Key
+  """
+  ✨ Generated from Field `Ride`.`vehicle` of type `Vehicle`
+  """
+  vehicle: Vehicle_Key
+  """
+  ✨ Generated from Field `Ride`.`completedAt` of type `Timestamp`
+  """
+  completedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `completedAt` (✨ Generated from Field `Ride`.`completedAt` of type `Timestamp`)
+  """
+  completedAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `completedAt` (✨ Generated from Field `Ride`.`completedAt` of type `Timestamp`)
+  """
+  completedAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `completedAt` (✨ Generated from Field `Ride`.`completedAt` of type `Timestamp`)
+  """
+  completedAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `Ride`.`driverRating` of type `Int`
+  """
+  driverRating: Int
+  """
+  ✨ `_expr` server value variant of `driverRating` (✨ Generated from Field `Ride`.`driverRating` of type `Int`)
+  """
+  driverRating_expr: Int_Expr
+  """
+  ✨ `_update` server value variant of `driverRating` (✨ Generated from Field `Ride`.`driverRating` of type `Int`)
+  """
+  driverRating_update: [Int_Update!]
+  """
+  ✨ Generated from Field `Ride`.`dropoffLocation` of type `String!`
+  """
+  dropoffLocation: String
+  """
+  ✨ `_expr` server value variant of `dropoffLocation` (✨ Generated from Field `Ride`.`dropoffLocation` of type `String!`)
+  """
+  dropoffLocation_expr: String_Expr
+  """
+  ✨ Generated from Field `Ride`.`fare` of type `Float!`
+  """
+  fare: Float
+  """
+  ✨ `_expr` server value variant of `fare` (✨ Generated from Field `Ride`.`fare` of type `Float!`)
+  """
+  fare_expr: Float_Expr
+  """
+  ✨ `_update` server value variant of `fare` (✨ Generated from Field `Ride`.`fare` of type `Float!`)
+  """
+  fare_update: [Float_Update!]
+  """
+  ✨ Generated from Field `Ride`.`pickupLocation` of type `String!`
+  """
+  pickupLocation: String
+  """
+  ✨ `_expr` server value variant of `pickupLocation` (✨ Generated from Field `Ride`.`pickupLocation` of type `String!`)
+  """
+  pickupLocation_expr: String_Expr
+  """
+  ✨ Generated from Field `Ride`.`requestedAt` of type `Timestamp!`
+  """
+  requestedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `requestedAt` (✨ Generated from Field `Ride`.`requestedAt` of type `Timestamp!`)
+  """
+  requestedAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `requestedAt` (✨ Generated from Field `Ride`.`requestedAt` of type `Timestamp!`)
+  """
+  requestedAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `requestedAt` (✨ Generated from Field `Ride`.`requestedAt` of type `Timestamp!`)
+  """
+  requestedAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `Ride`.`riderRating` of type `Int`
+  """
+  riderRating: Int
+  """
+  ✨ `_expr` server value variant of `riderRating` (✨ Generated from Field `Ride`.`riderRating` of type `Int`)
+  """
+  riderRating_expr: Int_Expr
+  """
+  ✨ `_update` server value variant of `riderRating` (✨ Generated from Field `Ride`.`riderRating` of type `Int`)
+  """
+  riderRating_update: [Int_Update!]
+  """
+  ✨ Generated from Field `Ride`.`scheduledAt` of type `Timestamp`
+  """
+  scheduledAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `scheduledAt` (✨ Generated from Field `Ride`.`scheduledAt` of type `Timestamp`)
+  """
+  scheduledAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `scheduledAt` (✨ Generated from Field `Ride`.`scheduledAt` of type `Timestamp`)
+  """
+  scheduledAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `scheduledAt` (✨ Generated from Field `Ride`.`scheduledAt` of type `Timestamp`)
+  """
+  scheduledAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `Ride`.`startedAt` of type `Timestamp`
+  """
+  startedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `startedAt` (✨ Generated from Field `Ride`.`startedAt` of type `Timestamp`)
+  """
+  startedAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `startedAt` (✨ Generated from Field `Ride`.`startedAt` of type `Timestamp`)
+  """
+  startedAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `startedAt` (✨ Generated from Field `Ride`.`startedAt` of type `Timestamp`)
+  """
+  startedAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `Ride`.`status` of type `String!`
+  """
+  status: String
+  """
+  ✨ `_expr` server value variant of `status` (✨ Generated from Field `Ride`.`status` of type `String!`)
+  """
+  status_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'Ride'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Ride_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Ride_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Ride_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Ride_Filter!]
+  """
+  ✨ Generated from Field `Ride`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Ride`.`driverId` of type `UUID`
+  """
+  driverId: UUID_Filter
+  """
+  ✨ Generated from Field `Ride`.`riderId` of type `UUID`
+  """
+  riderId: UUID_Filter
+  """
+  ✨ Generated from Field `Ride`.`vehicleId` of type `UUID`
+  """
+  vehicleId: UUID_Filter
+  """
+  ✨ Generated from Field `Ride`.`driver` of type `User`
+  """
+  driver: User_Filter
+  """
+  ✨ Generated from Field `Ride`.`rider` of type `User`
+  """
+  rider: User_Filter
+  """
+  ✨ Generated from Field `Ride`.`vehicle` of type `Vehicle`
+  """
+  vehicle: Vehicle_Filter
+  """
+  ✨ Generated from Field `Ride`.`completedAt` of type `Timestamp`
+  """
+  completedAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Ride`.`driverRating` of type `Int`
+  """
+  driverRating: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`dropoffLocation` of type `String!`
+  """
+  dropoffLocation: String_Filter
+  """
+  ✨ Generated from Field `Ride`.`fare` of type `Float!`
+  """
+  fare: Float_Filter
+  """
+  ✨ Generated from Field `Ride`.`pickupLocation` of type `String!`
+  """
+  pickupLocation: String_Filter
+  """
+  ✨ Generated from Field `Ride`.`requestedAt` of type `Timestamp!`
+  """
+  requestedAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Ride`.`riderRating` of type `Int`
+  """
+  riderRating: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`scheduledAt` of type `Timestamp`
+  """
+  scheduledAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Ride`.`startedAt` of type `Timestamp`
+  """
+  startedAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Ride`.`status` of type `String!`
+  """
+  status: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'Ride'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Ride_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Ride_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Ride_Filter
+}
+"""
+✨ Generated having input type for table 'Ride'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Ride_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Ride_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Ride_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Ride_Having!]
+  """
+  ✨ Generated from Field `Ride`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`completedAt_count` of type `Int!`
+  """
+  completedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`driverId_count` of type `Int!`
+  """
+  driverId_count: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`driverRating_count` of type `Int!`
+  """
+  driverRating_count: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`dropoffLocation_count` of type `Int!`
+  """
+  dropoffLocation_count: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`fare_count` of type `Int!`
+  """
+  fare_count: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`pickupLocation_count` of type `Int!`
+  """
+  pickupLocation_count: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`requestedAt_count` of type `Int!`
+  """
+  requestedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`riderId_count` of type `Int!`
+  """
+  riderId_count: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`riderRating_count` of type `Int!`
+  """
+  riderRating_count: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`scheduledAt_count` of type `Int!`
+  """
+  scheduledAt_count: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`startedAt_count` of type `Int!`
+  """
+  startedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`status_count` of type `Int!`
+  """
+  status_count: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`vehicleId_count` of type `Int!`
+  """
+  vehicleId_count: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`driverRating_sum` of type `Int`
+  """
+  driverRating_sum: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`fare_sum` of type `Float`
+  """
+  fare_sum: Float_Filter
+  """
+  ✨ Generated from Field `Ride`.`riderRating_sum` of type `Int`
+  """
+  riderRating_sum: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`driverRating_avg` of type `Float`
+  """
+  driverRating_avg: Float_Filter
+  """
+  ✨ Generated from Field `Ride`.`fare_avg` of type `Float`
+  """
+  fare_avg: Float_Filter
+  """
+  ✨ Generated from Field `Ride`.`riderRating_avg` of type `Float`
+  """
+  riderRating_avg: Float_Filter
+  """
+  ✨ Generated from Field `Ride`.`completedAt_min` of type `Timestamp`
+  """
+  completedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Ride`.`driverRating_min` of type `Int`
+  """
+  driverRating_min: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`fare_min` of type `Float`
+  """
+  fare_min: Float_Filter
+  """
+  ✨ Generated from Field `Ride`.`requestedAt_min` of type `Timestamp`
+  """
+  requestedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Ride`.`riderRating_min` of type `Int`
+  """
+  riderRating_min: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`scheduledAt_min` of type `Timestamp`
+  """
+  scheduledAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Ride`.`startedAt_min` of type `Timestamp`
+  """
+  startedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Ride`.`completedAt_max` of type `Timestamp`
+  """
+  completedAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `Ride`.`driverRating_max` of type `Int`
+  """
+  driverRating_max: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`fare_max` of type `Float`
+  """
+  fare_max: Float_Filter
+  """
+  ✨ Generated from Field `Ride`.`requestedAt_max` of type `Timestamp`
+  """
+  requestedAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `Ride`.`riderRating_max` of type `Int`
+  """
+  riderRating_max: Int_Filter
+  """
+  ✨ Generated from Field `Ride`.`scheduledAt_max` of type `Timestamp`
+  """
+  scheduledAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `Ride`.`startedAt_max` of type `Timestamp`
+  """
+  startedAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'Ride'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Ride_Key {
+  """
+  ✨ Generated from Field `Ride`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Ride`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Ride'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Ride_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Ride_Filter
+}
+"""
+✨ Generated order input type for table 'Ride'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Ride_Order {
+  """
+  ✨ Generated from Field `Ride`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`driverId` of type `UUID`
+  """
+  driverId: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`riderId` of type `UUID`
+  """
+  riderId: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`vehicleId` of type `UUID`
+  """
+  vehicleId: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`driver` of type `User`
+  """
+  driver: User_Order
+  """
+  ✨ Generated from Field `Ride`.`rider` of type `User`
+  """
+  rider: User_Order
+  """
+  ✨ Generated from Field `Ride`.`vehicle` of type `Vehicle`
+  """
+  vehicle: Vehicle_Order
+  """
+  ✨ Generated from Field `Ride`.`completedAt` of type `Timestamp`
+  """
+  completedAt: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`driverRating` of type `Int`
+  """
+  driverRating: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`dropoffLocation` of type `String!`
+  """
+  dropoffLocation: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`fare` of type `Float!`
+  """
+  fare: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`pickupLocation` of type `String!`
+  """
+  pickupLocation: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`requestedAt` of type `Timestamp!`
+  """
+  requestedAt: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`riderRating` of type `Int`
+  """
+  riderRating: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`scheduledAt` of type `Timestamp`
+  """
+  scheduledAt: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`startedAt` of type `Timestamp`
+  """
+  startedAt: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`status` of type `String!`
+  """
+  status: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`completedAt_count` of type `Int!`
+  """
+  completedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`driverId_count` of type `Int!`
+  """
+  driverId_count: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`driverRating_count` of type `Int!`
+  """
+  driverRating_count: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`dropoffLocation_count` of type `Int!`
+  """
+  dropoffLocation_count: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`fare_count` of type `Int!`
+  """
+  fare_count: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`pickupLocation_count` of type `Int!`
+  """
+  pickupLocation_count: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`requestedAt_count` of type `Int!`
+  """
+  requestedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`riderId_count` of type `Int!`
+  """
+  riderId_count: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`riderRating_count` of type `Int!`
+  """
+  riderRating_count: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`scheduledAt_count` of type `Int!`
+  """
+  scheduledAt_count: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`startedAt_count` of type `Int!`
+  """
+  startedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`status_count` of type `Int!`
+  """
+  status_count: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`vehicleId_count` of type `Int!`
+  """
+  vehicleId_count: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`driverRating_sum` of type `Int`
+  """
+  driverRating_sum: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`fare_sum` of type `Float`
+  """
+  fare_sum: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`riderRating_sum` of type `Int`
+  """
+  riderRating_sum: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`driverRating_avg` of type `Float`
+  """
+  driverRating_avg: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`fare_avg` of type `Float`
+  """
+  fare_avg: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`riderRating_avg` of type `Float`
+  """
+  riderRating_avg: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`completedAt_min` of type `Timestamp`
+  """
+  completedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`driverRating_min` of type `Int`
+  """
+  driverRating_min: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`fare_min` of type `Float`
+  """
+  fare_min: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`requestedAt_min` of type `Timestamp`
+  """
+  requestedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`riderRating_min` of type `Int`
+  """
+  riderRating_min: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`scheduledAt_min` of type `Timestamp`
+  """
+  scheduledAt_min: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`startedAt_min` of type `Timestamp`
+  """
+  startedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`completedAt_max` of type `Timestamp`
+  """
+  completedAt_max: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`driverRating_max` of type `Int`
+  """
+  driverRating_max: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`fare_max` of type `Float`
+  """
+  fare_max: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`requestedAt_max` of type `Timestamp`
+  """
+  requestedAt_max: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`riderRating_max` of type `Int`
+  """
+  riderRating_max: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`scheduledAt_max` of type `Timestamp`
+  """
+  scheduledAt_max: OrderDirection
+  """
+  ✨ Generated from Field `Ride`.`startedAt_max` of type `Timestamp`
+  """
+  startedAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'User'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input User_Data {
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `User`.`email` of type `String!`
+  """
+  email: String
+  """
+  ✨ `_expr` server value variant of `email` (✨ Generated from Field `User`.`email` of type `String!`)
+  """
+  email_expr: String_Expr
+  """
+  ✨ Generated from Field `User`.`firstName` of type `String!`
+  """
+  firstName: String
+  """
+  ✨ `_expr` server value variant of `firstName` (✨ Generated from Field `User`.`firstName` of type `String!`)
+  """
+  firstName_expr: String_Expr
+  """
+  ✨ Generated from Field `User`.`lastName` of type `String!`
+  """
+  lastName: String
+  """
+  ✨ `_expr` server value variant of `lastName` (✨ Generated from Field `User`.`lastName` of type `String!`)
+  """
+  lastName_expr: String_Expr
+  """
+  ✨ Generated from Field `User`.`phoneNumber` of type `String!`
+  """
+  phoneNumber: String
+  """
+  ✨ `_expr` server value variant of `phoneNumber` (✨ Generated from Field `User`.`phoneNumber` of type `String!`)
+  """
+  phoneNumber_expr: String_Expr
+  """
+  ✨ Generated from Field `User`.`photoUrl` of type `String`
+  """
+  photoUrl: String
+  """
+  ✨ `_expr` server value variant of `photoUrl` (✨ Generated from Field `User`.`photoUrl` of type `String`)
+  """
+  photoUrl_expr: String_Expr
+  """
+  ✨ Generated from Field `User`.`rating` of type `Float`
+  """
+  rating: Float
+  """
+  ✨ `_expr` server value variant of `rating` (✨ Generated from Field `User`.`rating` of type `Float`)
+  """
+  rating_expr: Float_Expr
+  """
+  ✨ `_update` server value variant of `rating` (✨ Generated from Field `User`.`rating` of type `Float`)
+  """
+  rating_update: [Float_Update!]
+  """
+  ✨ Generated from Field `User`.`userType` of type `String!`
+  """
+  userType: String
+  """
+  ✨ `_expr` server value variant of `userType` (✨ Generated from Field `User`.`userType` of type `String!`)
+  """
+  userType_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'User'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input User_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [User_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: User_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [User_Filter!]
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `User`.`email` of type `String!`
+  """
+  email: String_Filter
+  """
+  ✨ Generated from Field `User`.`firstName` of type `String!`
+  """
+  firstName: String_Filter
+  """
+  ✨ Generated from Field `User`.`lastName` of type `String!`
+  """
+  lastName: String_Filter
+  """
+  ✨ Generated from Field `User`.`phoneNumber` of type `String!`
+  """
+  phoneNumber: String_Filter
+  """
+  ✨ Generated from Field `User`.`photoUrl` of type `String`
+  """
+  photoUrl: String_Filter
+  """
+  ✨ Generated from Field `User`.`rating` of type `Float`
+  """
+  rating: Float_Filter
+  """
+  ✨ Generated from Field `User`.`userType` of type `String!`
+  """
+  userType: String_Filter
+  """
+  ✨ Generated from Field `User`.`locations_on_user` of type `[Location!]!`
+  """
+  locations_on_user: Location_ListFilter
+  """
+  ✨ Generated from Field `User`.`paymentMethods_on_user` of type `[PaymentMethod!]!`
+  """
+  paymentMethods_on_user: PaymentMethod_ListFilter
+  """
+  ✨ Generated from Field `User`.`rides_on_driver` of type `[Ride!]!`
+  """
+  rides_on_driver: Ride_ListFilter
+  """
+  ✨ Generated from Field `User`.`rides_on_rider` of type `[Ride!]!`
+  """
+  rides_on_rider: Ride_ListFilter
+  """
+  ✨ Generated from Field `User`.`vehicles_on_driver` of type `[Vehicle!]!`
+  """
+  vehicles_on_driver: Vehicle_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'User'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input User_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [User_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: User_Filter
+}
+"""
+✨ Generated having input type for table 'User'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input User_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [User_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: User_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [User_Having!]
+  """
+  ✨ Generated from Field `User`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`email_count` of type `Int!`
+  """
+  email_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`firstName_count` of type `Int!`
+  """
+  firstName_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`lastName_count` of type `Int!`
+  """
+  lastName_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`phoneNumber_count` of type `Int!`
+  """
+  phoneNumber_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`photoUrl_count` of type `Int!`
+  """
+  photoUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`rating_count` of type `Int!`
+  """
+  rating_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`userType_count` of type `Int!`
+  """
+  userType_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`rating_sum` of type `Float`
+  """
+  rating_sum: Float_Filter
+  """
+  ✨ Generated from Field `User`.`rating_avg` of type `Float`
+  """
+  rating_avg: Float_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `User`.`rating_min` of type `Float`
+  """
+  rating_min: Float_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `User`.`rating_max` of type `Float`
+  """
+  rating_max: Float_Filter
+}
+"""
+✨ Generated key input type for table 'User'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input User_Key {
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'User'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input User_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: User_Filter
+}
+"""
+✨ Generated order input type for table 'User'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input User_Order {
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `User`.`email` of type `String!`
+  """
+  email: OrderDirection
+  """
+  ✨ Generated from Field `User`.`firstName` of type `String!`
+  """
+  firstName: OrderDirection
+  """
+  ✨ Generated from Field `User`.`lastName` of type `String!`
+  """
+  lastName: OrderDirection
+  """
+  ✨ Generated from Field `User`.`phoneNumber` of type `String!`
+  """
+  phoneNumber: OrderDirection
+  """
+  ✨ Generated from Field `User`.`photoUrl` of type `String`
+  """
+  photoUrl: OrderDirection
+  """
+  ✨ Generated from Field `User`.`rating` of type `Float`
+  """
+  rating: OrderDirection
+  """
+  ✨ Generated from Field `User`.`userType` of type `String!`
+  """
+  userType: OrderDirection
+  """
+  ✨ Generated from Field `User`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`email_count` of type `Int!`
+  """
+  email_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`firstName_count` of type `Int!`
+  """
+  firstName_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`lastName_count` of type `Int!`
+  """
+  lastName_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`phoneNumber_count` of type `Int!`
+  """
+  phoneNumber_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`photoUrl_count` of type `Int!`
+  """
+  photoUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`rating_count` of type `Int!`
+  """
+  rating_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`userType_count` of type `Int!`
+  """
+  userType_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`rating_sum` of type `Float`
+  """
+  rating_sum: OrderDirection
+  """
+  ✨ Generated from Field `User`.`rating_avg` of type `Float`
+  """
+  rating_avg: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `User`.`rating_min` of type `Float`
+  """
+  rating_min: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `User`.`rating_max` of type `Float`
+  """
+  rating_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Vehicle'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Vehicle_Data {
+  """
+  ✨ Generated from Field `Vehicle`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Vehicle`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Vehicle`.`driverId` of type `UUID`
+  """
+  driverId: UUID
+  """
+  ✨ `_expr` server value variant of `driverId` (✨ Generated from Field `Vehicle`.`driverId` of type `UUID`)
+  """
+  driverId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Vehicle`.`driver` of type `User`
+  """
+  driver: User_Key
+  """
+  ✨ Generated from Field `Vehicle`.`capacity` of type `Int!`
+  """
+  capacity: Int
+  """
+  ✨ `_expr` server value variant of `capacity` (✨ Generated from Field `Vehicle`.`capacity` of type `Int!`)
+  """
+  capacity_expr: Int_Expr
+  """
+  ✨ `_update` server value variant of `capacity` (✨ Generated from Field `Vehicle`.`capacity` of type `Int!`)
+  """
+  capacity_update: [Int_Update!]
+  """
+  ✨ Generated from Field `Vehicle`.`color` of type `String!`
+  """
+  color: String
+  """
+  ✨ `_expr` server value variant of `color` (✨ Generated from Field `Vehicle`.`color` of type `String!`)
+  """
+  color_expr: String_Expr
+  """
+  ✨ Generated from Field `Vehicle`.`imageUrl` of type `String`
+  """
+  imageUrl: String
+  """
+  ✨ `_expr` server value variant of `imageUrl` (✨ Generated from Field `Vehicle`.`imageUrl` of type `String`)
+  """
+  imageUrl_expr: String_Expr
+  """
+  ✨ Generated from Field `Vehicle`.`licensePlate` of type `String!`
+  """
+  licensePlate: String
+  """
+  ✨ `_expr` server value variant of `licensePlate` (✨ Generated from Field `Vehicle`.`licensePlate` of type `String!`)
+  """
+  licensePlate_expr: String_Expr
+  """
+  ✨ Generated from Field `Vehicle`.`make` of type `String!`
+  """
+  make: String
+  """
+  ✨ `_expr` server value variant of `make` (✨ Generated from Field `Vehicle`.`make` of type `String!`)
+  """
+  make_expr: String_Expr
+  """
+  ✨ Generated from Field `Vehicle`.`model` of type `String!`
+  """
+  model: String
+  """
+  ✨ `_expr` server value variant of `model` (✨ Generated from Field `Vehicle`.`model` of type `String!`)
+  """
+  model_expr: String_Expr
+  """
+  ✨ Generated from Field `Vehicle`.`vehicleType` of type `String!`
+  """
+  vehicleType: String
+  """
+  ✨ `_expr` server value variant of `vehicleType` (✨ Generated from Field `Vehicle`.`vehicleType` of type `String!`)
+  """
+  vehicleType_expr: String_Expr
+  """
+  ✨ Generated from Field `Vehicle`.`year` of type `Int!`
+  """
+  year: Int
+  """
+  ✨ `_expr` server value variant of `year` (✨ Generated from Field `Vehicle`.`year` of type `Int!`)
+  """
+  year_expr: Int_Expr
+  """
+  ✨ `_update` server value variant of `year` (✨ Generated from Field `Vehicle`.`year` of type `Int!`)
+  """
+  year_update: [Int_Update!]
+}
+"""
+✨ Generated filter input type for table 'Vehicle'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Vehicle_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Vehicle_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Vehicle_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Vehicle_Filter!]
+  """
+  ✨ Generated from Field `Vehicle`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`driverId` of type `UUID`
+  """
+  driverId: UUID_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`driver` of type `User`
+  """
+  driver: User_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`capacity` of type `Int!`
+  """
+  capacity: Int_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`color` of type `String!`
+  """
+  color: String_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`imageUrl` of type `String`
+  """
+  imageUrl: String_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`licensePlate` of type `String!`
+  """
+  licensePlate: String_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`make` of type `String!`
+  """
+  make: String_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`model` of type `String!`
+  """
+  model: String_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`vehicleType` of type `String!`
+  """
+  vehicleType: String_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`year` of type `Int!`
+  """
+  year: Int_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`rides_on_vehicle` of type `[Ride!]!`
+  """
+  rides_on_vehicle: Ride_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'Vehicle'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Vehicle_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Vehicle_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Vehicle_Filter
+}
+"""
+✨ Generated having input type for table 'Vehicle'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Vehicle_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Vehicle_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Vehicle_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Vehicle_Having!]
+  """
+  ✨ Generated from Field `Vehicle`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`capacity_count` of type `Int!`
+  """
+  capacity_count: Int_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`color_count` of type `Int!`
+  """
+  color_count: Int_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`driverId_count` of type `Int!`
+  """
+  driverId_count: Int_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`imageUrl_count` of type `Int!`
+  """
+  imageUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`licensePlate_count` of type `Int!`
+  """
+  licensePlate_count: Int_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`make_count` of type `Int!`
+  """
+  make_count: Int_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`model_count` of type `Int!`
+  """
+  model_count: Int_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`vehicleType_count` of type `Int!`
+  """
+  vehicleType_count: Int_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`year_count` of type `Int!`
+  """
+  year_count: Int_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`capacity_sum` of type `Int`
+  """
+  capacity_sum: Int_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`year_sum` of type `Int`
+  """
+  year_sum: Int_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`capacity_avg` of type `Float`
+  """
+  capacity_avg: Float_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`year_avg` of type `Float`
+  """
+  year_avg: Float_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`capacity_min` of type `Int`
+  """
+  capacity_min: Int_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`year_min` of type `Int`
+  """
+  year_min: Int_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`capacity_max` of type `Int`
+  """
+  capacity_max: Int_Filter
+  """
+  ✨ Generated from Field `Vehicle`.`year_max` of type `Int`
+  """
+  year_max: Int_Filter
+}
+"""
+✨ Generated key input type for table 'Vehicle'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Vehicle_Key {
+  """
+  ✨ Generated from Field `Vehicle`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Vehicle`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Vehicle'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Vehicle_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Vehicle_Filter
+}
+"""
+✨ Generated order input type for table 'Vehicle'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Vehicle_Order {
+  """
+  ✨ Generated from Field `Vehicle`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`driverId` of type `UUID`
+  """
+  driverId: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`driver` of type `User`
+  """
+  driver: User_Order
+  """
+  ✨ Generated from Field `Vehicle`.`capacity` of type `Int!`
+  """
+  capacity: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`color` of type `String!`
+  """
+  color: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`imageUrl` of type `String`
+  """
+  imageUrl: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`licensePlate` of type `String!`
+  """
+  licensePlate: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`make` of type `String!`
+  """
+  make: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`model` of type `String!`
+  """
+  model: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`vehicleType` of type `String!`
+  """
+  vehicleType: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`year` of type `Int!`
+  """
+  year: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`capacity_count` of type `Int!`
+  """
+  capacity_count: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`color_count` of type `Int!`
+  """
+  color_count: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`driverId_count` of type `Int!`
+  """
+  driverId_count: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`imageUrl_count` of type `Int!`
+  """
+  imageUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`licensePlate_count` of type `Int!`
+  """
+  licensePlate_count: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`make_count` of type `Int!`
+  """
+  make_count: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`model_count` of type `Int!`
+  """
+  model_count: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`vehicleType_count` of type `Int!`
+  """
+  vehicleType_count: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`year_count` of type `Int!`
+  """
+  year_count: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`capacity_sum` of type `Int`
+  """
+  capacity_sum: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`year_sum` of type `Int`
+  """
+  year_sum: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`capacity_avg` of type `Float`
+  """
+  capacity_avg: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`year_avg` of type `Float`
+  """
+  year_avg: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`capacity_min` of type `Int`
+  """
+  capacity_min: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`year_min` of type `Int`
+  """
+  year_min: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`capacity_max` of type `Int`
+  """
+  capacity_max: OrderDirection
+  """
+  ✨ Generated from Field `Vehicle`.`year_max` of type `Int`
+  """
+  year_max: OrderDirection
+}

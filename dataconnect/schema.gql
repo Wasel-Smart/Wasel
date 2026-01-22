@@ -1,0 +1,131 @@
+"""
+Wasel Ride Sharing Platform - Data Connect Schema
+Defines database structure for users, rides, ratings, and messaging
+"""
+
+type User {
+  id: String! @id
+  email: String! @unique
+  phone: String
+  name: String!
+  password_hash: String!
+  profile_image_url: String
+  bio: String
+  rating: Float @default(value: 0)
+  total_rides: Int @default(value: 0)
+  is_driver: Boolean @default(value: false)
+  is_active: Boolean @default(value: true)
+  created_at: DateTime! @default(value: "now()")
+  updated_at: DateTime! @default(value: "now()")
+}
+
+type Ride {
+  id: String! @id
+  passenger_id: String! @relation(name: "PassengerRides")
+  driver_id: String @relation(name: "DriverRides")
+  pickup_location: String!
+  dropoff_location: String!
+  pickup_coordinates: Point
+  dropoff_coordinates: Point
+  fare: Float!
+  distance_km: Float
+  estimated_duration_minutes: Int
+  status: String! @default(value: "requested")
+  scheduled_at: DateTime
+  started_at: DateTime
+  completed_at: DateTime
+  cancelled_at: DateTime
+  cancellation_reason: String
+  rating: Float
+  review: String
+  created_at: DateTime! @default(value: "now()")
+  updated_at: DateTime! @default(value: "now()")
+}
+
+type Message {
+  id: String! @id
+  ride_id: String!
+  sender_id: String!
+  receiver_id: String!
+  content: String!
+  is_read: Boolean @default(value: false)
+  read_at: DateTime
+  created_at: DateTime! @default(value: "now()")
+}
+
+type Payment {
+  id: String! @id
+  ride_id: String! @unique
+  user_id: String!
+  amount: Float!
+  currency: String @default(value: "USD")
+  payment_method: String! # credit_card, debit_card, wallet
+  stripe_payment_id: String @unique
+  status: String! @default(value: "pending")
+  created_at: DateTime! @default(value: "now()")
+  updated_at: DateTime! @default(value: "now()")
+}
+
+type Rating {
+  id: String! @id
+  ride_id: String! @unique
+  rater_id: String!
+  ratee_id: String!
+  rating: Float! # 1-5 stars
+  comment: String
+  created_at: DateTime! @default(value: "now()")
+}
+
+type EmergencyContact {
+  id: String! @id
+  user_id: String!
+  contact_name: String!
+  contact_phone: String!
+  relationship: String
+  created_at: DateTime! @default(value: "now()")
+}
+
+type SupportTicket {
+  id: String! @id
+  user_id: String!
+  ride_id: String
+  subject: String!
+  description: String!
+  status: String @default(value: "open")
+  priority: String @default(value: "normal")
+  created_at: DateTime! @default(value: "now()")
+  resolved_at: DateTime
+}
+
+# Custom types
+type Point {
+  latitude: Float!
+  longitude: Float!
+}
+
+# Indexes for performance
+extend index User {
+  @index { is_active }
+  @index { is_driver }
+  @index { created_at }
+}
+
+extend index Ride {
+  @index { passenger_id }
+  @index { driver_id }
+  @index { status }
+  @index { created_at }
+}
+
+extend index Message {
+  @index { ride_id }
+  @index { sender_id }
+  @index { receiver_id }
+  @index { is_read }
+}
+
+extend index Payment {
+  @index { ride_id }
+  @index { user_id }
+  @index { status }
+}

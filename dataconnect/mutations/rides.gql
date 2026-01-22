@@ -1,0 +1,230 @@
+"""
+Create a new user account
+"""
+mutation CreateUser(
+  $email: String!
+  $name: String!
+  $phone: String!
+  $password_hash: String!
+) @auth(level: PUBLIC) {
+  user_insert(
+    data: {
+      email: $email
+      name: $name
+      phone: $phone
+      password_hash: $password_hash
+      is_active: true
+    }
+  ) {
+    id
+    email
+    name
+    phone
+    created_at
+  }
+}
+
+"""
+Create a new ride request
+"""
+mutation CreateRide(
+  $passengerId: String!
+  $pickupLocation: String!
+  $dropoffLocation: String!
+  $fare: Float!
+  $distance_km: Float
+  $estimated_duration_minutes: Int
+) @auth(level: USER) {
+  ride_insert(
+    data: {
+      passenger_id: $passengerId
+      pickup_location: $pickupLocation
+      dropoff_location: $dropoffLocation
+      fare: $fare
+      distance_km: $distance_km
+      estimated_duration_minutes: $estimated_duration_minutes
+      status: "requested"
+    }
+  ) {
+    id
+    status
+    fare
+    created_at
+  }
+}
+
+"""
+Accept a ride as driver
+"""
+mutation AcceptRide(
+  $rideId: String!
+  $driverId: String!
+) @auth(level: USER) {
+  ride_update(
+    where: { id: $rideId }
+    data: {
+      driver_id: $driverId
+      status: "accepted"
+    }
+  ) {
+    id
+    driver_id
+    status
+    updated_at
+  }
+}
+
+"""
+Start a ride
+"""
+mutation StartRide($rideId: String!) @auth(level: USER) {
+  ride_update(
+    where: { id: $rideId }
+    data: {
+      status: "in_progress"
+      started_at: "now()"
+    }
+  ) {
+    id
+    status
+    started_at
+  }
+}
+
+"""
+Complete a ride
+"""
+mutation CompleteRide($rideId: String!) @auth(level: USER) {
+  ride_update(
+    where: { id: $rideId }
+    data: {
+      status: "completed"
+      completed_at: "now()"
+    }
+  ) {
+    id
+    status
+    completed_at
+  }
+}
+
+"""
+Cancel a ride
+"""
+mutation CancelRide(
+  $rideId: String!
+  $reason: String
+) @auth(level: USER) {
+  ride_update(
+    where: { id: $rideId }
+    data: {
+      status: "cancelled"
+      cancelled_at: "now()"
+      cancellation_reason: $reason
+    }
+  ) {
+    id
+    status
+    cancelled_at
+  }
+}
+
+"""
+Send a message
+"""
+mutation SendMessage(
+  $rideId: String!
+  $senderId: String!
+  $receiverId: String!
+  $content: String!
+) @auth(level: USER) {
+  message_insert(
+    data: {
+      ride_id: $rideId
+      sender_id: $senderId
+      receiver_id: $receiverId
+      content: $content
+    }
+  ) {
+    id
+    content
+    created_at
+  }
+}
+
+"""
+Rate a ride
+"""
+mutation RateRide(
+  $rideId: String!
+  $rating: Float!
+  $review: String
+) @auth(level: USER) {
+  ride_update(
+    where: { id: $rideId }
+    data: {
+      rating: $rating
+      review: $review
+    }
+  ) {
+    id
+    rating
+    review
+    updated_at
+  }
+}
+
+"""
+Process a payment
+"""
+mutation CreatePayment(
+  $rideId: String!
+  $userId: String!
+  $amount: Float!
+  $payment_method: String!
+  $stripe_payment_id: String
+) @auth(level: USER) {
+  payment_insert(
+    data: {
+      ride_id: $rideId
+      user_id: $userId
+      amount: $amount
+      payment_method: $payment_method
+      stripe_payment_id: $stripe_payment_id
+      status: "pending"
+    }
+  ) {
+    id
+    amount
+    status
+    created_at
+  }
+}
+
+"""
+Update user profile
+"""
+mutation UpdateUserProfile(
+  $userId: String!
+  $name: String
+  $phone: String
+  $bio: String
+  $profile_image_url: String
+) @auth(level: USER) {
+  user_update(
+    where: { id: $userId }
+    data: {
+      name: $name
+      phone: $phone
+      bio: $bio
+      profile_image_url: $profile_image_url
+    }
+  ) {
+    id
+    name
+    phone
+    bio
+    profile_image_url
+    updated_at
+  }
+}

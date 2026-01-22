@@ -1,0 +1,267 @@
+extend type Query {
+  """
+  ✨ Look up a single `Location` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  location(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Location_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Location_FirstRow
+  ): Location @fdc_generated(from: "Location", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `PaymentMethod` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  paymentMethod(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: PaymentMethod_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: PaymentMethod_FirstRow
+  ): PaymentMethod @fdc_generated(from: "PaymentMethod", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Ride` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  ride(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Ride_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Ride_FirstRow
+  ): Ride @fdc_generated(from: "Ride", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `User` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  user(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+  ): User @fdc_generated(from: "User", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Vehicle` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  vehicle(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Vehicle_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Vehicle_FirstRow
+  ): Vehicle @fdc_generated(from: "Vehicle", purpose: QUERY_SINGLE)
+  """
+  ✨ List `Location` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  locations(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Location_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Location_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Location_Having
+  ): [Location!]! @fdc_generated(from: "Location", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `PaymentMethod` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  paymentMethods(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: PaymentMethod_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [PaymentMethod_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: PaymentMethod_Having
+  ): [PaymentMethod!]! @fdc_generated(from: "PaymentMethod", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Ride` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  rides(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Ride_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Ride_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Ride_Having
+  ): [Ride!]! @fdc_generated(from: "Ride", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `User` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  users(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: User_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [User_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: User_Having
+  ): [User!]! @fdc_generated(from: "User", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Vehicle` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  vehicles(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Vehicle_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Vehicle_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Vehicle_Having
+  ): [Vehicle!]! @fdc_generated(from: "Vehicle", purpose: QUERY_MULTIPLE)
+}

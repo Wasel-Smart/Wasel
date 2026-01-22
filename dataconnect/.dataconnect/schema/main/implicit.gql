@@ -1,0 +1,54 @@
+extend type Location {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Location", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Location`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: UUID @fdc_generated(from: "Location.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type PaymentMethod {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "PaymentMethod", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `PaymentMethod`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: UUID @fdc_generated(from: "PaymentMethod.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Ride {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Ride", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Ride`.`driver`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  driverId: UUID @fdc_generated(from: "Ride.driver", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Ride`.`rider`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  riderId: UUID @fdc_generated(from: "Ride.rider", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Ride`.`vehicle`. It must match the value of `Vehicle`.`id`. See `@ref` for how to customize it.
+  """
+  vehicleId: UUID @fdc_generated(from: "Ride.vehicle", purpose: IMPLICIT_REF_FIELD)
+}
+extend type User {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "User", purpose: IMPLICIT_KEY_FIELD)
+}
+extend type Vehicle {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Vehicle", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Vehicle`.`driver`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  driverId: UUID @fdc_generated(from: "Vehicle.driver", purpose: IMPLICIT_REF_FIELD)
+}

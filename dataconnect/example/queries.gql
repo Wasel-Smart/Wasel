@@ -1,0 +1,59 @@
+mutation CreateDemoUser @auth(level: PUBLIC, insecureReason: "This operation is for demo purposes and does not require authentication") {
+  user_insertMany(data: [
+    {
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      firstName: "demouser1",
+      lastName: "demo",
+      email: "demo@example.com",
+      phoneNumber: "555-555-5555",
+      userType: "rider",
+      createdAt: "2024-04-03T12:00:00Z"
+    },
+    {
+      id: "550e8400-e29b-41d4-a716-446655440001",
+      firstName: "demouser2",
+      lastName: "demo",
+      email: "demo2@example.com",
+      phoneNumber: "555-555-5555",
+      userType: "driver",
+      createdAt: "2024-04-03T12:00:00Z"
+    }
+  ])
+}
+
+query ListAllVehicles @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
+  vehicles {
+    id
+    make
+    model
+    year
+    capacity
+    vehicleType
+    color
+    licensePlate
+  }
+}
+
+query GetMyPaymentMethods @auth(level: USER) {
+  paymentMethods(where: {userId: {eq_expr: "auth.uid"}}) {
+    id
+    type
+    cardHolderName
+    lastFourDigits
+    expiryDate
+    isDefault
+    createdAt
+  }
+}
+
+mutation CreatePaymentMethod($type: String!, $cardHolderName: String!, $lastFourDigits: String!, $expiryDate: String!, $isDefault: Boolean!) @auth(level: USER) {
+  paymentMethod_insert(data: {
+    userId_expr: "auth.uid",
+    type: $type,
+    cardHolderName: $cardHolderName,
+    lastFourDigits: $lastFourDigits,
+    expiryDate: $expiryDate,
+    isDefault: $isDefault,
+    createdAt_expr: "request.time"
+  })
+}

@@ -1,0 +1,9 @@
+specVersion: v1
+dataConnectYaml: dataconnect/dataconnect.yaml
+deploymentMetadata:
+  functions:
+    location: us-central1
+  sdkGeneration:
+    enabled: true
+    outputLanguage: typescript
+    outputDir: src/dataconnect-generated

@@ -1,0 +1,562 @@
+extend type Mutation {
+  """
+  ✨ Insert a single `Location` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  location_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Location_Data!
+  ): Location_KeyOutput! @fdc_generated(from: "Location", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `PaymentMethod` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  paymentMethod_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: PaymentMethod_Data!
+  ): PaymentMethod_KeyOutput! @fdc_generated(from: "PaymentMethod", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Ride` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  ride_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Ride_Data!
+  ): Ride_KeyOutput! @fdc_generated(from: "Ride", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `User` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  user_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: User_Data!
+  ): User_KeyOutput! @fdc_generated(from: "User", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Vehicle` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  vehicle_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Vehicle_Data!
+  ): Vehicle_KeyOutput! @fdc_generated(from: "Vehicle", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert `Location` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  location_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Location_Data!]!
+  ): [Location_KeyOutput!]! @fdc_generated(from: "Location", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `PaymentMethod` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  paymentMethod_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [PaymentMethod_Data!]!
+  ): [PaymentMethod_KeyOutput!]! @fdc_generated(from: "PaymentMethod", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Ride` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  ride_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Ride_Data!]!
+  ): [Ride_KeyOutput!]! @fdc_generated(from: "Ride", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `User` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  user_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [User_Data!]!
+  ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Vehicle` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  vehicle_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Vehicle_Data!]!
+  ): [Vehicle_KeyOutput!]! @fdc_generated(from: "Vehicle", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert or update a single `Location` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Location`.
+  """
+  location_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Location_Data!
+  ): Location_KeyOutput! @fdc_generated(from: "Location", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `PaymentMethod` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `PaymentMethod`.
+  """
+  paymentMethod_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: PaymentMethod_Data!
+  ): PaymentMethod_KeyOutput! @fdc_generated(from: "PaymentMethod", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Ride` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Ride`.
+  """
+  ride_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Ride_Data!
+  ): Ride_KeyOutput! @fdc_generated(from: "Ride", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `User` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
+  """
+  user_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: User_Data!
+  ): User_KeyOutput! @fdc_generated(from: "User", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Vehicle` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Vehicle`.
+  """
+  vehicle_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Vehicle_Data!
+  ): Vehicle_KeyOutput! @fdc_generated(from: "Vehicle", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update `Location` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Location`.
+  """
+  location_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Location_Data!]!
+  ): [Location_KeyOutput!]! @fdc_generated(from: "Location", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `PaymentMethod` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `PaymentMethod`.
+  """
+  paymentMethod_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [PaymentMethod_Data!]!
+  ): [PaymentMethod_KeyOutput!]! @fdc_generated(from: "PaymentMethod", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Ride` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Ride`.
+  """
+  ride_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Ride_Data!]!
+  ): [Ride_KeyOutput!]! @fdc_generated(from: "Ride", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `User` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
+  """
+  user_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [User_Data!]!
+  ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Vehicle` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Vehicle`.
+  """
+  vehicle_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Vehicle_Data!]!
+  ): [Vehicle_KeyOutput!]! @fdc_generated(from: "Vehicle", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Update a single `Location` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Location` or `null` if not found.
+  """
+  location_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Location_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Location_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Location_Data!
+  ): Location_KeyOutput @fdc_generated(from: "Location", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `PaymentMethod` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `PaymentMethod` or `null` if not found.
+  """
+  paymentMethod_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: PaymentMethod_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: PaymentMethod_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: PaymentMethod_Data!
+  ): PaymentMethod_KeyOutput @fdc_generated(from: "PaymentMethod", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Ride` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Ride` or `null` if not found.
+  """
+  ride_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Ride_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Ride_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Ride_Data!
+  ): Ride_KeyOutput @fdc_generated(from: "Ride", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `User` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `User` or `null` if not found.
+  """
+  user_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: User_Data!
+  ): User_KeyOutput @fdc_generated(from: "User", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Vehicle` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Vehicle` or `null` if not found.
+  """
+  vehicle_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Vehicle_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Vehicle_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Vehicle_Data!
+  ): Vehicle_KeyOutput @fdc_generated(from: "Vehicle", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update `Location` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  location_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Location_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Location_Data!
+  ): Int! @fdc_generated(from: "Location", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `PaymentMethod` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  paymentMethod_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: PaymentMethod_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: PaymentMethod_Data!
+  ): Int! @fdc_generated(from: "PaymentMethod", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Ride` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  ride_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Ride_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Ride_Data!
+  ): Int! @fdc_generated(from: "Ride", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `User` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  user_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: User_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: User_Data!
+  ): Int! @fdc_generated(from: "User", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Vehicle` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  vehicle_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Vehicle_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Vehicle_Data!
+  ): Int! @fdc_generated(from: "Vehicle", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Delete a single `Location` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  location_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Location_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Location_FirstRow
+  ): Location_KeyOutput @fdc_generated(from: "Location", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `PaymentMethod` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  paymentMethod_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: PaymentMethod_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: PaymentMethod_FirstRow
+  ): PaymentMethod_KeyOutput @fdc_generated(from: "PaymentMethod", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Ride` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  ride_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Ride_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Ride_FirstRow
+  ): Ride_KeyOutput @fdc_generated(from: "Ride", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `User` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  user_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+  ): User_KeyOutput @fdc_generated(from: "User", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Vehicle` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  vehicle_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Vehicle_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Vehicle_FirstRow
+  ): Vehicle_KeyOutput @fdc_generated(from: "Vehicle", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete `Location` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  location_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Location_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Location", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `PaymentMethod` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  paymentMethod_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: PaymentMethod_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "PaymentMethod", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Ride` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  ride_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Ride_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Ride", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `User` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  user_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: User_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "User", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Vehicle` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  vehicle_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Vehicle_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Vehicle", purpose: DELETE_MULTIPLE)
+}

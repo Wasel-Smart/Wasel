@@ -1,0 +1,68 @@
+mutation CreateDemoData @transaction @auth(level: PUBLIC, insecureReason: "This mutation is used to seed data and is safe to expose to the public.") {
+  user_insertMany(data: [
+    {
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      createdAt: "2024-04-26T12:00:00Z",
+      email: "demo1@example.com",
+      firstName: "Demo",
+      lastName: "User1",
+      phoneNumber: "123-456-7890",
+      userType: "rider"
+    },
+    {
+      id: "550e8400-e29b-41d4-a716-446655440001",
+      createdAt: "2024-04-26T12:00:00Z",
+      email: "demo2@example.com",
+      firstName: "Demo",
+      lastName: "User2",
+      phoneNumber: "987-654-3210",
+      userType: "driver"
+    }
+  ])
+  vehicle_insertMany(data: [
+    {
+      id: "650e8400-e29b-41d4-a716-446655440002",
+      driverId: "550e8400-e29b-41d4-a716-446655440001",
+      capacity: 4,
+      color: "Red",
+      licensePlate: "ABC-123",
+      make: "Toyota",
+      model: "Camry",
+      vehicleType: "Sedan",
+      year: 2020
+    }
+  ])
+  ride_insertMany(data: [
+    {
+      id: "750e8400-e29b-41d4-a716-446655440003",
+      driverId: "550e8400-e29b-41d4-a716-446655440001",
+      riderId: "550e8400-e29b-41d4-a716-446655440000",
+      vehicleId: "650e8400-e29b-41d4-a716-446655440002",
+      dropoffLocation: "123 Dropoff St",
+      fare: 12.50,
+      pickupLocation: "123 Pickup Ave",
+      requestedAt: "2024-04-26T12:30:00Z",
+      status: "completed"
+    }
+  ])
+  location_insertMany(data: [
+    {
+      id: "850e8400-e29b-41d4-a716-446655440004",
+      userId: "550e8400-e29b-41d4-a716-446655440000",
+      address: "123 Location Ave",
+      latitude: 34.0522,
+      longitude: -118.2437,
+      name: "Home"
+    }
+  ])
+  paymentMethod_insertMany(data: [
+    {
+      id: "950e8400-e29b-41d4-a716-446655440005",
+      userId: "550e8400-e29b-41d4-a716-446655440000",
+      createdAt: "2024-04-26T12:45:00Z",
+      isDefault: true,
+      lastFourDigits: "1111",
+      type: "Visa"
+    }
+  ])
+}

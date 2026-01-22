@@ -1,0 +1,136 @@
+"""
+Get user profile information
+"""
+query GetUser($userId: String!) @auth(level: PUBLIC) {
+  user(id: $userId) {
+    id
+    email
+    name
+    phone
+    rating
+    total_rides
+    is_driver
+    profile_image_url
+    bio
+    created_at
+  }
+}
+
+"""
+List available rides (for passengers to book)
+"""
+query ListAvailableRides($limit: Int) @auth(level: USER) {
+  rides(where: { status: "available" }, limit: $limit) {
+    id
+    passenger_id
+    pickup_location
+    dropoff_location
+    fare
+    estimated_duration_minutes
+    created_at
+  }
+}
+
+"""
+Get ride details
+"""
+query GetRide($rideId: String!) @auth(level: USER) {
+  ride(id: $rideId) {
+    id
+    passenger_id
+    driver_id
+    pickup_location
+    dropoff_location
+    fare
+    distance_km
+    estimated_duration_minutes
+    status
+    started_at
+    completed_at
+    rating
+    review
+    created_at
+  }
+}
+
+"""
+Get user's ride history
+"""
+query GetUserRides($userId: String!, $limit: Int) @auth(level: USER) {
+  rides(where: { passenger_id: $userId }, limit: $limit, orderBy: { created_at: DESC }) {
+    id
+    driver_id
+    pickup_location
+    dropoff_location
+    fare
+    status
+    completed_at
+    rating
+    created_at
+  }
+}
+
+"""
+Search rides with filters
+"""
+query SearchRides(
+  $pickupLocation: String!
+  $dropoffLocation: String
+  $status: String
+  $limit: Int
+) @auth(level: USER) {
+  rides(
+    where: {
+      pickup_location: $pickupLocation
+      dropoff_location: $dropoffLocation
+      status: $status
+    }
+    limit: $limit
+    orderBy: { created_at: DESC }
+  ) {
+    id
+    passenger_id
+    pickup_location
+    dropoff_location
+    fare
+    estimated_duration_minutes
+    status
+    created_at
+  }
+}
+
+"""
+Get driver's earnings for a date range
+"""
+query GetDriverEarnings(
+  $driverId: String!
+  $startDate: DateTime!
+  $endDate: DateTime!
+) @auth(level: USER) {
+  rides(
+    where: {
+      driver_id: $driverId
+      created_at: { _gte: $startDate, _lte: $endDate }
+      status: "completed"
+    }
+  ) {
+    id
+    fare
+    created_at
+  }
+}
+
+"""
+Get messages for a ride
+"""
+query GetRideMessages($rideId: String!) @auth(level: USER) {
+  messages(
+    where: { ride_id: $rideId }
+    orderBy: { created_at: ASC }
+  ) {
+    id
+    sender_id
+    content
+    created_at
+  }
+}
