@@ -11,6 +11,7 @@ export type ServiceType =
   | 'scooter'
   | 'package'
   | 'school'
+  | 'laundry'
   | 'medical'
   | 'pet'
   | 'luxury'
