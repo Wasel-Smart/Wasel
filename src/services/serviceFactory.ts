@@ -490,6 +490,7 @@ export class ServiceFactory {
       'scooter': 'scooter_rentals',
       'package': 'package_deliveries',
       'school': 'school_routes',
+      'laundry': 'laundry_orders',
       'medical': 'trips',
       'pet': 'trips',
       'luxury': 'trips',
