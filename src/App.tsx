@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { AIProvider } from './contexts/AIContext';
 import { Toaster } from './components/ui/sonner';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Core components (loaded immediately)
 import { Sidebar } from './components/Sidebar';
@@ -97,12 +98,14 @@ export default function App() {
   }, []);
 
   return (
-    <LanguageProvider>
-      <AuthProvider>
-        <AIProvider>
-          <MemoizedAppContent />
-        </AIProvider>
-      </AuthProvider>
-    </LanguageProvider>
+    <ErrorBoundary>
+      <LanguageProvider>
+        <AuthProvider>
+          <AIProvider>
+            <MemoizedAppContent />
+          </AIProvider>
+        </AuthProvider>
+      </LanguageProvider>
+    </ErrorBoundary>
   );
 }

@@ -28,6 +28,7 @@ export {
 // Specialized Services
 export { heroService } from './heroService';
 export { intermodalService } from './intermodalService';
+export { laundryService } from './laundryService';
 export { matchingService } from './matchingService';
 export { mockDataStore, dataService } from './mockDataService';
 export { packageService } from './packageService';

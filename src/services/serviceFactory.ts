@@ -76,6 +76,8 @@ export class ServiceFactory {
           return await this.discoverCaptains(filters);
         case 'school':
           return await this.discoverSchoolRoutes(filters);
+        case 'laundry':
+          return await this.discoverLaundryPartners(filters);
         default:
           return await this.discoverTrips(filters);
       }
@@ -161,6 +163,17 @@ export class ServiceFactory {
     return { success: true, data };
   }
 
+  private static async discoverLaundryPartners(filters: any) {
+    const { data, error } = await supabase
+      .from('laundry_partners')
+      .select('*')
+      .eq('status', 'active')
+      .eq('is_available', true);
+
+    if (error) throw error;
+    return { success: true, data };
+  }
+
   // ==================== STAGE 2: REQUEST ====================
   /**
    * Create a service request
@@ -178,6 +191,8 @@ export class ServiceFactory {
           return await this.requestPackageDelivery(userId, serviceRequest);
         case 'school':
           return await this.requestSchoolTransport(userId, serviceRequest);
+        case 'laundry':
+          return await this.requestLaundryService(userId, serviceRequest);
         default:
           return await this.requestTrip(userId, serviceRequest);
       }
@@ -253,6 +268,27 @@ export class ServiceFactory {
     return { success: true, data: route };
   }
 
+  private static async requestLaundryService(userId: string, request: ServiceRequest) {
+    const { data: order, error } = await supabase
+      .from('laundry_orders')
+      .insert({
+        customer_id: userId,
+        service_type: request.details.serviceType || 'wasel', // wasel or raje3
+        pickup_location: request.from?.address || JSON.stringify(request.from),
+        delivery_location: request.to?.address || JSON.stringify(request.to),
+        laundry_partner_id: request.details.laundryPartnerId,
+        load_details: request.details.loadDetails,
+        preferred_pickup_time: request.details.preferredPickupTime,
+        status: 'pending',
+        tracking_code: this.generateTrackingCode()
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return { success: true, data: order };
+  }
+
   // ==================== STAGE 3: PRICING ====================
   /**
    * Calculate service pricing
@@ -268,6 +304,8 @@ export class ServiceFactory {
           return this.calculateTripPrice(details);
         case 'school':
           return this.calculateSchoolTransportPrice(details);
+        case 'laundry':
+          return this.calculateLaundryPrice(details);
         default:
           return this.calculateTripPrice(details);
       }
@@ -354,6 +392,33 @@ export class ServiceFactory {
     };
   }
 
+  private static calculateLaundryPrice(details: any) {
+    const { loadWeight, serviceType, laundryPartnerId } = details;
+    const basePrice = 15; // Base service fee
+    const pricePerKg = 8; // Price per kg of laundry
+    const captainFee = 10; // Captain pickup/delivery fee
+    const partnerFee = loadWeight * 5; // Partner processing fee
+
+    const subtotal = basePrice + (loadWeight * pricePerKg) + captainFee + partnerFee;
+    const waselCommission = subtotal * 0.1; // 10% platform commission
+    const total = subtotal + waselCommission;
+
+    return {
+      success: true,
+      data: {
+        basePrice,
+        weightPrice: loadWeight * pricePerKg,
+        captainFee,
+        partnerFee,
+        subtotal,
+        waselCommission,
+        total,
+        serviceType,
+        loadWeight
+      }
+    };
+  }
+
   // ==================== STAGE 4: ASSIGNMENT ====================
   /**
    * Match service request with provider
@@ -367,6 +432,8 @@ export class ServiceFactory {
           return await this.assignCaptain(requestId, providerId);
         case 'carpool':
           return await this.assignDriver(requestId, providerId);
+        case 'laundry':
+          return await this.assignLaundryCaptain(requestId, providerId);
         default:
           return { success: true, data: { assigned: true } };
       }
@@ -407,6 +474,21 @@ export class ServiceFactory {
       .from('bookings')
       .update({ status: 'accepted' })
       .eq('id', bookingId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return { success: true, data };
+  }
+
+  private static async assignLaundryCaptain(orderId: string, captainId?: string) {
+    const { data, error } = await supabase
+      .from('laundry_orders')
+      .update({
+        captain_id: captainId,
+        status: 'assigned'
+      })
+      .eq('id', orderId)
       .select()
       .single();
 
