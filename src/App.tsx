@@ -14,6 +14,7 @@ import { Header } from './components/Header';
 const Dashboard = lazy(() => import('./components/Dashboard').then(m => ({ default: m.Dashboard })));
 const LandingPage = lazy(() => import('./components/LandingPage').then(m => ({ default: m.LandingPage })));
 const LaundryService = lazy(() => import('./components/LaundryService').then(m => ({ default: m.LaundryService })));
+const FindRide = lazy(() => import('./components/FindRide').then(m => ({ default: m.FindRide })));
 
 const LoadingSpinner = memo(() => (
   <div className="flex h-full min-h-[200px] items-center justify-center">
@@ -84,8 +85,9 @@ function AppContent() {
             <Suspense fallback={<LoadingSpinner />}>
               {currentPage === 'dashboard' && <Dashboard onNavigate={handleNavigate} />}
               {currentPage === 'laundry' && <LaundryService />}
+              {currentPage === 'find-ride' && <FindRide />}
               {/* Default to dashboard for other pages */}
-              {!['dashboard', 'laundry'].includes(currentPage) && <Dashboard onNavigate={handleNavigate} />}
+              {!['dashboard', 'laundry', 'find-ride'].includes(currentPage) && <Dashboard onNavigate={handleNavigate} />}
             </Suspense>
           </main>
         </div>

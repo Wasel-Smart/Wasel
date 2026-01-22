@@ -48,6 +48,13 @@ export function FindRide() {
   });
 
   const handleSearch = () => {
+    console.log('🔍 DEBUG: Starting search with params:', {
+      from: searchFrom,
+      to: searchTo,
+      date: searchDate,
+      passengers: passengers
+    });
+
     // Input validation
     if (!searchFrom.trim()) {
       toast.error('Please enter a starting location');
@@ -65,17 +72,18 @@ export function FindRide() {
       toast.error('Number of passengers must be between 1 and 8');
       return;
     }
-    
+
     // Check if date is not in the past
     const selectedDate = new Date(searchDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     if (selectedDate < today) {
       toast.error('Please select a future date');
       return;
     }
-    
+
+    console.log('🔍 DEBUG: Calling searchTrips...');
     searchTrips();
   };
 

@@ -184,6 +184,7 @@ export function useSearchTrips(searchParams: {
 
   const searchTrips = async () => {
     try {
+      console.log('🔍 DEBUG: useSearchTrips called with params:', searchParams);
       setLoading(true);
       setError(null);
 
@@ -194,13 +195,16 @@ export function useSearchTrips(searchParams: {
         seats: searchParams.seats || 1
       });
 
+      console.log('🔍 DEBUG: ServiceFactory.discover response:', response);
+
       if (!response.success) {
         throw new Error(response.error || 'Search failed');
       }
 
+      console.log('🔍 DEBUG: Found trips:', response.data?.length || 0);
       setTrips(response.data || []);
     } catch (err: any) {
-      console.error('Error searching trips:', err);
+      console.error('❌ ERROR searching trips:', err);
       setError(err.message);
       setTrips([]);
     } finally {

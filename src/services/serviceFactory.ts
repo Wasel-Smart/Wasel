@@ -110,6 +110,8 @@ export class ServiceFactory {
   }
 
   private static async discoverTrips(filters: any) {
+    console.log('🔍 DEBUG: discoverTrips called with filters:', filters);
+
     let query = supabase
       .from('trips')
       .select(`
@@ -132,8 +134,14 @@ export class ServiceFactory {
       query = query.eq('is_female_only', filters.isFemaleOnly);
     }
 
+    console.log('🔍 DEBUG: Executing Supabase query...');
     const { data, error } = await query;
-    if (error) throw error;
+    console.log('🔍 DEBUG: Supabase query result:', { data: data?.length || 0, error });
+
+    if (error) {
+      console.error('❌ ERROR in discoverTrips:', error);
+      throw error;
+    }
     return { success: true, data };
   }
 
