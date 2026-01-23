@@ -23,26 +23,49 @@ interface LanguageProviderProps {
   children: ReactNode;
 }
 
-export function LanguageProvider({ children }: LanguageProviderProps) {
-  const [language, setLanguageState] = useState<Language>(() => {
-    // Get from localStorage or default to 'en'
+// Safe localStorage access
+function getSavedLanguage(): Language {
+  try {
     const saved = localStorage.getItem('wassel-language');
     return (saved === 'ar' ? 'ar' : 'en') as Language;
-  });
+  } catch (error) {
+    console.warn('localStorage not available, using default language:', error);
+    return 'en';
+  }
+}
+
+function saveLanguage(lang: Language): void {
+  try {
+    localStorage.setItem('wassel-language', lang);
+  } catch (error) {
+    console.warn('Could not save language preference:', error);
+  }
+}
+
+export function LanguageProvider({ children }: LanguageProviderProps) {
+  const [language, setLanguageState] = useState<Language>(() => getSavedLanguage());
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem('wassel-language', lang);
+    saveLanguage(lang);
     
     // Update HTML dir attribute
-    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.lang = lang;
+    try {
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      document.documentElement.lang = lang;
+    } catch (error) {
+      console.warn('Could not update document attributes:', error);
+    }
   };
 
   useEffect(() => {
     // Set initial dir attribute
-    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.lang = language;
+    try {
+      document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+      document.documentElement.lang = language;
+    } catch (error) {
+      console.warn('Could not set initial document attributes:', error);
+    }
   }, [language]);
 
   // Translation function
@@ -360,7 +383,7 @@ const translations: Record<Language, any> = {
     },
     settings: {
       title: 'الإعدادات',
-      subtitle: 'إدارة تفضيلات ح��ابك',
+      subtitle: 'إدارة تفضيلات حسابك',
       profile: {
         title: 'معلومات الملف الشخصي',
         subtitle: 'تحديث بياناتك الشخصية',

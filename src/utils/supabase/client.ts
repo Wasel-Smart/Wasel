@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './database.types';
-import { projectId, publicAnonKey } from './info';
+import { projectId, publicAnonKey } from './info.tsx';
 
 // Build Supabase URL from project ID
 const supabaseUrl = projectId ? `https://${projectId}.supabase.co` : '';

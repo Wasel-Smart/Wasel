@@ -61,6 +61,14 @@ function handleRootError(error: Error) {
 }
 
 function initializeApp() {
+  console.log("🚀 Wasel: Initializing application...");
+  console.log("📊 Environment:", {
+    mode: import.meta.env.MODE,
+    mockAuth: import.meta.env.VITE_ENABLE_MOCK_AUTH,
+    hasSupabaseUrl: !!import.meta.env.VITE_SUPABASE_URL,
+    hasSupabaseKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
+  });
+
   const rootElement = document.getElementById("root");
 
   if (!rootElement) {
@@ -83,10 +91,12 @@ function initializeApp() {
     return;
   }
 
-  console.log("✅ Root element found, initializing Wasel App...");
+  console.log("✅ Root element found, mounting React app...");
   
   try {
     const root = createRoot(rootElement);
+    
+    console.log("✅ React root created, rendering <App />...");
     root.render(<App />);
     
     // Log successful mount
@@ -107,5 +117,9 @@ function initializeApp() {
   }
 }
 
-// Initialize the app
-initializeApp();
+// Ensure DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+  initializeApp();
+}
