@@ -1,11 +1,14 @@
-import { useState } from 'react';
-import { CircleX, Locate, CalendarClock, Timer, UsersRound, CircleDollarSign, Sparkles, Smartphone, MessagesSquare } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { CircleX, Locate, CalendarClock, Timer, UsersRound, CircleDollarSign, Sparkles, Smartphone, MessagesSquare, MapPin, Navigation2, ShieldCheck, Clock, User, Phone } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Separator } from './ui/separator';
 import { MapComponent } from './MapComponent';
 import { Avatar, AvatarFallback } from './ui/avatar';
+import { toast } from 'sonner';
+import { twilioService } from '../services/twilioService';
+import { supabase } from '../services/api';
 
 interface TripStop {
   label: string;
@@ -21,6 +24,8 @@ interface TripDetails {
     rating: number;
     trips: number;
     phone?: string;
+    verified?: boolean;
+    id?: string;
   };
   from: string;
   to: string;
@@ -31,238 +36,309 @@ interface TripDetails {
   price: number;
   tripType: 'wasel' | 'raje3';
   vehicleModel?: string;
+  vehicleColor?: string;
+  vehiclePlate?: string;
   notes?: string;
+  preferences?: {
+    noSmoking?: boolean;
+    petsAllowed?: boolean;
+    musicOk?: boolean;
+    quietRide?: boolean;
+  };
+  instantBook?: boolean;
+  estimatedDuration?: string;
+  distance?: string;
 }
 
 interface TripDetailsDialogProps {
   trip: TripDetails | null;
   open: boolean;
   onClose: () => void;
-  onBook?: (tripId: number) => void;
+  onBook?: (tripId: number, seats: number) => void;
 }
 
 export function TripDetailsDialog({ trip, open, onClose, onBook }: TripDetailsDialogProps) {
   const [selectedSeats, setSelectedSeats] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [driverPhone, setDriverPhone] = useState<string>('');
+  const [userPhone, setUserPhone] = useState<string>('');
+
+  useEffect(() => {
+    if (trip?.driver?.id && open) {
+      fetchDriverPhone(trip.driver.id);
+      fetchUserPhone();
+    }
+  }, [trip, open]);
+
+  const fetchDriverPhone = async (driverId: string) => {
+    try {
+      const { data } = await supabase
+        .from('profiles')
+        .select('phone')
+        .eq('id', driverId)
+        .single();
+      
+      if (data?.phone) {
+        setDriverPhone(data.phone);
+      }
+    } catch (error) {
+      console.error('Error fetching driver phone:', error);
+    }
+  };
+
+  const fetchUserPhone = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data } = await supabase
+        .from('profiles')
+        .select('phone')
+        .eq('id', user.id)
+        .single();
+      
+      if (data?.phone) {
+        setUserPhone(data.phone);
+      }
+    } catch (error) {
+      console.error('Error fetching user phone:', error);
+    }
+  };
 
   if (!trip) return null;
 
-  // Prepare map locations
+  // Prepare map locations with proper coordinates
   const mapLocations = [
     {
-      lat: trip.stops?.[0]?.lat || 25.2048, // Dubai default
+      lat: trip.stops?.[0]?.lat || 25.2048,
       lng: trip.stops?.[0]?.lng || 55.2708,
       label: trip.from,
       type: 'start' as const
     },
-    ...(trip.stops?.slice(1, -1).map((stop, index) => ({
+    ...(trip.stops?.slice(1, -1).map((stop) => ({
       lat: stop.lat,
       lng: stop.lng,
       label: stop.label,
       type: 'stop' as const
     })) || []),
     {
-      lat: trip.stops?.[trip.stops.length - 1]?.lat || 24.4539, // Abu Dhabi default
+      lat: trip.stops?.[trip.stops.length - 1]?.lat || 24.4539,
       lng: trip.stops?.[trip.stops.length - 1]?.lng || 54.3773,
       label: trip.to,
       type: 'destination' as const
     }
   ];
 
+  const handleCall = async () => {
+    if (!driverPhone || !userPhone) {
+      toast.error('Phone numbers not available. Please update your profile.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const result = await twilioService.initiateCall(userPhone, driverPhone);
+      
+      if (result.success) {
+        toast.success('Call initiated successfully');
+      } else {
+        toast.error(result.error || 'Failed to initiate call');
+      }
+    } catch (error) {
+      console.error('Call failed:', error);
+      toast.error('Failed to initiate call');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMessage = () => {
+    // Navigate to messages with driver
+    toast.info('Opening chat with driver...');
+    // TODO: Implement navigation to messages
+  };
+
+  const handleGetDirections = () => {
+    const origin = `${trip.stops?.[0]?.lat || 25.2048},${trip.stops?.[0]?.lng || 55.2708}`;
+    const destination = `${trip.stops?.[trip.stops!.length - 1]?.lat || 24.4539},${trip.stops?.[trip.stops!.length - 1]?.lng || 54.3773}`;
+    window.open(`https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}`, '_blank');
+  };
+
+  const handleBooking = async () => {
+    if (!onBook) return;
+    
+    if (selectedSeats < 1 || selectedSeats > trip.seats) {
+      toast.error('Invalid number of seats');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await onBook(trip.id, selectedSeats);
+      onClose();
+    } catch (error) {
+      console.error('Booking failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const totalPrice = trip.price * selectedSeats;
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Trip Details</DialogTitle>
+          <div className="flex items-center justify-between">
+            <DialogTitle className="text-2xl font-bold">Trip Details</DialogTitle>
+            <div className="flex items-center gap-2">
+              {trip.instantBook && (
+                <Badge variant="default" className="bg-green-500">
+                  <Sparkles className="w-3 h-3 mr-1" />
+                  Instant Book
+                </Badge>
+              )}
+              <Badge variant={trip.tripType === 'wasel' ? 'default' : 'secondary'}>
+                {trip.tripType === 'wasel' ? 'Wasel (واصل)' : 'Raje3 (راجع)'}
+              </Badge>
+            </div>
+          </div>
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Driver Info */}
-          <div className="flex items-start gap-4">
-            <Avatar className="w-16 h-16">
-              <AvatarFallback className="bg-primary text-primary-foreground text-xl">
+          {/* Driver Info with Enhanced Actions */}
+          <div className="flex items-start gap-4 p-4 bg-muted/30 rounded-xl">
+            <Avatar className="w-20 h-20 border-4 border-primary/20">
+              <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
                 {trip.driver.initials}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <h3>{trip.driver.name}</h3>
-              <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-xl font-semibold">{trip.driver.name}</h3>
+                {trip.driver.verified && (
+                  <ShieldCheck className="w-5 h-5 text-blue-500" />
+                )}
+              </div>
+              <div className="flex items-center gap-3 text-sm text-muted-foreground mb-3">
                 <div className="flex items-center gap-1">
                   <Sparkles className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span>{trip.driver.rating}</span>
+                  <span className="font-medium">{trip.driver.rating.toFixed(1)}</span>
                 </div>
                 <span>•</span>
                 <span>{trip.driver.trips} trips completed</span>
               </div>
-              <div className="flex gap-2 mt-3">
-                <Button size="sm" variant="outline" className="gap-2">
-                  <Smartphone className="w-4 h-4" />
-                  Call
+              <div className="flex flex-wrap gap-2">
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="gap-2"
+                  onClick={handleCall}
+                  disabled={loading || !driverPhone}
+                >
+                  <Phone className="w-4 h-4" />
+                  Call Driver
                 </Button>
-                <Button size="sm" variant="outline" className="gap-2">
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="gap-2"
+                  onClick={handleMessage}
+                >
                   <MessagesSquare className="w-4 h-4" />
                   Message
                 </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="gap-2"
+                  onClick={handleGetDirections}
+                >
+                  <Navigation2 className="w-4 h-4" />
+                  Directions
+                </Button>
               </div>
             </div>
-            <Badge variant={trip.tripType === 'wasel' ? 'default' : 'secondary'}>
-              {trip.tripType === 'wasel' ? 'Wasel (واصل)' : 'Raje3 (راجع)'}
-            </Badge>
           </div>
 
           <Separator />
 
-          {/* Route Map */}
+          {/* Enhanced Interactive Map */}
           <div className="space-y-3">
-            <h3>Route & Stops</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Route & Stops</h3>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                {trip.estimatedDuration && (
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    <span>{trip.estimatedDuration}</span>
+                  </div>
+                )}
+                {trip.distance && (
+                  <div className="flex items-center gap-1">
+                    <Navigation2 className="w-4 h-4" />
+                    <span>{trip.distance}</span>
+                  </div>
+                )}
+              </div>
+            </div>
             <MapComponent 
               locations={mapLocations}
               showRoute={true}
-              height="350px"
+              height="450px"
+              interactive={true}
+              style="streets"
+              showTraffic={false}
+              className="shadow-xl"
             />
           </div>
 
-          {/* Trip Information */}
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-3">
-              <h3>Trip Information</h3>
-              
-              <div className="flex items-start gap-3">
-                <Locate className="w-5 h-5 text-primary mt-0.5" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Route</p>
-                  <p>{trip.from} → {trip.to}</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <CalendarClock className="w-5 h-5 text-primary mt-0.5" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Date</p>
-                  <p>{trip.date}</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Timer className="w-5 h-5 text-primary mt-0.5" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Departure Time</p>
-                  <p>{trip.time}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <h3>Booking Details</h3>
-              
-              <div className="flex items-start gap-3">
-                <UsersRound className="w-5 h-5 text-primary mt-0.5" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Available Seats</p>
-                  <p>{trip.seats} seats left</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <CircleDollarSign className="w-5 h-5 text-primary mt-0.5" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Price per Seat</p>
-                  <p className="text-2xl text-primary">${trip.price}</p>
-                </div>
-              </div>
-
-              {trip.vehicleModel && (
-                <div className="flex items-start gap-3">
-                  <div className="w-5 h-5 flex items-center justify-center mt-0.5">
-                    🚗
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Vehicle</p>
-                    <p>{trip.vehicleModel}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Stops List */}
-          {trip.stops && trip.stops.length > 0 && (
-            <>
-              <Separator />
-              <div className="space-y-3">
-                <h3>Stops Along the Way</h3>
-                <div className="space-y-2">
-                  {trip.stops.map((stop, index) => (
-                    <div 
-                      key={index}
-                      className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg"
-                    >
-                      <div className={`
-                        w-6 h-6 rounded-full flex items-center justify-center text-xs
-                        ${index === 0 ? 'bg-primary text-primary-foreground' : 
-                          index === trip.stops!.length - 1 ? 'bg-accent text-accent-foreground' : 
-                          'bg-secondary text-secondary-foreground'}
-                      `}>
-                        {index === 0 ? 'A' : index === trip.stops!.length - 1 ? 'B' : index}
-                      </div>
-                      <p>{stop.label}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Additional Notes */}
-          {trip.notes && (
-            <>
-              <Separator />
-              <div className="space-y-2">
-                <h3>Additional Notes</h3>
-                <p className="text-sm text-muted-foreground">{trip.notes}</p>
-              </div>
-            </>
-          )}
-
           {/* Booking Section */}
-          <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
-            <div className="flex items-center gap-4">
-              <div>
-                <p className="text-sm text-muted-foreground">Number of Seats</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setSelectedSeats(Math.max(1, selectedSeats - 1))}
-                    disabled={selectedSeats <= 1}
-                  >
-                    -
-                  </Button>
-                  <span className="w-8 text-center">{selectedSeats}</span>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setSelectedSeats(Math.min(trip.seats, selectedSeats + 1))}
-                    disabled={selectedSeats >= trip.seats}
-                  >
-                    +
-                  </Button>
+          <div className="p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border-2 border-primary/20">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-6">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-2">Number of Seats</p>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setSelectedSeats(Math.max(1, selectedSeats - 1))}
+                      disabled={selectedSeats <= 1 || loading}
+                      className="w-10 h-10 text-lg font-bold"
+                    >
+                      -
+                    </Button>
+                    <span className="w-12 text-center text-2xl font-bold">{selectedSeats}</span>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setSelectedSeats(Math.min(trip.seats, selectedSeats + 1))}
+                      disabled={selectedSeats >= trip.seats || loading}
+                      className="w-10 h-10 text-lg font-bold"
+                    >
+                      +
+                    </Button>
+                  </div>
+                </div>
+                <Separator orientation="vertical" className="h-16" />
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Total Price</p>
+                  <p className="text-4xl font-bold text-primary">${totalPrice}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    ${trip.price} × {selectedSeats} seat{selectedSeats > 1 ? 's' : ''}
+                  </p>
                 </div>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Total Price</p>
-                <p className="text-2xl text-primary">${trip.price * selectedSeats}</p>
-              </div>
+              <Button
+                size="lg"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground min-w-[200px] h-14 text-lg font-semibold shadow-lg"
+                onClick={handleBooking}
+                disabled={loading || selectedSeats < 1}
+              >
+                {loading ? 'Processing...' : `Book ${selectedSeats} Seat${selectedSeats > 1 ? 's' : ''}`}
+              </Button>
             </div>
-            <Button
-              size="lg"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground"
-              onClick={() => {
-                if (onBook) onBook(trip.id);
-                onClose();
-              }}
-            >
-              Book {selectedSeats} Seat{selectedSeats > 1 ? 's' : ''}
-            </Button>
           </div>
         </div>
       </DialogContent>
