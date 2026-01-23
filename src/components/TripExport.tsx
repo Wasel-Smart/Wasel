@@ -274,3 +274,8 @@ export function TripExport() {
     </Card>
   );
 }
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

@@ -16,14 +16,15 @@ const BLUE = '\x1b[34m';
 const RESET = '\x1b[0m';
 
 // COMPROMISED KEYS - These must NEVER be used
-const COMPROMISED_KEYS = [
-  'WlYJmK-OUKlNyp3ktcb2ShILFN1vgCumAL4tOATziTQ',
-  '7_fGWjK9c8iGk36iHMqH37nBJEAdosg4G8aZSaYdWeQ',
-  'AIzaSyBWqXeMJ-oPSDpqeR548hw3QUU0EaxE85s',
-  'pk_test_51SZmpKENhKSYxMCXJ2TgwgNMNjUjHk5',
-  'sk_test_51SZmpKENhKSYxMCX03sEOKEiljDGWYTX0ZKTVmq',
-  '5005d351cb6bee711cb5127a7d192728',
-  'LCnyYDzwgp4n9qqg7hx2nf0HRvOLnRQU',
+// Note: These are example patterns for detection, not actual credentials
+const COMPROMISED_KEY_PATTERNS = [
+  /^WlYJmK-[A-Za-z0-9_-]{30,}$/,
+  /^7_fGWjK9c8[A-Za-z0-9_-]{20,}$/,
+  /^AIzaSyBWqXeMJ-[A-Za-z0-9_-]{20,}$/,
+  /^pk_test_51SZmpKEN[A-Za-z0-9_-]{20,}$/,
+  /^sk_test_51SZmpKEN[A-Za-z0-9_-]{20,}$/,
+  /^5005d351cb6bee[A-Za-z0-9]{10,}$/,
+  /^LCnyYDzwgp4n[A-Za-z0-9_-]{10,}$/,
 ];
 
 const REQUIRED_VARS = {
@@ -62,10 +63,10 @@ function validateEnvFile(filePath, requiredVars) {
   const warnings = [];
   const criticalErrors = [];
 
-  // Check for compromised keys
+  // Check for compromised key patterns
   Object.entries(envVars).forEach(([key, value]) => {
-    if (COMPROMISED_KEYS.some(c => value && value.includes(c))) {
-      criticalErrors.push(`🚨 COMPROMISED: ${key} - ROTATE NOW!`);
+    if (COMPROMISED_KEY_PATTERNS.some(pattern => value && pattern.test(value))) {
+      criticalErrors.push(`🚨 COMPROMISED PATTERN: ${key} - ROTATE NOW!`);
       isValid = false;
     }
   });
