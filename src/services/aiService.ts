@@ -133,9 +133,9 @@ async function getAuthDetails() {
 function createAIEndpoint(path: string): string {
   // AI backend endpoint - can be configured via environment variable
   // Defaults to Supabase Edge Function if not specified
-  const AI_BASE_URL = process.env.REACT_APP_AI_API_URL || 
-    (process.env.REACT_APP_SUPABASE_URL 
-      ? `${process.env.REACT_APP_SUPABASE_URL}/functions/v1/ai-service`
+  const AI_BASE_URL = import.meta.env.VITE_AI_API_URL ||
+    (import.meta.env.VITE_SUPABASE_URL
+      ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-service`
       : 'https://ai.wassel.app/v1');
   return `${AI_BASE_URL}${path}`;
 }
