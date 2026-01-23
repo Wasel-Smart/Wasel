@@ -1,0 +1,49 @@
+# ================================
+# Wasel DataConnect bootstrap
+# ================================
+
+# Create directories
+mkdir -p data/wasel/dataconnect/connectors
+
+# ----------------
+# dataconnect.yaml
+# ----------------
+cat <<'EOF' > data/wasel/dataconnect/dataconnect.yaml
+# ======================================
+# DataConnect Configuration – Wasel
+# ======================================
+
+location: "/data/wasel/dataconnect"
+
+schema:
+  source: "schema.gql"
+
+connectorDirs:
+  - "./connectors"
+EOF
+
+# -------------
+# schema.gql
+# -------------
+cat <<'EOF' > data/wasel/dataconnect/schema.gql
+type Query {
+  healthCheck: String
+}
+
+schema {
+  query: Query
+}
+EOF
+
+# --------------------------------
+# default.connector.yaml
+# --------------------------------
+cat <<'EOF' > data/wasel/dataconnect/connectors/default.connector.yaml
+name: wasel-default-connector
+type: graphql
+
+schema:
+  source: "../schema.gql"
+EOF
+
+echo "✅ Wasel DataConnect initialized successfully"
