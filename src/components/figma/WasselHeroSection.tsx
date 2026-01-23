@@ -1,8 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Button } from '../ui/button';
-import { ImageWithFallback } from './ImageWithFallback';
-import { designTokens } from './FigmaDesignSystem';
 import wasselLogo from 'figma:asset/1ccf434105a811706fd618a3b652ae052ecf47e1.png';
 
 interface WasselHeroSectionProps {
