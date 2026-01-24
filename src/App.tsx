@@ -3,6 +3,7 @@ import { InstallPWA } from './components/InstallPWA';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { AIProvider } from './contexts/AIContext';
+import { NavigationProvider, useNavigation } from './contexts/NavigationContext';
 import { Toaster } from './components/ui/sonner';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
@@ -11,7 +12,7 @@ import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 
 // Lazy loaded components with proper error handling
-const Dashboard = lazy(() => 
+const Dashboard = lazy(() =>
   import('./components/Dashboard')
     .then(m => ({ default: m.Dashboard }))
     .catch(error => {
@@ -20,7 +21,7 @@ const Dashboard = lazy(() =>
     })
 );
 
-const LandingPage = lazy(() => 
+const LandingPage = lazy(() =>
   import('./components/LandingPage')
     .then(m => ({ default: m.LandingPage }))
     .catch(error => {
@@ -29,7 +30,7 @@ const LandingPage = lazy(() =>
     })
 );
 
-const LaundryService = lazy(() => 
+const LaundryService = lazy(() =>
   import('./components/LaundryService')
     .then(m => ({ default: m.LaundryService }))
     .catch(error => {
@@ -38,12 +39,21 @@ const LaundryService = lazy(() =>
     })
 );
 
-const FindRide = lazy(() => 
+const FindRide = lazy(() =>
   import('./components/FindRide')
     .then(m => ({ default: m.FindRide }))
     .catch(error => {
       console.error('Failed to load FindRide:', error);
       return { default: () => <div className="p-4 text-red-600">Failed to load Find Ride</div> };
+    })
+);
+
+const Messages = lazy(() =>
+  import('./components/Messages')
+    .then(m => ({ default: m.default }))
+    .catch(error => {
+      console.error('Failed to load Messages:', error);
+      return { default: () => <div className="p-4 text-red-600">Failed to load Messages</div> };
     })
 );
 
@@ -58,13 +68,13 @@ LoadingSpinner.displayName = 'LoadingSpinner';
 
 function AppContent() {
   const { user, loading } = useAuth();
-  const [currentPage, setCurrentPage] = useState('dashboard');
+  const { currentPage, navigate } = useNavigation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleNavigate = useCallback((page: string) => {
-    setCurrentPage(page);
+    navigate(page);
     setSidebarOpen(false); // Close sidebar on navigation
-  }, []);
+  }, [navigate]);
 
   const handleMenuClick = useCallback(() => {
     setSidebarOpen(prev => !prev);
@@ -91,8 +101,8 @@ function AppContent() {
         <Toaster />
         <Suspense fallback={<LoadingSpinner />}>
           <LandingPage
-            onLogin={() => {}}
-            onGetStarted={() => {}}
+            onLogin={() => { }}
+            onGetStarted={() => { }}
           />
         </Suspense>
       </>
@@ -126,8 +136,9 @@ function AppContent() {
                 {currentPage === 'dashboard' && <Dashboard onNavigate={handleNavigate} />}
                 {currentPage === 'laundry' && <LaundryService />}
                 {currentPage === 'find-ride' && <FindRide />}
+                {currentPage === 'messages' && <Messages />}
                 {/* Default to dashboard for other pages */}
-                {!['dashboard', 'laundry', 'find-ride'].includes(currentPage) && <Dashboard onNavigate={handleNavigate} />}
+                {!['dashboard', 'laundry', 'find-ride', 'messages'].includes(currentPage) && <Dashboard onNavigate={handleNavigate} />}
               </Suspense>
             </ErrorBoundary>
           </main>
@@ -149,7 +160,9 @@ export default function App() {
       <LanguageProvider>
         <AuthProvider>
           <AIProvider>
-            <MemoizedAppContent />
+            <NavigationProvider>
+              <MemoizedAppContent />
+            </NavigationProvider>
           </AIProvider>
         </AuthProvider>
       </LanguageProvider>

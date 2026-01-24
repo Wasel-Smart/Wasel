@@ -11,12 +11,12 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Progress } from './ui/progress';
-import { 
-  Phone, 
-  MessageCircle, 
-  AlertTriangle, 
-  Navigation, 
-  Clock, 
+import {
+  Phone,
+  MessageCircle,
+  AlertTriangle,
+  Navigation,
+  Clock,
   MapPin,
   Share2,
   X,
@@ -26,6 +26,7 @@ import { realTimeTrackingService, LocationUpdate, TripStatus } from '../services
 import { toast } from 'sonner';
 import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../services/api';
+import { useNavigation } from '../contexts/NavigationContext';
 
 interface LiveTripProps {
   tripId: string;
@@ -60,6 +61,7 @@ export function LiveTrip({
   onComplete,
 }: LiveTripProps) {
   const { t } = useLanguage();
+  const { navigate } = useNavigation();
   const [driverLocation, setDriverLocation] = useState<LocationUpdate | null>(null);
   const [tripStatus, setTripStatus] = useState<TripStatus | null>(null);
   const [verificationCode] = useState(() => Math.floor(1000 + Math.random() * 9000).toString());
@@ -74,7 +76,7 @@ export function LiveTrip({
       (location) => {
         setDriverLocation(location);
         updateMapMarker(location);
-        
+
         // Calculate ETA
         if (tripStatus?.status === 'arriving' || tripStatus?.status === 'waiting') {
           const eta = realTimeTrackingService.calculateETA(
@@ -92,7 +94,7 @@ export function LiveTrip({
       tripId,
       (status) => {
         setTripStatus(status);
-        
+
         if (status.status === 'completed') {
           toast.success(t('trip.completed'));
           onComplete?.();
@@ -126,7 +128,7 @@ export function LiveTrip({
     toast.info('Initiating call to driver...');
     try {
       const { twilioService } = await import('../services/twilioService');
-      
+
       // Get user's phone number
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -167,8 +169,8 @@ export function LiveTrip({
   };
 
   const handleMessage = () => {
-    toast.info('Opening chat with driver...');
-    // Navigate to messages
+    navigate('messages');
+    toast.info('Opening messages...');
   };
 
   const handleShare = () => {
@@ -241,11 +243,11 @@ export function LiveTrip({
 
   const formatETA = () => {
     if (!tripStatus?.eta) return 'Calculating...';
-    
+
     const now = new Date();
     const eta = new Date(tripStatus.eta);
     const diffMinutes = Math.round((eta.getTime() - now.getTime()) / 60000);
-    
+
     if (diffMinutes < 1) return 'Arriving now';
     if (diffMinutes === 1) return '1 min away';
     return `${diffMinutes} mins away`;
@@ -253,7 +255,7 @@ export function LiveTrip({
 
   const formatDistance = () => {
     if (!tripStatus?.distance) return '-';
-    
+
     const km = (tripStatus.distance / 1000).toFixed(1);
     return `${km} km`;
   };
@@ -298,8 +300,8 @@ export function LiveTrip({
       {/* Map View */}
       <Card>
         <CardContent className="p-0">
-          <div 
-            ref={mapRef} 
+          <div
+            ref={mapRef}
             className="w-full h-96 bg-gray-200 rounded-lg relative overflow-hidden"
           >
             {/* Placeholder for map - integrate Google Maps here */}
@@ -396,7 +398,7 @@ export function LiveTrip({
           <Share2 className="w-4 h-4 mr-2" />
           Share Trip
         </Button>
-        
+
         {tripStatus?.status === 'waiting' && onCancel && (
           <Button variant="destructive" onClick={onCancel}>
             <X className="w-4 h-4 mr-2" />

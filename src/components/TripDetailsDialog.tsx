@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { CircleX, Locate, CalendarClock, Timer, UsersRound, CircleDollarSign, Sparkles, Smartphone, MessagesSquare, MapPin, Navigation2, ShieldCheck, Clock, User, Phone } from 'lucide-react';
+import { useState, useEffect, memo } from 'react';
+import { ChevronDown, ChevronUp, Sparkles, ShieldCheck, MessagesSquare, Navigation2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback } from './ui/avatar';
 import { toast } from 'sonner';
 import { twilioService } from '../services/twilioService';
 import { supabase } from '../services/api';
+import { useNavigation } from '../contexts/NavigationContext';
 
 interface TripStop {
   label: string;
@@ -58,10 +59,13 @@ interface TripDetailsDialogProps {
 }
 
 export function TripDetailsDialog({ trip, open, onClose, onBook }: TripDetailsDialogProps) {
+  const { navigate } = useNavigation();
   const [selectedSeats, setSelectedSeats] = useState(1);
   const [loading, setLoading] = useState(false);
   const [driverPhone, setDriverPhone] = useState<string>('');
   const [userPhone, setUserPhone] = useState<string>('');
+  const [showVehicleDetails, setShowVehicleDetails] = useState(false);
+  const [showTripPreferences, setShowTripPreferences] = useState(false);
 
   useEffect(() => {
     if (trip?.driver?.id && open) {
@@ -77,7 +81,7 @@ export function TripDetailsDialog({ trip, open, onClose, onBook }: TripDetailsDi
         .select('phone')
         .eq('id', driverId)
         .single();
-      
+
       if (data?.phone) {
         setDriverPhone(data.phone);
       }
@@ -96,7 +100,7 @@ export function TripDetailsDialog({ trip, open, onClose, onBook }: TripDetailsDi
         .select('phone')
         .eq('id', user.id)
         .single();
-      
+
       if (data?.phone) {
         setUserPhone(data.phone);
       }
@@ -138,7 +142,7 @@ export function TripDetailsDialog({ trip, open, onClose, onBook }: TripDetailsDi
     setLoading(true);
     try {
       const result = await twilioService.initiateCall(userPhone, driverPhone);
-      
+
       if (result.success) {
         toast.success('Call initiated successfully');
       } else {
@@ -153,9 +157,9 @@ export function TripDetailsDialog({ trip, open, onClose, onBook }: TripDetailsDi
   };
 
   const handleMessage = () => {
-    // Navigate to messages with driver
-    toast.info('Opening chat with driver...');
-    // TODO: Implement navigation to messages
+    // Navigate to messages
+    navigate('messages');
+    toast.info('Opening messages...');
   };
 
   const handleGetDirections = () => {
@@ -166,7 +170,7 @@ export function TripDetailsDialog({ trip, open, onClose, onBook }: TripDetailsDi
 
   const handleBooking = async () => {
     if (!onBook) return;
-    
+
     if (selectedSeats < 1 || selectedSeats > trip.seats) {
       toast.error('Invalid number of seats');
       return;
@@ -229,9 +233,9 @@ export function TripDetailsDialog({ trip, open, onClose, onBook }: TripDetailsDi
                 <span>{trip.driver.trips} trips completed</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                <Button 
-                  size="sm" 
-                  variant="outline" 
+                <Button
+                  size="sm"
+                  variant="outline"
                   className="gap-2"
                   onClick={handleCall}
                   disabled={loading || !driverPhone}
@@ -239,18 +243,18 @@ export function TripDetailsDialog({ trip, open, onClose, onBook }: TripDetailsDi
                   <Phone className="w-4 h-4" />
                   Call Driver
                 </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
+                <Button
+                  size="sm"
+                  variant="outline"
                   className="gap-2"
                   onClick={handleMessage}
                 >
                   <MessagesSquare className="w-4 h-4" />
                   Message
                 </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
+                <Button
+                  size="sm"
+                  variant="outline"
                   className="gap-2"
                   onClick={handleGetDirections}
                 >
@@ -282,7 +286,7 @@ export function TripDetailsDialog({ trip, open, onClose, onBook }: TripDetailsDi
                 )}
               </div>
             </div>
-            <MapComponent 
+            <MapComponent
               locations={mapLocations}
               showRoute={true}
               height="450px"
@@ -345,3 +349,5 @@ export function TripDetailsDialog({ trip, open, onClose, onBook }: TripDetailsDi
     </Dialog>
   );
 }
+
+export const MemoizedTripDetailsDialog = memo(TripDetailsDialog);
